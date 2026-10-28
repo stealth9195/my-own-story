@@ -48,6 +48,7 @@
     <div class="row" style="margin-top:10px">
       <label>음성 모델 <select id="ttsModel"></select></label>
       <label>목소리 <select id="voice"></select></label>
+      <label>속도 <select id="ttsStyle"><option value="slow">천천히</option><option value="normal">보통</option></select></label>
       <span class="muted">음성은 모델마다 하루 10회라 버튼을 눌렀을 때만 만들어요.</span>
     </div>
     <div class="muted" style="margin-top:12px">카드 3~5장 선택</div>
@@ -127,12 +128,12 @@ function renderSegment(seg) {
     status.textContent = "음성 만드는 중...";
     const t0 = performance.now();
     try {
-      const res = await api("/api/tts", { text: seg.pages.map(p => p.text).join(" "), voice: $("voice").value, model: $("ttsModel").value });
+      const res = await api("/api/tts", { text: seg.pages.map(p => p.text).join(" "), voice: $("voice").value, model: $("ttsModel").value, style: $("ttsStyle").value });
       const url = URL.createObjectURL(await res.blob());
       const audio = document.createElement("audio");
       audio.controls = true; audio.src = url; audio.autoplay = true;
       el.appendChild(audio);
-      status.textContent = `${((performance.now() - t0) / 1000).toFixed(1)}초 · ${$("ttsModel").value} / ${$("voice").value}`;
+      status.textContent = `${((performance.now() - t0) / 1000).toFixed(1)}초 · ${$("ttsModel").value} / ${$("voice").value} / ${$("ttsStyle").selectedOptions[0].text}`;
     } catch (e) {
       status.textContent = e.status === 429 ? "이 음성 모델의 오늘 한도를 다 썼어요. 다른 모델을 골라보세요." : errorText(e);
       ttsBtn.disabled = false;

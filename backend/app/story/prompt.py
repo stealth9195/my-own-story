@@ -22,13 +22,18 @@ class StoryContext:
 
 
 def forbidden_choices(ctx: StoryContext) -> set[str]:
-    """처음 고른 카드와 지금까지 제시된 선택지. 새 선택지로 다시 쓰지 않는다."""
-    return set(ctx.cards) | {c.id for seg in ctx.history for c in seg.choices}
+    """처음 고른 카드, 지금까지 제시된 선택지, 이야기에 이미 등장한 캐릭터·사물.
+    새 선택지로 다시 쓰지 않는다."""
+    offered = {c.id for seg in ctx.history for c in seg.choices}
+    in_scene = {c.id for seg in ctx.history for p in seg.pages for c in p.scene.characters}
+    in_scene |= {o for seg in ctx.history for p in seg.pages for o in p.scene.objects}
+    return set(ctx.cards) | offered | in_scene
 
 
 def unchosen_ids(ctx: StoryContext) -> set[str]:
     """제시됐지만 고르지 않은 선택지. 처음 고른 카드는 등장해도 되므로 제외."""
-    return forbidden_choices(ctx) - set(ctx.chosen) - set(ctx.cards)
+    offered = {c.id for seg in ctx.history for c in seg.choices}
+    return offered - set(ctx.chosen) - set(ctx.cards)
 
 
 def build_messages(

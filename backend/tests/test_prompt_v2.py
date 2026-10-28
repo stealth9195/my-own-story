@@ -66,7 +66,7 @@ def test_validator_rejects_unchosen_in_scene():
     data["pages"][1]["scene"]["objects"] = ["cake"]
     raw = json.dumps(data, ensure_ascii=False)
     r = validate_segment(raw, "middle", cat, banned, forbidden_scene={"cake"})
-    assert r.errors == ["unchosen_used"]
+    assert "unchosen_used" in r.errors
 
 
 def test_generator_applies_rules_from_context():

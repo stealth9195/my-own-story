@@ -12,7 +12,7 @@ CARDS = ["rabbit", "rose", "star"]
 def make(responses, tts=None):
     llm = FakeLLM("fake-model", responses)
     app = create_app(models={"fake": lambda: llm},
-                     tts_fn=tts or (lambda text, voice, model: b"RIFFwav"))
+                     tts_fn=tts or (lambda *args: b"RIFFwav"))
     return TestClient(app), llm
 
 
@@ -88,7 +88,7 @@ def test_tts_returns_wav():
 
 
 def test_tts_quota_error_passes_status():
-    def fail(text, voice, model):
+    def fail(*args):
         raise TTSError("limit", status=429)
 
     client, _ = make([], tts=fail)

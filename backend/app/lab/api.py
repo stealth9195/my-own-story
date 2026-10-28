@@ -23,7 +23,7 @@ from app.tts import gemini as gemini_tts
 BACKEND_DIR = Path(__file__).resolve().parents[2]
 PAGE = Path(__file__).with_name("lab.html")
 
-TTSFn = Callable[[str, str, str], bytes]
+TTSFn = Callable[[str, str, str, str], bytes]
 
 
 class StartRequest(BaseModel):
@@ -41,6 +41,7 @@ class TTSRequest(BaseModel):
     text: str = Field(min_length=1, max_length=2000)
     voice: str
     model: str
+    style: str = "slow"
 
 
 def load_model_factories(path: Path | None = None) -> dict[str, Callable[[], LLM]]:
@@ -62,8 +63,8 @@ def prompt_versions() -> list[str]:
     return sorted(p.name for p in (REPO_ROOT / "prompts").iterdir() if (p / "system.md").exists())
 
 
-def default_tts(text: str, voice: str, model: str) -> bytes:
-    return gemini_tts.synthesize(text, voice, os.environ.get("GEMINI_API_KEY", ""), model)
+def default_tts(text: str, voice: str, model: str, style: str) -> bytes:
+    return gemini_tts.synthesize(text, voice, os.environ.get("GEMINI_API_KEY", ""), model, style)
 
 
 def segment_types(choice_count: int) -> list[str]:
@@ -111,6 +112,7 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
             "models": list(models),
             "tts_models": gemini_tts.MODELS,
             "voices": gemini_tts.VOICES,
+            "tts_styles": list(gemini_tts.STYLES),
             "prompt_versions": prompt_versions(),
         }
 
@@ -144,7 +146,7 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
     @app.post("/api/tts")
     def tts(req: TTSRequest):
         try:
-            audio = tts_fn(req.text, req.voice, req.model)
+            audio = tts_fn(req.text, req.voice, req.model, req.style)
         except gemini_tts.TTSError as e:
             status = e.status if e.status in (400, 429) else 502
             raise HTTPException(status, str(e)[:300])

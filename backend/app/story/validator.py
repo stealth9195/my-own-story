@@ -89,6 +89,22 @@ def _clean_choices(choices: list[Choice], catalog: Catalog, dropped: list[str],
     return result[:MAX_CHOICES]
 
 
+def _page_ids(page: Page) -> set[str]:
+    return {c.id for c in page.scene.characters} | set(page.scene.objects)
+
+
+def _check_intro_cards(pages: list[Page], cards: set[str], catalog: Catalog) -> list[str]:
+    """도입: 첫 페이지에 카드 2개 이상, 도입 안에 카드 모두 등장, 첫 페이지 캐릭터는 고른 카드만."""
+    errors = []
+    first = _page_ids(pages[0])
+    shown = set().union(*(_page_ids(p) for p in pages))
+    if len(first & cards) < min(2, len(cards)) or not cards <= shown:
+        errors.append("cards_missing")
+    if {c.id for c in pages[0].scene.characters} - cards:
+        errors.append("wrong_hero")
+    return errors
+
+
 def validate_segment(
     raw: str,
     segment_type: SegmentType,
@@ -97,6 +113,7 @@ def validate_segment(
     max_page_chars: int = 250,
     forbidden_choices: set[str] = frozenset(),
     forbidden_scene: set[str] = frozenset(),
+    cards: list[str] | None = None,
 ) -> ValidationResult:
     """forbidden_choices: 이미 나온 선택지(새 선택지에서 제거).
     forbidden_scene: 고르지 않은 선택지(장면에 나오면 실패)."""
@@ -136,7 +153,10 @@ def validate_segment(
     if segment_type == "ending":
         choices = []
     else:
-        choices = _clean_choices(choices, catalog, dropped, forbidden_choices)
+        # 같은 구간 장면에 이미 나온 것도 선택지로 쓰지 않는다
+        in_scene = {c.id for p in pages for c in p.scene.characters} | {
+            o for p in pages for o in p.scene.objects}
+        choices = _clean_choices(choices, catalog, dropped, set(forbidden_choices) | in_scene)
         if len(choices) < MIN_CHOICES:
             errors.append("choices")
 
@@ -144,6 +164,8 @@ def validate_segment(
         o for p in pages for o in p.scene.objects}
     if scene_ids & forbidden_scene:
         errors.append("unchosen_used")
+    if segment_type == "intro" and cards and pages:
+        errors += _check_intro_cards(pages, set(cards), catalog)
 
     texts = [p.text for p in pages] + [c.label for c in choices]
     if any(find_banned(t, banned) for t in texts):

@@ -19,7 +19,7 @@ def page(text=TEXT, **scene):
     return {"text": text, "scene": base, "mood": "calm", "sfx": "birds"}
 
 
-def make_raw(pages=3, choices=("dragon", "rose", "star"), page_list=None):
+def make_raw(pages=3, choices=("dragon", "star", "moon"), page_list=None):
     return json.dumps({
         "pages": page_list if page_list is not None else [page() for _ in range(pages)],
         "choices": [{"id": c, "label": cat.name_of(c) if c in cat.choice_ids() else c}

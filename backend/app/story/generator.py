@@ -49,7 +49,8 @@ def generate_segment(
 ) -> GenerationResult:
     """기본 1차 → (검증 실패 시) 기본 2차 → 예비 1회. 기본에서 LLMError면 바로 예비로."""
     messages = build_messages(ctx, segment_type, catalog, version)
-    rules = {"forbidden_choices": forbidden_choices(ctx), "forbidden_scene": unchosen_ids(ctx)}
+    rules = {"forbidden_choices": forbidden_choices(ctx), "forbidden_scene": unchosen_ids(ctx),
+             "cards": ctx.cards}
     attempts: list[Attempt] = []
 
     def try_once(llm: LLM) -> Segment | None:

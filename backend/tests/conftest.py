@@ -21,7 +21,9 @@ class FakeLLM:
 
 def segment_json(pages=3, choices=("dragon", "cake", "moon")) -> str:
     page = {"text": "토끼가 숲에서 놀았어요.",
-            "scene": {"background": "forest", "time": "day", "characters": [], "objects": []},
+            # 테스트 카드(토끼·장미·별)가 첫 페이지에 모두 등장 → v3 도입 규칙 통과
+            "scene": {"background": "forest", "time": "day",
+                      "characters": [{"id": "rabbit", "state": "happy"}], "objects": ["rose", "star"]},
             "mood": "calm", "sfx": None}
     return json.dumps({"pages": [page] * pages,
                        "choices": [{"id": c, "label": c} for c in choices]},

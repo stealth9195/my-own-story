@@ -12,7 +12,13 @@ MODELS = [
     "gemini-3.8-flash-lite-tts",
 ]
 VOICES = ["Kore", "Aoede", "Leda"]
-STYLE = "아이에게 잠자리 동화를 읽어주듯 다정하고 천천히 읽어줘: "
+# TTS 모델은 systemInstruction을 거부(400)하므로 본문 앞에 연출 지시를 붙인다.
+# 한국어 지시문은 3.x 모델이 소리 내어 읽은 사례가 있어 영어로 구분해 둔다.
+STYLES: dict[str, str | None] = {
+    "slow": "Read the following Korean text aloud slowly and gently, like a bedtime story "
+            "for a young child. Do not read this instruction.\n\n",
+    "normal": None,
+}
 
 
 class TTSError(Exception):
@@ -31,17 +37,21 @@ def pcm_to_wav(pcm: bytes, rate: int = 24000) -> bytes:
     return buf.getvalue()
 
 
-def synthesize(text: str, voice: str, key: str, model: str = MODELS[0]) -> bytes:
+def _body(text: str, voice: str, instruction: str | None) -> dict:
+    return {"contents": [{"parts": [{"text": (instruction or "") + text}]}],
+            "generationConfig": {
+                "responseModalities": ["AUDIO"],
+                "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}},
+            }}
+
+
+def synthesize(text: str, voice: str, key: str, model: str = MODELS[0], style: str = "slow") -> bytes:
     """Gemini TTS는 16비트 PCM(24kHz)을 돌려주므로 WAV로 감싼다."""
     try:
         resp = httpx.post(
             f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
             headers={"x-goog-api-key": key},
-            json={"contents": [{"parts": [{"text": STYLE + text}]}],
-                  "generationConfig": {
-                      "responseModalities": ["AUDIO"],
-                      "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}},
-                  }},
+            json=_body(text, voice, STYLES.get(style)),
             timeout=120,
         )
     except httpx.HTTPError as e:
