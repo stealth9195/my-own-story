@@ -7,6 +7,7 @@ API 키는 .env의 환경 변수(models.json의 api_key_env)에서 읽는다.
 import argparse
 import json
 import os
+import time
 from pathlib import Path
 
 from app.catalog import Catalog, load_catalog
@@ -19,6 +20,24 @@ from eval.story_runner import is_rate_limited, run_story
 
 EVAL_DIR = Path(__file__).parent
 MAX_RATE_LIMITED = 3
+
+
+class ThrottledLLM:
+    """무료 티어 분당 호출 한도를 넘지 않게 호출 사이 간격을 둔다."""
+
+    def __init__(self, inner: LLM, min_interval: float, now=time.monotonic, sleep=time.sleep):
+        self.inner, self.min_interval, self.now, self.sleep = inner, min_interval, now, sleep
+        self.model = inner.model
+        self._last: float | None = None
+
+    def complete(self, messages, temperature: float = 0.9):
+        t = self.now()
+        if self._last is not None and t - self._last < self.min_interval:
+            wait = self.min_interval - (t - self._last)
+            self.sleep(wait)
+            t += wait
+        self._last = t
+        return self.inner.complete(messages, temperature)
 
 
 def _is_done(path: Path) -> bool:
@@ -64,6 +83,8 @@ def main() -> None:
     parser.add_argument("--cases", help="쉼표로 구분한 케이스 ID (생략 시 전체)")
     parser.add_argument("--choice-count", type=int, default=Settings.model_fields["choice_count"].default)
     parser.add_argument("--version", default="v1")
+    parser.add_argument("--min-interval", type=float, default=0.0,
+                        help="LLM 호출 사이 최소 간격(초). 분당 한도 대비 (예: 분당 15회 → 4)")
     args = parser.parse_args()
 
     cases = json.loads((EVAL_DIR / "cases.json").read_text(encoding="utf-8"))
@@ -80,6 +101,8 @@ def main() -> None:
         llm = OpenAICompatClient(m["base_url"], key, m["model"], json_mode=m.get("json_mode", True),
                                  merge_system=m.get("merge_system", False),
                                  extra_body=m.get("extra"), timeout=m.get("timeout", 60))
+        if args.min_interval > 0:
+            llm = ThrottledLLM(llm, args.min_interval)
         run_model(cases, llm, args.out / m["name"], catalog, banned, args.choice_count, args.version)
 
 

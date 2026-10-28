@@ -51,3 +51,16 @@ def test_stops_model_after_three_rate_limited_stories(tmp_path):
     run_model(cases, llm, tmp_path, cat, banned, choice_count=3, version="v1")
     assert llm.calls == 3
     assert len(list(tmp_path.glob("*.json"))) == 3
+
+
+def test_throttled_llm_waits_between_calls():
+    from eval.run_generate import ThrottledLLM
+
+    waits = []
+    clock = iter([0.0, 1.0, 1.5]).__next__
+    llm = ThrottledLLM(FakeLLM("m", ["a", "b", "c"]), min_interval=4.0,
+                       now=clock, sleep=waits.append)
+    assert llm.model == "m"
+    llm.complete([])  # 첫 호출은 바로
+    llm.complete([])  # 1초 지남 → 3초 대기
+    assert waits == [3.0]
