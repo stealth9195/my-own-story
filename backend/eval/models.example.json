@@ -5,20 +5,23 @@
     "api_key_env": "GEMINI_API_KEY",
     "model": "<블로그 도구에서 쓰는 Gemma 모델 ID>",
     "json_mode": false,
-    "merge_system": true
+    "merge_system": true,
+    "timeout": 180
   },
   {
     "name": "nemotron",
     "base_url": "https://openrouter.ai/api/v1",
     "api_key_env": "OPENROUTER_API_KEY",
     "model": "<블로그 도구에서 쓰는 Nemotron 모델 ID>",
-    "json_mode": true
+    "json_mode": true,
+    "timeout": 180
   },
   {
     "name": "gemini-flash",
     "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
     "api_key_env": "GEMINI_API_KEY",
     "model": "<Gemini Flash 무료 티어 모델 ID>",
-    "json_mode": true
+    "json_mode": true,
+    "timeout": 180
   }
 ]
