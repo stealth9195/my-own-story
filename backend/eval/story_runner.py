@@ -19,7 +19,7 @@ def run_story(
     version: str,
 ) -> dict:
     """이야기 1편을 끝까지 생성. 실패해도 예외 대신 status=failed로 기록."""
-    ctx = StoryContext(cards=case["cards"], history=[], chosen=[])
+    ctx = StoryContext(cards=case["cards"], history=[], chosen=[], total_segments=choice_count + 1)
     result = {"case_id": case["id"], "model": llm.model, "version": version,
               "cards": case["cards"], "card_names": [catalog.name_of(c) for c in case["cards"]],
               "status": "done", "segments": [], "failed_at": None}

@@ -19,6 +19,11 @@ class StoryContext:
     cards: list[str]
     history: list[Segment]
     chosen: list[str]
+    total_segments: int | None = None  # v5부터 "전체 N구간 중 몇 번째"를 알려줄 때 사용
+
+
+def _version_number(version: str) -> int:
+    return int(version.lstrip("v")) if version.lstrip("v").isdigit() else 0
 
 
 def forbidden_choices(ctx: StoryContext) -> set[str]:
@@ -58,6 +63,8 @@ def build_messages(
         parts.append("이미 나온 선택지 (새 선택지로 쓰지 마): " + names(forbidden_choices(ctx)))
         if unchosen_ids(ctx):
             parts.append("고르지 않은 선택지 (등장시키지 마): " + names(unchosen_ids(ctx)))
+    if _version_number(version) >= 5 and ctx.total_segments:
+        parts.append(f"지금은 전체 {ctx.total_segments}구간 중 {len(ctx.history) + 1}번째 구간이야.")
     parts.append(INSTRUCTIONS[segment_type])
 
     return [
