@@ -31,6 +31,7 @@ class StartRequest(BaseModel):
     model: str
     choice_count: int = Field(default=4, ge=2, le=5)
     prompt_version: str = "v2"
+    fallback_model: str | None = None
 
 
 class NextRequest(BaseModel):
@@ -83,7 +84,7 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
         index = len(story["ctx"].history)
         seg_type = story["types"][index]
         try:
-            gen = generate_segment(story["ctx"], seg_type, primary=story["llm"], secondary=None,
+            gen = generate_segment(story["ctx"], seg_type, primary=story["llm"], secondary=story["fallback"],
                                    catalog=catalog, banned=banned, version=story["version"])
         except GenerationFailed as e:
             raise HTTPException(502, {"message": "생성 실패",
@@ -122,11 +123,15 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
             raise HTTPException(400, "없는 카드")
         if req.model not in models:
             raise HTTPException(400, "없는 모델")
+        if req.fallback_model and req.fallback_model not in models:
+            raise HTTPException(400, "없는 예비 모델")
         if req.prompt_version not in prompt_versions():
             raise HTTPException(400, "없는 프롬프트 버전")
         story = {"id": uuid.uuid4().hex[:8], "llm": models[req.model](),
+                 "fallback": models[req.fallback_model]() if req.fallback_model else None,
                  "types": segment_types(req.choice_count), "version": req.prompt_version,
-                 "ctx": StoryContext(cards=req.cards, history=[], chosen=[])}
+                 "ctx": StoryContext(cards=req.cards, history=[], chosen=[],
+                                    total_segments=req.choice_count + 1)}
         stories[story["id"]] = story
         return generate(story)
 

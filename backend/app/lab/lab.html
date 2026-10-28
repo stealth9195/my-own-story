@@ -42,6 +42,7 @@
   <section>
     <div class="row">
       <label>이야기 모델 <select id="model"></select></label>
+      <label>예비 모델 <select id="fallback"></select></label>
       <label>프롬프트 <select id="promptVersion"></select></label>
       <label>선택 횟수 <input id="choiceCount" type="number" min="2" max="5" value="4" style="width:64px"></label>
     </div>
@@ -86,6 +87,8 @@ async function init() {
   option($("model"), cfg.models);
   option($("ttsModel"), cfg.tts_models);
   option($("promptVersion"), cfg.prompt_versions);
+  $("fallback").innerHTML = `<option value="">없음</option>` + cfg.models.map(m => `<option value="${m}">${m}</option>`).join("");
+  if (cfg.models.length > 1) $("fallback").value = cfg.models[1];
   $("promptVersion").value = cfg.prompt_versions[cfg.prompt_versions.length - 1];
   option($("voice"), cfg.voices);
   $("cards").innerHTML = cfg.cards.map(c => `<div class="chip" data-id="${c.id}">${c.name}</div>`).join("");
@@ -99,9 +102,15 @@ async function init() {
   if (cfg.models.length === 0) $("pickCount").textContent = "API 키가 있는 모델이 없어요 (.env 확인)";
 }
 
+// 오류 코드를 사람이 읽는 말로
+const ERR = { "llm_error:429": "분당 한도 초과(429)", "llm_error:None": "응답 없음/시간 초과", choices: "선택지 문제",
+  page_count: "페이지 수", cards_missing: "카드 누락", wrong_hero: "주인공 오류", unchosen_used: "안 고른 선택지 등장",
+  json: "JSON 형식", schema: "형식 누락", unsafe: "금지어", not_korean: "한글 아님", too_long: "너무 김", empty_text: "빈 본문" };
+const errName = (x) => ERR[x] ?? x;
+
 function errorText(e) {
   if (e.detail && e.detail.attempts) {
-    return "생성 실패\n" + e.detail.attempts.map(a => `- ${a.model}: ${a.errors.join(", ")} (${(a.latency_ms/1000).toFixed(1)}초)`).join("\n");
+    return "생성 실패\n" + e.detail.attempts.map(a => `- ${a.model}: ${a.errors.map(errName).join(", ")} (${(a.latency_ms/1000).toFixed(1)}초)`).join("\n");
   }
   return `오류 ${e.status ?? ""}: ${typeof e.detail === "string" ? e.detail : JSON.stringify(e.detail)}`;
 }
@@ -109,7 +118,7 @@ function errorText(e) {
 function renderSegment(seg) {
   const el = document.createElement("section");
   el.className = "seg";
-  const attempts = seg.attempts.map(a => `<span class="${a.ok ? "ok" : "bad"}">${a.ok ? "성공" : a.errors.join(",")}</span>`).join(" → ");
+  const attempts = seg.attempts.map(a => `<span class="${a.ok ? "ok" : "bad"}">${a.ok ? `성공(${a.model.split("/").pop()})` : a.errors.map(errName).join(",")}</span>`).join(" → ");
   const label = { intro: "도입", middle: "중간", ending: "결말" }[seg.type];
   el.innerHTML = `
     <h2>${seg.index + 1}. ${label}</h2>
@@ -178,7 +187,7 @@ async function run(path, body) {
 
 $("startBtn").onclick = () => {
   $("story").innerHTML = "";
-  run("/api/stories", { cards: [...picked], model: $("model").value, choice_count: Number($("choiceCount").value), prompt_version: $("promptVersion").value });
+  run("/api/stories", { cards: [...picked], model: $("model").value, choice_count: Number($("choiceCount").value), prompt_version: $("promptVersion").value, fallback_model: $("fallback").value || null });
 };
 function next(choiceId) { run(`/api/stories/${storyId}/next`, { choice_id: choiceId }); }
 

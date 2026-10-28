@@ -111,3 +111,22 @@ def test_prompt_versions_listed_and_unknown_rejected():
     r = client.post("/api/stories", json={"cards": CARDS, "model": "fake", "choice_count": 2,
                                           "prompt_version": "v1"})
     assert r.status_code == 200
+
+
+def test_fallback_model_used_when_primary_fails():
+    primary = FakeLLM("primary", ["bad", "bad"])
+    backup = FakeLLM("backup", [MID])
+    app = create_app(models={"p": lambda: primary, "b": lambda: backup}, tts_fn=lambda *a: b"")
+    client = TestClient(app)
+    r = client.post("/api/stories", json={"cards": CARDS, "model": "p", "fallback_model": "b",
+                                          "choice_count": 2})
+    assert r.status_code == 200
+    assert r.json()["model_used"] == "backup"
+    assert [a["model"] for a in r.json()["attempts"]] == ["primary", "primary", "backup"]
+
+
+def test_unknown_fallback_model_rejected():
+    client, _ = make([])
+    r = client.post("/api/stories", json={"cards": CARDS, "model": "fake", "fallback_model": "nope",
+                                          "choice_count": 2})
+    assert r.status_code == 400
