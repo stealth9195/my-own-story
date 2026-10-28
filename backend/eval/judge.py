@@ -6,12 +6,14 @@ from pathlib import Path
 
 # 기준별 배점 (합계 100). judge_prompt.md와 같은 값이어야 한다.
 CRITERIA: dict[str, int] = {
-    "vocabulary": 20,
-    "plot": 20,
-    "coherence": 25,
-    "length": 10,
-    "safety": 15,
+    "vocabulary": 15,
+    "plot": 15,
+    "structure": 15,
+    "moral": 10,
+    "coherence": 20,
     "choices": 10,
+    "length": 5,
+    "safety": 10,
 }
 PROMPT_PATH = Path(__file__).with_name("judge_prompt.md")
 

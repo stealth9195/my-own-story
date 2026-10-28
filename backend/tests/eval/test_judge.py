@@ -54,3 +54,17 @@ def test_parse_scores_csv_missing_column_raises(tmp_path):
     p.write_text("file,vocabulary\ns01,10\n", encoding="utf-8")
     with pytest.raises(ValueError):
         parse_scores_csv(p)
+
+
+def test_criteria_include_structure_and_moral():
+    assert CRITERIA == {"vocabulary": 15, "plot": 15, "structure": 15, "moral": 10,
+                        "coherence": 20, "choices": 10, "length": 5, "safety": 10}
+
+
+def test_judge_prompt_matches_criteria():
+    from eval.judge import PROMPT_PATH
+
+    prompt = PROMPT_PATH.read_text(encoding="utf-8")
+    for name, points in CRITERIA.items():
+        assert f"{name} ({points}점)" in prompt
+    assert "file," + ",".join(CRITERIA) in prompt
