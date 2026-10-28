@@ -1,0 +1,16 @@
+[
+  {
+    "name": "judge-gemini",
+    "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
+    "api_key_env": "GEMINI_API_KEY",
+    "model": "<평가 대상과 다른 Gemini 모델 ID>",
+    "json_mode": true
+  },
+  {
+    "name": "judge-openrouter",
+    "base_url": "https://openrouter.ai/api/v1",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "model": "<평가 대상과 다른 OpenRouter 무료 모델 ID>",
+    "json_mode": true
+  }
+]
