@@ -85,28 +85,35 @@ def test_corrupt_result_file_is_regenerated(tmp_path):
     assert json.loads((tmp_path / "c01.json").read_text(encoding="utf-8"))["status"] == "done"
 
 
-def test_tts_google_gets_google_key_in_header(monkeypatch, tmp_path):
+def test_tts_gemini_and_azure_get_their_own_keys(monkeypatch, tmp_path):
+    import base64
     import eval.tts_check as t
 
     sent = []
     monkeypatch.setattr(t, "OUT_DIR", tmp_path)
-    monkeypatch.setenv("GOOGLE_TTS_API_KEY", "GKEY")
+    monkeypatch.setenv("GEMINI_API_KEY", "GKEY")
     monkeypatch.setenv("AZURE_SPEECH_KEY", "AKEY")
     monkeypatch.setenv("AZURE_SPEECH_REGION", "koreacentral")
+    pcm = b"\x00\x01" * 100
 
     def fake_post(url, **kw):
         sent.append((url, kw.get("headers", {})))
-        if "googleapis" in url:
-            import base64
-            return httpx.Response(200, json={"audioContent": base64.b64encode(b"mp3").decode()},
-                                  request=httpx.Request("POST", url))
-        return httpx.Response(200, content=b"mp3", request=httpx.Request("POST", url))
+        req = httpx.Request("POST", url)
+        if "generativelanguage" in url:
+            part = {"inlineData": {"mimeType": "audio/L16;rate=24000",
+                                   "data": base64.b64encode(pcm).decode()}}
+            return httpx.Response(200, json={"candidates": [{"content": {"parts": [part]}}]},
+                                  request=req)
+        return httpx.Response(200, content=b"mp3", request=req)
 
     monkeypatch.setattr(t.httpx, "post", fake_post)
     t.main([])
-    google_calls = [(u, h) for u, h in sent if "googleapis" in u]
-    assert google_calls
-    assert all(h.get("X-Goog-Api-Key") == "GKEY" and "key=" not in u for u, h in google_calls)
+    gemini = [h for u, h in sent if "generativelanguage" in u]
+    azure = [h for u, h in sent if "microsoft" in u]
+    assert gemini and all(h.get("x-goog-api-key") == "GKEY" for h in gemini)
+    assert azure and all(h.get("Ocp-Apim-Subscription-Key") == "AKEY" for h in azure)
+    wavs = list(tmp_path.glob("gemini_*.wav"))
+    assert wavs and wavs[0].read_bytes()[:4] == b"RIFF"
 
 
 def test_setup_console_switches_stdout_to_utf8(monkeypatch):
