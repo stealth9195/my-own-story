@@ -3,14 +3,14 @@ import json
 from app.catalog import load_catalog
 from app.llm.client import LLMError
 from app.story.safety import load_banned_words
-from conftest import FakeLLM, segment_json
+from conftest import FakeLLM, middles, segment_json
 from eval.run_generate import run_model
 from eval.story_runner import run_story
 
 cat = load_catalog()
 banned = load_banned_words()
 CASE = {"id": "c01", "cards": ["rabbit", "rose", "star"], "picks": [0, 1, 2, 3, 4]}
-MID = segment_json(pages=3, choices=("dragon", "rose", "star"))
+MID = segment_json(pages=3)
 END = segment_json(pages=4, choices=())
 
 
@@ -19,11 +19,11 @@ def story(llm, choice_count=3):
 
 
 def test_run_story_done_has_expected_segment_types():
-    r = story(FakeLLM("m", [MID, MID, MID, END]))
+    r = story(FakeLLM("m", [*middles(3), END]))
     assert r["status"] == "done"
     assert r["failed_at"] is None
     assert [s["type"] for s in r["segments"]] == ["intro", "middle", "middle", "ending"]
-    assert [s["chosen"] for s in r["segments"]] == ["dragon", "rose", "star", None]
+    assert [s["chosen"] for s in r["segments"]] == ["dragon", "balloon", "owl", None]
 
 
 def test_run_story_failure_recorded_not_raised():
@@ -39,7 +39,7 @@ def test_resume_skips_done_files(tmp_path):
     (out / "c01.json").write_text(json.dumps({"status": "done"}), encoding="utf-8")
     (out / "c02.json").write_text(json.dumps({"status": "failed"}), encoding="utf-8")
     cases = [CASE, {**CASE, "id": "c02"}]
-    llm = FakeLLM("m", [MID, MID, MID, END])
+    llm = FakeLLM("m", [*middles(3), END])
     run_model(cases, llm, out, cat, banned, choice_count=3, version="v1")
     assert llm.calls == 4
     assert json.loads((out / "c02.json").read_text(encoding="utf-8"))["status"] == "done"

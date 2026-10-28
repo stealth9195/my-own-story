@@ -10,7 +10,7 @@ from app.catalog import load_catalog
 from app.llm.client import OpenAICompatClient
 from app.story.safety import load_banned_words
 from app.story.validator import validate_segment
-from conftest import FakeLLM, segment_json
+from conftest import FakeLLM, middles, segment_json
 
 cat = load_catalog()
 banned = load_banned_words()
@@ -69,7 +69,7 @@ def test_story_records_cards_and_judge_text_shows_them():
 
     case = {"id": "c01", "cards": ["rabbit", "rose"], "picks": [0, 0, 0]}
     end = segment_json(pages=4, choices=())
-    story = run_story(case, FakeLLM("m", [GOOD, GOOD, end]), cat, banned, 2, "v1")
+    story = run_story(case, FakeLLM("m", [*middles(2), end]), cat, banned, 2, "v1")
     assert story["cards"] == ["rabbit", "rose"]
     assert "아이가 고른 카드: 토끼, 장미" in story_to_text(story)
 
@@ -80,7 +80,7 @@ def test_corrupt_result_file_is_regenerated(tmp_path):
     (tmp_path / "c01.json").write_text('{"status": "do', encoding="utf-8")
     case = {"id": "c01", "cards": ["rabbit"], "picks": [0, 0]}
     end = segment_json(pages=4, choices=())
-    llm = FakeLLM("m", [GOOD, GOOD, end])
+    llm = FakeLLM("m", [*middles(2), end])
     run_model([case], llm, tmp_path, cat, banned, choice_count=2, version="v1")
     assert json.loads((tmp_path / "c01.json").read_text(encoding="utf-8"))["status"] == "done"
 

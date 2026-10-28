@@ -13,6 +13,7 @@ from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, Field
 
 from app.catalog import load_catalog
+from app.config import REPO_ROOT
 from app.llm.client import OpenAICompatClient
 from app.story.generator import LLM, GenerationFailed, generate_segment
 from app.story.prompt import StoryContext
@@ -29,6 +30,7 @@ class StartRequest(BaseModel):
     cards: list[str] = Field(min_length=3, max_length=5)
     model: str
     choice_count: int = Field(default=4, ge=2, le=5)
+    prompt_version: str = "v2"
 
 
 class NextRequest(BaseModel):
@@ -56,6 +58,10 @@ def load_model_factories(path: Path | None = None) -> dict[str, Callable[[], LLM
     return factories
 
 
+def prompt_versions() -> list[str]:
+    return sorted(p.name for p in (REPO_ROOT / "prompts").iterdir() if (p / "system.md").exists())
+
+
 def default_tts(text: str, voice: str, model: str) -> bytes:
     return gemini_tts.synthesize(text, voice, os.environ.get("GEMINI_API_KEY", ""), model)
 
@@ -77,7 +83,7 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
         seg_type = story["types"][index]
         try:
             gen = generate_segment(story["ctx"], seg_type, primary=story["llm"], secondary=None,
-                                   catalog=catalog, banned=banned)
+                                   catalog=catalog, banned=banned, version=story["version"])
         except GenerationFailed as e:
             raise HTTPException(502, {"message": "생성 실패",
                                       "attempts": [asdict(a) for a in e.attempts]})
@@ -105,6 +111,7 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
             "models": list(models),
             "tts_models": gemini_tts.MODELS,
             "voices": gemini_tts.VOICES,
+            "prompt_versions": prompt_versions(),
         }
 
     @app.post("/api/stories")
@@ -113,8 +120,10 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
             raise HTTPException(400, "없는 카드")
         if req.model not in models:
             raise HTTPException(400, "없는 모델")
+        if req.prompt_version not in prompt_versions():
+            raise HTTPException(400, "없는 프롬프트 버전")
         story = {"id": uuid.uuid4().hex[:8], "llm": models[req.model](),
-                 "types": segment_types(req.choice_count),
+                 "types": segment_types(req.choice_count), "version": req.prompt_version,
                  "ctx": StoryContext(cards=req.cards, history=[], chosen=[])}
         stories[story["id"]] = story
         return generate(story)

@@ -76,11 +76,12 @@ def _clean_scene(scene: Scene, catalog: Catalog, dropped: list[str]) -> Scene:
     return scene
 
 
-def _clean_choices(choices: list[Choice], catalog: Catalog, dropped: list[str]) -> list[Choice]:
+def _clean_choices(choices: list[Choice], catalog: Catalog, dropped: list[str],
+                   forbidden: set[str]) -> list[Choice]:
     seen: set[str] = set()
     result = []
     for c in choices:
-        if c.id not in catalog.choice_ids():
+        if c.id not in catalog.choice_ids() or c.id in forbidden:
             dropped.append(c.id)
         elif c.id not in seen:
             seen.add(c.id)
@@ -94,7 +95,11 @@ def validate_segment(
     catalog: Catalog,
     banned: list[str],
     max_page_chars: int = 250,
+    forbidden_choices: set[str] = frozenset(),
+    forbidden_scene: set[str] = frozenset(),
 ) -> ValidationResult:
+    """forbidden_choices: 이미 나온 선택지(새 선택지에서 제거).
+    forbidden_scene: 고르지 않은 선택지(장면에 나오면 실패)."""
     data = extract_json(raw)
     if data is None:
         return ValidationResult(ok=False, segment=None, errors=["json"])
@@ -131,9 +136,14 @@ def validate_segment(
     if segment_type == "ending":
         choices = []
     else:
-        choices = _clean_choices(choices, catalog, dropped)
+        choices = _clean_choices(choices, catalog, dropped, forbidden_choices)
         if len(choices) < MIN_CHOICES:
             errors.append("choices")
+
+    scene_ids = {c.id for p in pages for c in p.scene.characters} | {
+        o for p in pages for o in p.scene.objects}
+    if scene_ids & forbidden_scene:
+        errors.append("unchosen_used")
 
     texts = [p.text for p in pages] + [c.label for c in choices]
     if any(find_banned(t, banned) for t in texts):

@@ -2,9 +2,9 @@ from fastapi.testclient import TestClient
 
 from app.lab.api import create_app
 from app.tts.gemini import TTSError
-from conftest import FakeLLM, segment_json
+from conftest import FakeLLM, middles, segment_json
 
-MID = segment_json(pages=3, choices=("dragon", "rose", "star"))
+MID = segment_json(pages=3)
 END = segment_json(pages=4, choices=())
 CARDS = ["rabbit", "rose", "star"]
 
@@ -30,14 +30,14 @@ def test_config_lists_cards_and_models():
 
 
 def test_full_story_flow():
-    client, _ = make([MID, MID, END])
+    client, _ = make([*middles(2), END])
     r = start(client).json()
     assert r["type"] == "intro" and len(r["choices"]) == 3 and r["done"] is False
     assert r["model_used"] == "fake-model" and r["attempts"][0]["ok"]
     sid = r["story_id"]
     r = client.post(f"/api/stories/{sid}/next", json={"choice_id": "dragon"}).json()
     assert r["type"] == "middle" and r["index"] == 1
-    r = client.post(f"/api/stories/{sid}/next", json={"choice_id": "rose"}).json()
+    r = client.post(f"/api/stories/{sid}/next", json={"choice_id": "balloon"}).json()
     assert r["type"] == "ending" and r["done"] is True and r["choices"] == []
 
 
@@ -49,10 +49,10 @@ def test_choice_not_offered_is_rejected():
 
 
 def test_next_after_ending_is_rejected():
-    client, _ = make([MID, MID, END])
+    client, _ = make([*middles(2), END])
     sid = start(client, choice_count=2).json()["story_id"]
     client.post(f"/api/stories/{sid}/next", json={"choice_id": "dragon"})
-    client.post(f"/api/stories/{sid}/next", json={"choice_id": "dragon"})
+    client.post(f"/api/stories/{sid}/next", json={"choice_id": "balloon"})
     r = client.post(f"/api/stories/{sid}/next", json={"choice_id": "dragon"})
     assert r.status_code == 409
 
@@ -100,3 +100,14 @@ def test_index_page_served():
     client, _ = make([])
     r = client.get("/")
     assert r.status_code == 200 and "<html" in r.text
+
+
+def test_prompt_versions_listed_and_unknown_rejected():
+    client, _ = make([MID])
+    assert {"v1", "v2"} <= set(client.get("/api/config").json()["prompt_versions"])
+    r = client.post("/api/stories", json={"cards": CARDS, "model": "fake", "choice_count": 2,
+                                          "prompt_version": "v999"})
+    assert r.status_code == 400
+    r = client.post("/api/stories", json={"cards": CARDS, "model": "fake", "choice_count": 2,
+                                          "prompt_version": "v1"})
+    assert r.status_code == 200

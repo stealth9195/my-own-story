@@ -17,8 +17,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     choice_count: int = Field(default=4, ge=2, le=5)
-    prompt_version: str = "v1"
-    max_page_chars: int = 250
+    prompt_version: str = "v2"
+    max_page_chars: int = 150
 
     primary_base_url: str
     primary_api_key: str

@@ -42,6 +42,7 @@
   <section>
     <div class="row">
       <label>이야기 모델 <select id="model"></select></label>
+      <label>프롬프트 <select id="promptVersion"></select></label>
       <label>선택 횟수 <input id="choiceCount" type="number" min="2" max="5" value="4" style="width:64px"></label>
     </div>
     <div class="row" style="margin-top:10px">
@@ -83,6 +84,8 @@ async function init() {
   const cfg = await (await api("/api/config")).json();
   option($("model"), cfg.models);
   option($("ttsModel"), cfg.tts_models);
+  option($("promptVersion"), cfg.prompt_versions);
+  $("promptVersion").value = cfg.prompt_versions[cfg.prompt_versions.length - 1];
   option($("voice"), cfg.voices);
   $("cards").innerHTML = cfg.cards.map(c => `<div class="chip" data-id="${c.id}">${c.name}</div>`).join("");
   document.querySelectorAll(".chip").forEach(el => el.onclick = () => {
@@ -109,7 +112,7 @@ function renderSegment(seg) {
   const label = { intro: "도입", middle: "중간", ending: "결말" }[seg.type];
   el.innerHTML = `
     <h2>${seg.index + 1}. ${label}</h2>
-    <div class="meta">${seg.model_used} · ${(seg.latency_ms / 1000).toFixed(1)}초 · 시도: ${attempts}</div>
+    <div class="meta">${seg.model_used} · ${seg.pages.map(p => p.text.length).join("/")}자 · ${(seg.latency_ms / 1000).toFixed(1)}초 · 시도: ${attempts}</div>
     ${seg.pages.map(p => `
       <div class="page">
         <div class="text">${p.text}</div>
@@ -174,7 +177,7 @@ async function run(path, body) {
 
 $("startBtn").onclick = () => {
   $("story").innerHTML = "";
-  run("/api/stories", { cards: [...picked], model: $("model").value, choice_count: Number($("choiceCount").value) });
+  run("/api/stories", { cards: [...picked], model: $("model").value, choice_count: Number($("choiceCount").value), prompt_version: $("promptVersion").value });
 };
 function next(choiceId) { run(`/api/stories/${storyId}/next`, { choice_id: choiceId }); }
 

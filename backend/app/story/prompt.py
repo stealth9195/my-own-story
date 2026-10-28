@@ -21,6 +21,16 @@ class StoryContext:
     chosen: list[str]
 
 
+def forbidden_choices(ctx: StoryContext) -> set[str]:
+    """처음 고른 카드와 지금까지 제시된 선택지. 새 선택지로 다시 쓰지 않는다."""
+    return set(ctx.cards) | {c.id for seg in ctx.history for c in seg.choices}
+
+
+def unchosen_ids(ctx: StoryContext) -> set[str]:
+    """제시됐지만 고르지 않은 선택지. 처음 고른 카드는 등장해도 되므로 제외."""
+    return forbidden_choices(ctx) - set(ctx.chosen) - set(ctx.cards)
+
+
 def build_messages(
     ctx: StoryContext,
     segment_type: SegmentType,
@@ -37,6 +47,12 @@ def build_messages(
         parts.append("지금까지의 이야기:\n" + story)
     if ctx.chosen:
         parts.append("아이가 방금 고른 선택지: " + catalog.name_of(ctx.chosen[-1]))
+    # v1은 비교 기준이라 그대로 두고, v2부터 선택지 이력을 알려준다
+    if version != "v1":
+        names = lambda ids: ", ".join(sorted(catalog.name_of(i) for i in ids))
+        parts.append("이미 나온 선택지 (새 선택지로 쓰지 마): " + names(forbidden_choices(ctx)))
+        if unchosen_ids(ctx):
+            parts.append("고르지 않은 선택지 (등장시키지 마): " + names(unchosen_ids(ctx)))
     parts.append(INSTRUCTIONS[segment_type])
 
     return [
