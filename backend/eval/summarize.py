@@ -7,6 +7,7 @@ import json
 import sys
 from pathlib import Path
 
+from eval.console import setup_console
 from eval.judge import CRITERIA
 
 
@@ -43,6 +44,7 @@ def summarize(run_dir: Path) -> str:
 
 
 def main() -> None:
+    setup_console()
     run_dir = Path(sys.argv[1])
     table = summarize(run_dir)
     (run_dir / "summary.md").write_text(table + "\n", encoding="utf-8")

@@ -4,7 +4,8 @@
     "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
     "api_key_env": "GEMINI_API_KEY",
     "model": "<블로그 도구에서 쓰는 Gemma 모델 ID>",
-    "json_mode": true
+    "json_mode": false,
+    "merge_system": true
   },
   {
     "name": "nemotron",

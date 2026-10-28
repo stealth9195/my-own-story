@@ -10,12 +10,14 @@ import os
 from pathlib import Path
 
 from app.llm.client import LLMError, OpenAICompatClient
+from eval.console import setup_console
 from eval.judge import build_judge_messages, parse_judge, story_to_text
 
 EVAL_DIR = Path(__file__).parent
 
 
 def main() -> None:
+    setup_console()
     parser = argparse.ArgumentParser()
     parser.add_argument("--results", type=Path, required=True)
     parser.add_argument("--judges", type=Path, default=EVAL_DIR / "judges.json")
@@ -34,7 +36,8 @@ def main() -> None:
         if not key:
             print(f"[{j['name']}] 환경 변수 {j['api_key_env']} 없음 → 건너뜀")
             continue
-        judge = OpenAICompatClient(j["base_url"], key, j["model"], json_mode=j.get("json_mode", True))
+        judge = OpenAICompatClient(j["base_url"], key, j["model"], json_mode=j.get("json_mode", True),
+                                   merge_system=j.get("merge_system", False))
         for model_dir in sorted(p for p in args.results.iterdir() if p.is_dir()):
             for f in sorted(model_dir.glob("*.json")):
                 story = json.loads(f.read_text(encoding="utf-8"))

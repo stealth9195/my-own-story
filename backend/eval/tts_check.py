@@ -13,6 +13,8 @@ from xml.sax.saxutils import escape
 
 import httpx
 
+from eval.console import setup_console
+
 OUT_DIR = Path(__file__).parent / "tts_out"
 SAMPLE = (
     "옛날 옛적, 장미가 가득한 정원에 작은 토끼가 살았어요. "
@@ -27,7 +29,8 @@ AZURE_VOICES = ["ko-KR-SunHiNeural", "ko-KR-InJoonNeural"]
 
 def google(text: str, voice: str, key: str) -> bytes:
     resp = httpx.post(
-        f"https://texttospeech.googleapis.com/v1/text:synthesize?key={key}",
+        "https://texttospeech.googleapis.com/v1/text:synthesize",
+        headers={"X-Goog-Api-Key": key},
         json={"input": {"text": text},
               "voice": {"languageCode": "ko-KR", "name": voice},
               "audioConfig": {"audioEncoding": "MP3"}},
@@ -52,24 +55,25 @@ def azure(text: str, voice: str, key: str, region: str) -> bytes:
     return resp.content
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
+    setup_console()
     parser = argparse.ArgumentParser()
     parser.add_argument("--text", default=SAMPLE)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
+    gkey = os.environ.get("GOOGLE_TTS_API_KEY")
+    akey, region = os.environ.get("AZURE_SPEECH_KEY"), os.environ.get("AZURE_SPEECH_REGION")
     jobs = []
-    if key := os.environ.get("GOOGLE_TTS_API_KEY"):
-        jobs += [("google", v, lambda v=v: google(args.text, v, key)) for v in GOOGLE_VOICES]
-    key, region = os.environ.get("AZURE_SPEECH_KEY"), os.environ.get("AZURE_SPEECH_REGION")
-    if key and region:
-        jobs += [("azure", v, lambda v=v: azure(args.text, v, key, region)) for v in AZURE_VOICES]
+    if gkey:
+        jobs += [("google", v, lambda v=v: google(args.text, v, gkey)) for v in GOOGLE_VOICES]
+    if akey and region:
+        jobs += [("azure", v, lambda v=v: azure(args.text, v, akey, region)) for v in AZURE_VOICES]
 
-    skipped = [n for n, ok in [("google", os.environ.get("GOOGLE_TTS_API_KEY")),
-                               ("azure", key and region)] if not ok]
+    skipped = [n for n, ok in [("google", gkey), ("azure", akey and region)] if not ok]
     if skipped:
         print(f"키 없음: {', '.join(skipped)} 건너뜀")
 
-    OUT_DIR.mkdir(exist_ok=True)
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
     print(f"문장 길이: {len(args.text)}자")
     for vendor, voice, synth in jobs:
         start = time.perf_counter()

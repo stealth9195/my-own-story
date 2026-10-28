@@ -8,6 +8,8 @@ PROMPT_PATH = Path(__file__).with_name("judge_prompt.md")
 
 def story_to_text(story: dict) -> str:
     parts = []
+    if story.get("card_names"):
+        parts.append("아이가 고른 카드: " + ", ".join(story["card_names"]))
     for i, seg in enumerate(story["segments"], 1):
         lines = [f"[구간 {i}: {seg['type']}]"] + [p["text"] for p in seg["pages"]]
         if seg["choices"]:

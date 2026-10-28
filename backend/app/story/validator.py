@@ -22,16 +22,31 @@ class ValidationResult:
     dropped: list[str] = field(default_factory=list)
 
 
+FENCE = re.compile(r"```(?:json)?\s*(\{.*?\})\s*```", re.DOTALL)
+
+
 def extract_json(raw: str) -> dict | None:
-    """응답에서 첫 '{'부터 마지막 '}'까지 꺼내 파싱. 코드 블록·설명 문장 대응."""
-    start, end = raw.find("{"), raw.rfind("}")
-    if start == -1 or end <= start:
-        return None
-    try:
-        data = json.loads(raw[start : end + 1])
-    except json.JSONDecodeError:
-        return None
-    return data if isinstance(data, dict) else None
+    """응답에서 JSON 객체를 꺼낸다. 코드 블록 우선, 없으면 '{' 위치마다 파싱 시도.
+    앞뒤 설명 문장에 중괄호가 섞여 있어도 처리한다."""
+    fenced = FENCE.search(raw)
+    if fenced:
+        try:
+            data = json.loads(fenced.group(1))
+            if isinstance(data, dict):
+                return data
+        except json.JSONDecodeError:
+            pass
+    decoder = json.JSONDecoder()
+    pos = raw.find("{")
+    while pos != -1:
+        try:
+            data, _ = decoder.raw_decode(raw, pos)
+            if isinstance(data, dict):
+                return data
+        except json.JSONDecodeError:
+            pass
+        pos = raw.find("{", pos + 1)
+    return None
 
 
 def _clean_scene(scene: Scene, catalog: Catalog, dropped: list[str]) -> Scene:
@@ -86,8 +101,8 @@ def validate_segment(
     try:
         pages = [Page.model_validate(p) for p in data.get("pages", [])]
         choices = [Choice.model_validate(c) for c in data.get("choices") or []]
-    except (ValidationError, TypeError):
-        return ValidationResult(ok=False, segment=None, errors=["json"])
+    except (ValidationError, TypeError, AttributeError):
+        return ValidationResult(ok=False, segment=None, errors=["schema"])
 
     errors: list[str] = []
     dropped: list[str] = []

@@ -17,6 +17,14 @@ class LLMError(Exception):
         self.status = status
 
 
+def _merge_system(messages: list[dict[str, str]]) -> list[dict[str, str]]:
+    system = "\n\n".join(m["content"] for m in messages if m["role"] == "system")
+    rest = [dict(m) for m in messages if m["role"] != "system"]
+    if system and rest:
+        rest[0]["content"] = system + "\n\n" + rest[0]["content"]
+    return rest
+
+
 class OpenAICompatClient:
     """OpenAI 호환 chat/completions API 클라이언트. OpenRouter, Gemini 모두 사용."""
 
@@ -26,11 +34,14 @@ class OpenAICompatClient:
         api_key: str,
         model: str,
         json_mode: bool = True,
+        merge_system: bool = False,
         timeout: float = 60.0,
         transport: httpx.BaseTransport | None = None,
     ):
         self.model = model
         self.json_mode = json_mode
+        # Gemma 등 system 역할을 거부하는 모델용: system 내용을 첫 user 메시지 앞에 붙인다
+        self.merge_system = merge_system
         self._url = base_url.rstrip("/") + "/chat/completions"
         self._http = httpx.Client(
             headers={"Authorization": f"Bearer {api_key}"},
@@ -39,6 +50,8 @@ class OpenAICompatClient:
         )
 
     def complete(self, messages: list[dict[str, str]], temperature: float = 0.9) -> LLMResponse:
+        if self.merge_system:
+            messages = _merge_system(messages)
         body: dict = {"model": self.model, "messages": messages, "temperature": temperature}
         if self.json_mode:
             body["response_format"] = {"type": "json_object"}

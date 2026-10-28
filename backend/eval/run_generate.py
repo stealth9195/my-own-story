@@ -14,10 +14,18 @@ from app.config import Settings
 from app.llm.client import OpenAICompatClient
 from app.story.generator import LLM
 from app.story.safety import load_banned_words
+from eval.console import setup_console
 from eval.story_runner import is_rate_limited, run_story
 
 EVAL_DIR = Path(__file__).parent
 MAX_RATE_LIMITED = 3
+
+
+def _is_done(path: Path) -> bool:
+    try:
+        return json.loads(path.read_text(encoding="utf-8")).get("status") == "done"
+    except (FileNotFoundError, json.JSONDecodeError):
+        return False
 
 
 def run_model(
@@ -34,10 +42,13 @@ def run_model(
     rate_limited = 0
     for case in cases:
         path = out_dir / f"{case['id']}.json"
-        if path.exists() and json.loads(path.read_text(encoding="utf-8")).get("status") == "done":
+        if _is_done(path):
             continue
         story = run_story(case, llm, catalog, banned, choice_count, version)
-        path.write_text(json.dumps(story, ensure_ascii=False, indent=2), encoding="utf-8")
+        # 중간에 끊겨도 깨진 파일이 남지 않게 임시 파일에 쓰고 교체
+        tmp = path.with_suffix(".tmp")
+        tmp.write_text(json.dumps(story, ensure_ascii=False, indent=2), encoding="utf-8")
+        tmp.replace(path)
         print(f"[{llm.model}] {case['id']}: {story['status']}")
         rate_limited = rate_limited + 1 if is_rate_limited(story) else 0
         if rate_limited >= MAX_RATE_LIMITED:
@@ -46,6 +57,7 @@ def run_model(
 
 
 def main() -> None:
+    setup_console()
     parser = argparse.ArgumentParser()
     parser.add_argument("--models", type=Path, default=EVAL_DIR / "models.json")
     parser.add_argument("--out", type=Path, required=True)
@@ -65,7 +77,8 @@ def main() -> None:
         if not key:
             print(f"[{m['name']}] 환경 변수 {m['api_key_env']} 없음 → 건너뜀")
             continue
-        llm = OpenAICompatClient(m["base_url"], key, m["model"], json_mode=m.get("json_mode", True))
+        llm = OpenAICompatClient(m["base_url"], key, m["model"], json_mode=m.get("json_mode", True),
+                                 merge_system=m.get("merge_system", False))
         run_model(cases, llm, args.out / m["name"], catalog, banned, args.choice_count, args.version)
 
 
