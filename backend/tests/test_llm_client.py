@@ -71,3 +71,17 @@ def test_empty_content_raises(content):
     client = make_client(lambda r: httpx.Response(200, json=ok_body(content)))
     with pytest.raises(LLMError):
         client.complete(MSGS)
+
+
+def test_extra_body_is_merged_into_request():
+    seen = {}
+
+    def handler(request):
+        seen["body"] = json.loads(request.content)
+        return httpx.Response(200, json=ok_body())
+
+    client = OpenAICompatClient("https://x/v1", "k", "m", transport=httpx.MockTransport(handler),
+                                extra_body={"reasoning": {"enabled": False}})
+    client.complete(MSGS)
+    assert seen["body"]["reasoning"] == {"enabled": False}
+    assert seen["body"]["model"] == "m"

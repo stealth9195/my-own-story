@@ -79,7 +79,7 @@ def main() -> None:
             continue
         llm = OpenAICompatClient(m["base_url"], key, m["model"], json_mode=m.get("json_mode", True),
                                  merge_system=m.get("merge_system", False),
-                                 timeout=m.get("timeout", 60))
+                                 extra_body=m.get("extra"), timeout=m.get("timeout", 60))
         run_model(cases, llm, args.out / m["name"], catalog, banned, args.choice_count, args.version)
 
 

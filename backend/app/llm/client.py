@@ -35,6 +35,7 @@ class OpenAICompatClient:
         model: str,
         json_mode: bool = True,
         merge_system: bool = False,
+        extra_body: dict | None = None,
         timeout: float = 60.0,
         transport: httpx.BaseTransport | None = None,
     ):
@@ -42,6 +43,8 @@ class OpenAICompatClient:
         self.json_mode = json_mode
         # Gemma 등 system 역할을 거부하는 모델용: system 내용을 첫 user 메시지 앞에 붙인다
         self.merge_system = merge_system
+        # 업체별 추가 옵션 (예: OpenRouter 추론 끄기 {"reasoning": {"enabled": False}})
+        self.extra_body = extra_body or {}
         self._url = base_url.rstrip("/") + "/chat/completions"
         self._http = httpx.Client(
             headers={"Authorization": f"Bearer {api_key}"},
@@ -52,7 +55,8 @@ class OpenAICompatClient:
     def complete(self, messages: list[dict[str, str]], temperature: float = 0.9) -> LLMResponse:
         if self.merge_system:
             messages = _merge_system(messages)
-        body: dict = {"model": self.model, "messages": messages, "temperature": temperature}
+        body: dict = {**self.extra_body, "model": self.model, "messages": messages,
+                      "temperature": temperature}
         if self.json_mode:
             body["response_format"] = {"type": "json_object"}
 
