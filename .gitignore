@@ -1,3 +1,10 @@
 # 개인 메모
 구연동화앱.txt
 수치로 개선 사항 어필할거.txt
+.superpowers/
+
+# 개발 환경
+.env
+.venv/
+__pycache__/
+backend/eval/tts_out/
