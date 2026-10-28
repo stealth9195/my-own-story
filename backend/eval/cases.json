@@ -1,0 +1,12 @@
+[
+  { "id": "c01", "cards": ["rabbit", "rose", "star"], "picks": [0, 1, 2, 3, 0] },
+  { "id": "c02", "cards": ["dragon", "cake", "rainbow"], "picks": [1, 2, 3, 0, 1] },
+  { "id": "c03", "cards": ["robot", "star", "bear", "cake"], "picks": [2, 3, 0, 1, 2] },
+  { "id": "c04", "cards": ["cat", "rose", "rainbow"], "picks": [3, 0, 1, 2, 3] },
+  { "id": "c05", "cards": ["dinosaur", "cake", "rabbit", "star", "rose"], "picks": [0, 2, 1, 3, 0] },
+  { "id": "c06", "cards": ["bear", "rainbow", "dragon"], "picks": [1, 3, 0, 2, 1] },
+  { "id": "c07", "cards": ["robot", "cat", "rose", "cake"], "picks": [2, 0, 3, 1, 2] },
+  { "id": "c08", "cards": ["rabbit", "dinosaur", "rainbow"], "picks": [3, 1, 2, 0, 3] },
+  { "id": "c09", "cards": ["dragon", "star", "cat", "bear", "robot"], "picks": [0, 3, 2, 1, 0] },
+  { "id": "c10", "cards": ["dinosaur", "rose", "cake"], "picks": [1, 0, 3, 2, 1] }
+]
