@@ -1,52 +1,56 @@
-import json
-
 import pytest
 
-from eval.judge import CRITERIA, build_judge_messages, parse_judge, story_to_text
+from eval.judge import CRITERIA, parse_scores_csv, story_to_text
 
 STORY = {
+    "card_names": ["토끼", "장미"],
     "segments": [
         {"type": "intro", "pages": [{"text": "토끼가 숲에 갔어요."}],
          "choices": [{"id": "dragon", "label": "아기 용"}, {"id": "rose", "label": "장미"}],
          "chosen": "dragon"},
         {"type": "ending", "pages": [{"text": "모두 행복했어요."}], "choices": [], "chosen": None},
-    ]
+    ],
 }
+HEADER = "file," + ",".join(CRITERIA)
 
 
-def scores(value=4, **override):
-    s = {c: value for c in CRITERIA}
-    s.update(override)
-    return s
+def test_criteria_total_is_100():
+    assert sum(CRITERIA.values()) == 100
 
 
-def test_parse_judge_valid():
-    raw = "```json\n" + json.dumps(scores()) + "\n```"
-    assert parse_judge(raw) == scores()
-
-
-def test_parse_judge_missing_key_raises():
-    s = scores()
-    del s["plot"]
-    with pytest.raises(ValueError):
-        parse_judge(json.dumps(s))
-
-
-@pytest.mark.parametrize("bad", [0, 6, "5"])
-def test_parse_judge_out_of_range_raises(bad):
-    with pytest.raises(ValueError):
-        parse_judge(json.dumps(scores(plot=bad)))
-
-
-def test_story_to_text_contains_pages_and_chosen():
+def test_story_to_text_contains_cards_pages_and_chosen():
     text = story_to_text(STORY)
-    assert "토끼가 숲에 갔어요." in text
-    assert "모두 행복했어요." in text
-    assert "아기 용" in text and "장미" in text
+    assert "아이가 고른 카드: 토끼, 장미" in text
+    assert "토끼가 숲에 갔어요." in text and "모두 행복했어요." in text
     assert "고른 선택지: 아기 용" in text
 
 
-def test_build_judge_messages_includes_story():
-    msgs = build_judge_messages("이야기 본문")
-    assert msgs[0]["role"] == "system"
-    assert "이야기 본문" in msgs[1]["content"]
+def test_parse_scores_csv_valid(tmp_path):
+    row = ",".join(str(v) for v in CRITERIA.values())
+    p = tmp_path / "chatgpt.csv"
+    p.write_text(f"{HEADER}\ns01,{row}\n", encoding="utf-8")
+    rows = parse_scores_csv(p)
+    assert rows == [{"file": "s01", "judge": "chatgpt", "scores": dict(CRITERIA)}]
+
+
+def test_parse_scores_csv_ignores_extra_text_and_total_column(tmp_path):
+    row = ",".join(str(v) for v in CRITERIA.values())
+    p = tmp_path / "gemini.csv"
+    p.write_text(f"```csv\n{HEADER},total\ns01.md,{row},100\n```\n", encoding="utf-8")
+    assert parse_scores_csv(p)[0]["file"] == "s01"
+
+
+def test_parse_scores_csv_over_max_raises(tmp_path):
+    first = next(iter(CRITERIA))
+    over = {k: (v + 1 if k == first else v) for k, v in CRITERIA.items()}
+    p = tmp_path / "claude.csv"
+    p.write_text(f"{HEADER}\ns01,{','.join(str(v) for v in over.values())}\n", encoding="utf-8")
+    with pytest.raises(ValueError):
+        parse_scores_csv(p)
+
+
+def test_parse_scores_csv_missing_column_raises(tmp_path):
+    p = tmp_path / "claude.csv"
+    p.write_text("file,vocabulary\ns01,10\n", encoding="utf-8")
+    with pytest.raises(ValueError):
+        parse_scores_csv(p)

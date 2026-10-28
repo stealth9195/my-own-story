@@ -536,7 +536,7 @@ API 키 발급과 결과 판단은 사용자가 한다. 키는 사용자가 직�
 - [ ] **Step 1: 사용자가 키 준비** — OpenRouter, Google AI Studio(Gemini), Google Cloud TTS, Azure Speech. 각 무료 한도를 발급 화면에서 확인해 결과 문서에 기록
 - [ ] **Step 2: 1개 케이스로 시험 실행** — `uv run python -m eval.run_generate --models eval/models.json --out eval/results/run1 --cases c01` → 모델별 `c01.json` 생성 확인. `not_korean`, `json` 오류가 많은 모델은 `json_mode` 설정 확인
 - [ ] **Step 3: 전체 실행** (한도에 걸리면 다음 날 같은 명령 재실행) — 모델 3개 × 10편
-- [ ] **Step 4: 심사 + 요약** — `run_judge` → `summarize`. 심사 모델은 평가 대상과 다른 모델 2개 이상
+- [ ] **Step 4: 심사 + 요약** — (변경: API 심사 대신 수동 심사) `uv run python -m eval.export eval/results/<run>` → `export/s*.md`와 `평가질문.md`를 ChatGPT·Gemini·Claude에 첨부 → 답변 CSV를 `export/scores/<챗봇>.csv`로 저장 → `uv run python -m eval.summarize eval/results/<run>`
 - [ ] **Step 5: 사람 확인** — 모델별 2편씩 직접 읽고 심사 점수와 맞는지 메모
 - [ ] **Step 6: TTS 비교** — `tts_check` 실행 후 사용자가 듣고 목소리 선택
 - [ ] **Step 7: 결과 문서 작성** — 요약 표, 한도, 선택한 기본·예비 LLM과 TTS, 이유, 문제·해결 기록

@@ -3,28 +3,42 @@
 uv run python -m eval.summarize eval/results/<run>
 """
 
+import csv
 import json
 import sys
 from pathlib import Path
 
 from eval.console import setup_console
-from eval.judge import CRITERIA
+from eval.export import EXPORT_DIR
+from eval.judge import CRITERIA, parse_scores_csv
 
 
 def _pct(n: int, d: int) -> str:
     return f"{round(n / d * 100)}%" if d else "-"
 
 
-def summarize(run_dir: Path) -> str:
-    scores_path = run_dir / "scores.jsonl"
-    scores = []
-    if scores_path.exists():
-        scores = [json.loads(l) for l in scores_path.read_text(encoding="utf-8").splitlines() if l]
+def _load_scores(export_dir: Path) -> list[dict]:
+    """scores/*.csv 점수에 mapping.csv로 모델 이름을 붙인다."""
+    mapping_path = export_dir / "mapping.csv"
+    if not mapping_path.exists():
+        return []
+    with mapping_path.open(encoding="utf-8") as fp:
+        model_of = {r["file"]: r["model"] for r in csv.DictReader(fp)}
+    rows = []
+    for f in sorted((export_dir / "scores").glob("*.csv")):
+        for r in parse_scores_csv(f):
+            rows.append({**r, "model": model_of[r["file"]]})
+    return rows
 
-    header = ["모델", "완료율", "첫 시도 성공률", "평균 생성 시간(초)"] + CRITERIA + ["총점(30)"]
+
+def summarize(run_dir: Path) -> str:
+    scores = _load_scores(run_dir / EXPORT_DIR)
+
+    header = (["모델", "완료율", "첫 시도 성공률", "평균 생성 시간(초)"]
+              + [f"{c}({m})" for c, m in CRITERIA.items()] + ["총점(100)"])
     rows = ["| " + " | ".join(header) + " |", "|" + "---|" * len(header)]
 
-    for model_dir in sorted(p for p in run_dir.iterdir() if p.is_dir()):
+    for model_dir in sorted(p for p in run_dir.iterdir() if p.is_dir() and p.name != EXPORT_DIR):
         stories = [json.loads(f.read_text(encoding="utf-8")) for f in sorted(model_dir.glob("*.json"))]
         done = sum(s["status"] == "done" for s in stories)
         segs = [seg for s in stories for seg in s.get("segments", [])]

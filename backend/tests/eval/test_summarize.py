@@ -12,24 +12,29 @@ def seg(ok_first=True, latency=1000):
             "attempts": attempts, "latency_ms": latency * len(attempts)}
 
 
-def write(path, data):
+def write(path, text):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data), encoding="utf-8")
+    path.write_text(text, encoding="utf-8")
 
 
 def test_summarize_table(tmp_path):
     # 모델 a: 완료 2편 (구간 4개 중 1개만 첫 시도 실패), 모델 b: 완료 1 + 실패 1
-    write(tmp_path / "a" / "c01.json", {"status": "done", "segments": [seg(), seg(False)]})
-    write(tmp_path / "a" / "c02.json", {"status": "done", "segments": [seg(), seg()]})
-    write(tmp_path / "b" / "c01.json", {"status": "done", "segments": [seg()]})
-    write(tmp_path / "b" / "c02.json", {"status": "failed", "segments": []})
-    lines = [{"model": "a", "case_id": c, "judge": "j", "scores": {k: 4 for k in CRITERIA}}
-             for c in ["c01", "c02"]]
-    (tmp_path / "scores.jsonl").write_text(
-        "\n".join(json.dumps(x) for x in lines), encoding="utf-8")
+    write(tmp_path / "a" / "c01.json", json.dumps({"status": "done", "segments": [seg(), seg(False)]}))
+    write(tmp_path / "a" / "c02.json", json.dumps({"status": "done", "segments": [seg(), seg()]}))
+    write(tmp_path / "b" / "c01.json", json.dumps({"status": "done", "segments": [seg()]}))
+    write(tmp_path / "b" / "c02.json", json.dumps({"status": "failed", "segments": []}))
+    write(tmp_path / "export" / "mapping.csv",
+          "file,model,case_id\ns01,a,c01\ns02,a,c02\ns03,b,c01\n")
+    full = ",".join(str(v) for v in CRITERIA.values())
+    half = ",".join(str(v // 2) for v in CRITERIA.values())
+    header = "file," + ",".join(CRITERIA)
+    write(tmp_path / "export" / "scores" / "chatgpt.csv", f"{header}\ns01,{full}\ns02,{full}\n")
+    write(tmp_path / "export" / "scores" / "claude.csv", f"{header}\ns01,{half}\ns02,{half}\n")
 
     table = summarize(tmp_path)
     assert "| a | 100% | 75% |" in table
     assert "| b | 50% | 100% |" in table
-    assert "24.0" in table
-    assert (tmp_path / "summary.md").exists() is False  # 파일 저장은 CLI 책임
+    a_row = next(line for line in table.splitlines() if line.startswith("| a |"))
+    expected_total = (100 + sum(v // 2 for v in CRITERIA.values())) / 2
+    assert a_row.endswith(f"| {expected_total:.1f} |")
+    assert "export" not in table

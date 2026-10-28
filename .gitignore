@@ -9,4 +9,3 @@
 __pycache__/
 backend/eval/tts_out/
 backend/eval/models.json
-backend/eval/judges.json
