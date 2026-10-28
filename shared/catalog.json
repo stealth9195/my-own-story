@@ -2,73 +2,533 @@
   "version": 1,
   "default_background": "meadow",
   "backgrounds": [
-    { "id": "meadow", "name": "풀밭", "tags": ["자연"] },
-    { "id": "forest", "name": "숲", "tags": ["자연"] },
-    { "id": "sea", "name": "바다", "tags": ["물"] },
-    { "id": "castle", "name": "성", "tags": ["건물"] },
-    { "id": "village", "name": "마을", "tags": ["건물"] }
+    {
+      "id": "meadow",
+      "name": "풀밭",
+      "tags": [
+        "자연"
+      ]
+    },
+    {
+      "id": "forest",
+      "name": "숲",
+      "tags": [
+        "자연"
+      ]
+    },
+    {
+      "id": "sea",
+      "name": "바다",
+      "tags": [
+        "물"
+      ]
+    },
+    {
+      "id": "castle",
+      "name": "성",
+      "tags": [
+        "건물"
+      ]
+    },
+    {
+      "id": "village",
+      "name": "마을",
+      "tags": [
+        "건물"
+      ]
+    }
   ],
   "times": [
-    { "id": "day", "name": "낮" },
-    { "id": "night", "name": "밤" },
-    { "id": "sunset", "name": "노을" }
+    {
+      "id": "day",
+      "name": "낮"
+    },
+    {
+      "id": "night",
+      "name": "밤"
+    },
+    {
+      "id": "sunset",
+      "name": "노을"
+    }
   ],
   "characters": [
-    { "id": "rabbit", "name": "토끼", "tags": ["동물"], "card": true },
-    { "id": "bear", "name": "곰", "tags": ["동물"], "card": true },
-    { "id": "fox", "name": "여우", "tags": ["동물"] },
-    { "id": "cat", "name": "고양이", "tags": ["동물"], "card": true },
-    { "id": "puppy", "name": "강아지", "tags": ["동물"] },
-    { "id": "dragon", "name": "아기 용", "tags": ["상상"], "card": true },
-    { "id": "princess", "name": "공주", "tags": ["사람"] },
-    { "id": "robot", "name": "로봇", "tags": ["기계"], "card": true },
-    { "id": "owl", "name": "부엉이", "tags": ["동물"] },
-    { "id": "dinosaur", "name": "공룡", "tags": ["동물"], "card": true }
+    {
+      "id": "rabbit",
+      "name": "토끼",
+      "tags": [
+        "동물"
+      ],
+      "card": true
+    },
+    {
+      "id": "bear",
+      "name": "곰",
+      "tags": [
+        "동물"
+      ],
+      "card": true
+    },
+    {
+      "id": "fox",
+      "name": "여우",
+      "tags": [
+        "동물"
+      ]
+    },
+    {
+      "id": "cat",
+      "name": "고양이",
+      "tags": [
+        "동물"
+      ],
+      "card": true
+    },
+    {
+      "id": "puppy",
+      "name": "강아지",
+      "tags": [
+        "동물"
+      ]
+    },
+    {
+      "id": "dragon",
+      "name": "아기 용",
+      "tags": [
+        "상상"
+      ],
+      "card": true
+    },
+    {
+      "id": "princess",
+      "name": "공주",
+      "tags": [
+        "사람"
+      ]
+    },
+    {
+      "id": "robot",
+      "name": "로봇",
+      "tags": [
+        "기계"
+      ],
+      "card": true
+    },
+    {
+      "id": "owl",
+      "name": "부엉이",
+      "tags": [
+        "동물"
+      ]
+    },
+    {
+      "id": "dinosaur",
+      "name": "공룡",
+      "tags": [
+        "동물"
+      ],
+      "card": true
+    },
+    {
+      "id": "penguin",
+      "name": "펭귄",
+      "tags": [
+        "동물"
+      ]
+    },
+    {
+      "id": "elephant",
+      "name": "코끼리",
+      "tags": [
+        "동물"
+      ]
+    },
+    {
+      "id": "lion",
+      "name": "사자",
+      "tags": [
+        "동물"
+      ]
+    },
+    {
+      "id": "monkey",
+      "name": "원숭이",
+      "tags": [
+        "동물"
+      ]
+    },
+    {
+      "id": "giraffe",
+      "name": "기린",
+      "tags": [
+        "동물"
+      ]
+    },
+    {
+      "id": "turtle",
+      "name": "거북이",
+      "tags": [
+        "동물"
+      ]
+    },
+    {
+      "id": "squirrel",
+      "name": "다람쥐",
+      "tags": [
+        "동물"
+      ]
+    },
+    {
+      "id": "hedgehog",
+      "name": "고슴도치",
+      "tags": [
+        "동물"
+      ]
+    },
+    {
+      "id": "duck",
+      "name": "오리",
+      "tags": [
+        "동물"
+      ]
+    },
+    {
+      "id": "frog",
+      "name": "개구리",
+      "tags": [
+        "동물"
+      ]
+    },
+    {
+      "id": "butterfly",
+      "name": "나비",
+      "tags": [
+        "곤충"
+      ]
+    },
+    {
+      "id": "whale",
+      "name": "고래",
+      "tags": [
+        "바다"
+      ]
+    },
+    {
+      "id": "unicorn",
+      "name": "유니콘",
+      "tags": [
+        "상상"
+      ]
+    },
+    {
+      "id": "fairy",
+      "name": "요정",
+      "tags": [
+        "상상"
+      ]
+    },
+    {
+      "id": "snowman",
+      "name": "눈사람",
+      "tags": [
+        "겨울"
+      ]
+    }
   ],
   "objects": [
-    { "id": "rose", "name": "장미", "tags": ["꽃"], "card": true },
-    { "id": "star", "name": "별", "tags": ["하늘"], "card": true },
-    { "id": "cake", "name": "케이크", "tags": ["음식"], "card": true },
-    { "id": "balloon", "name": "풍선", "tags": ["놀이"] },
-    { "id": "treasure_box", "name": "보물 상자", "tags": ["모험"] },
-    { "id": "magic_wand", "name": "요술봉", "tags": ["마법"] },
-    { "id": "rainbow", "name": "무지개", "tags": ["하늘"], "card": true },
-    { "id": "moon", "name": "달", "tags": ["하늘"] },
-    { "id": "ship", "name": "배", "tags": ["물"] },
-    { "id": "apple", "name": "사과", "tags": ["음식"] }
+    {
+      "id": "rose",
+      "name": "장미",
+      "tags": [
+        "꽃"
+      ],
+      "card": true
+    },
+    {
+      "id": "star",
+      "name": "별",
+      "tags": [
+        "하늘"
+      ],
+      "card": true
+    },
+    {
+      "id": "cake",
+      "name": "케이크",
+      "tags": [
+        "음식"
+      ],
+      "card": true
+    },
+    {
+      "id": "balloon",
+      "name": "풍선",
+      "tags": [
+        "놀이"
+      ]
+    },
+    {
+      "id": "treasure_box",
+      "name": "보물 상자",
+      "tags": [
+        "모험"
+      ]
+    },
+    {
+      "id": "magic_wand",
+      "name": "요술봉",
+      "tags": [
+        "마법"
+      ]
+    },
+    {
+      "id": "rainbow",
+      "name": "무지개",
+      "tags": [
+        "하늘"
+      ],
+      "card": true
+    },
+    {
+      "id": "moon",
+      "name": "달",
+      "tags": [
+        "하늘"
+      ]
+    },
+    {
+      "id": "ship",
+      "name": "배",
+      "tags": [
+        "물"
+      ]
+    },
+    {
+      "id": "apple",
+      "name": "사과",
+      "tags": [
+        "음식"
+      ]
+    },
+    {
+      "id": "umbrella",
+      "name": "우산",
+      "tags": [
+        "생활"
+      ]
+    },
+    {
+      "id": "kite",
+      "name": "연",
+      "tags": [
+        "놀이"
+      ]
+    },
+    {
+      "id": "map",
+      "name": "지도",
+      "tags": [
+        "모험"
+      ]
+    },
+    {
+      "id": "lantern",
+      "name": "등불",
+      "tags": [
+        "빛"
+      ]
+    },
+    {
+      "id": "flower_crown",
+      "name": "꽃 왕관",
+      "tags": [
+        "꽃"
+      ]
+    },
+    {
+      "id": "cookie",
+      "name": "쿠키",
+      "tags": [
+        "음식"
+      ]
+    },
+    {
+      "id": "honey",
+      "name": "꿀단지",
+      "tags": [
+        "음식"
+      ]
+    },
+    {
+      "id": "music_box",
+      "name": "오르골",
+      "tags": [
+        "음악"
+      ]
+    },
+    {
+      "id": "crown",
+      "name": "왕관",
+      "tags": [
+        "보물"
+      ]
+    },
+    {
+      "id": "ball",
+      "name": "공",
+      "tags": [
+        "놀이"
+      ]
+    },
+    {
+      "id": "bicycle",
+      "name": "자전거",
+      "tags": [
+        "탈것"
+      ]
+    },
+    {
+      "id": "key",
+      "name": "열쇠",
+      "tags": [
+        "모험"
+      ]
+    },
+    {
+      "id": "letter",
+      "name": "편지",
+      "tags": [
+        "생활"
+      ]
+    },
+    {
+      "id": "snowflake",
+      "name": "눈송이",
+      "tags": [
+        "겨울"
+      ]
+    },
+    {
+      "id": "seashell",
+      "name": "조개껍데기",
+      "tags": [
+        "바다"
+      ]
+    }
   ],
   "states": [
-    { "id": "idle", "name": "가만히" },
-    { "id": "talking", "name": "말하기" },
-    { "id": "sleeping", "name": "잠자기" },
-    { "id": "happy", "name": "기쁨" },
-    { "id": "surprised", "name": "놀람" },
-    { "id": "scared", "name": "무서움" },
-    { "id": "walking", "name": "걷기" },
-    { "id": "thinking", "name": "생각하기" }
+    {
+      "id": "idle",
+      "name": "가만히"
+    },
+    {
+      "id": "talking",
+      "name": "말하기"
+    },
+    {
+      "id": "sleeping",
+      "name": "잠자기"
+    },
+    {
+      "id": "happy",
+      "name": "기쁨"
+    },
+    {
+      "id": "surprised",
+      "name": "놀람"
+    },
+    {
+      "id": "scared",
+      "name": "무서움"
+    },
+    {
+      "id": "walking",
+      "name": "걷기"
+    },
+    {
+      "id": "thinking",
+      "name": "생각하기"
+    }
   ],
   "moods": [
-    { "id": "calm", "name": "평화로움" },
-    { "id": "mystery", "name": "신비로움" },
-    { "id": "exciting", "name": "신남" },
-    { "id": "tense", "name": "살짝 긴장" },
-    { "id": "warm", "name": "따뜻함" }
+    {
+      "id": "calm",
+      "name": "평화로움"
+    },
+    {
+      "id": "mystery",
+      "name": "신비로움"
+    },
+    {
+      "id": "exciting",
+      "name": "신남"
+    },
+    {
+      "id": "tense",
+      "name": "살짝 긴장"
+    },
+    {
+      "id": "warm",
+      "name": "따뜻함"
+    }
   ],
   "sfx": [
-    { "id": "magic_sparkle", "name": "마법 반짝" },
-    { "id": "birds", "name": "새소리" },
-    { "id": "wind", "name": "바람" },
-    { "id": "footsteps", "name": "발소리" },
-    { "id": "splash", "name": "물 첨벙" },
-    { "id": "door_open", "name": "문 열림" },
-    { "id": "laugh", "name": "웃음" },
-    { "id": "bell", "name": "종소리" },
-    { "id": "pop", "name": "뿅" },
-    { "id": "snore", "name": "코 고는 소리" }
+    {
+      "id": "magic_sparkle",
+      "name": "마법 반짝"
+    },
+    {
+      "id": "birds",
+      "name": "새소리"
+    },
+    {
+      "id": "wind",
+      "name": "바람"
+    },
+    {
+      "id": "footsteps",
+      "name": "발소리"
+    },
+    {
+      "id": "splash",
+      "name": "물 첨벙"
+    },
+    {
+      "id": "door_open",
+      "name": "문 열림"
+    },
+    {
+      "id": "laugh",
+      "name": "웃음"
+    },
+    {
+      "id": "bell",
+      "name": "종소리"
+    },
+    {
+      "id": "pop",
+      "name": "뿅"
+    },
+    {
+      "id": "snore",
+      "name": "코 고는 소리"
+    }
   ],
   "bgm": [
-    { "id": "calm_loop", "name": "평화로운 음악", "mood": "calm" },
-    { "id": "mystery_loop", "name": "신비로운 음악", "mood": "mystery" },
-    { "id": "exciting_loop", "name": "신나는 음악", "mood": "exciting" }
+    {
+      "id": "calm_loop",
+      "name": "평화로운 음악",
+      "mood": "calm"
+    },
+    {
+      "id": "mystery_loop",
+      "name": "신비로운 음악",
+      "mood": "mystery"
+    },
+    {
+      "id": "exciting_loop",
+      "name": "신나는 음악",
+      "mood": "exciting"
+    }
   ]
 }
