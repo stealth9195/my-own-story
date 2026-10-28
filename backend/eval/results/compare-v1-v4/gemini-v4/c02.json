@@ -1,0 +1,368 @@
+{
+  "case_id": "c02",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "dragon",
+    "cake",
+    "rainbow"
+  ],
+  "card_names": [
+    "아기 용",
+    "케이크",
+    "무지개"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "알록달록 예쁜 무지개가 뜬 어느 날이에요.\n아기 용은 커다란 케이크를 만들기로 했어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rainbow",
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "아기 용은 맛있는 케이크를 혼자서 다 먹고 싶었어요.\n하지만 케이크가 너무 커서 혼자 먹을 수가 없었지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "아기 용은 속상해서 눈물이 살짝 고였어요.\n이 큰 케이크를 어떻게 하면 좋을까요?",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        }
+      ],
+      "chosen": "apple",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 3492
+        }
+      ],
+      "latency_ms": 3492
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "아기 용은 빨간 사과를 케이크 위에 올렸어요.\n하지만 사과를 올려도 케이크는 여전히 줄지 않았지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "cake",
+              "apple"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "어떻게 해야 이 커다란 케이크를 다 먹을 수 있을까요?\n아기 용은 숲속 친구들을 초대하기로 마음먹었어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "곰과 토끼가 달콤한 냄새를 맡고 찾아왔어요.\n아기 용은 케이크를 예쁘게 잘라서 친구들에게 나누어 주었지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "함께 나누어 먹으니 케이크가 훨씬 더 맛있어졌어요.\n아기 용의 얼굴에 환한 미소가 활짝 피어났답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "fox",
+          "label": "여우"
+        },
+        {
+          "id": "treasure_box",
+          "label": "보물 상자"
+        },
+        {
+          "id": "star",
+          "label": "별"
+        }
+      ],
+      "chosen": "star",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 5515
+        }
+      ],
+      "latency_ms": 5515
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "아기 용과 친구들은 밤하늘을 올려다보았어요.\n반짝이는 별빛이 온통 초록빛 숲을 감싸 안았지요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "talking"
+              },
+              {
+                "id": "rabbit",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "아기 용은 가장 반짝이는 별을 케이크 위에 얹고 싶었어요.\n하지만 별은 너무 높아서 손이 닿지 않았지요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "star",
+              "cake"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": null
+        },
+        {
+          "text": "곰이 튼튼한 장난감 로봇을 데리고 나타났어요.\n로봇이 성큼성큼 다가가 별을 조심스럽게 건네주었지요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "surprised"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "robot",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "star",
+              "cake"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "pop"
+        },
+        {
+          "text": "아기 용은 로봇과 친구들에게 별 장식이 빛나는 케이크를 한 조각씩 더 주었어요.\n다 함께 반짝이는 별을 보며 웃음꽃을 피웠답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "robot",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star",
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "id": "cat",
+          "label": "고양이"
+        },
+        {
+          "id": "ship",
+          "label": "배"
+        },
+        {
+          "id": "moon",
+          "label": "달"
+        },
+        {
+          "id": "rose",
+          "label": "장미"
+        }
+      ],
+      "chosen": "rose",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 5959
+        }
+      ],
+      "latency_ms": 5959
+    }
+  ],
+  "failed_at": 3,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count",
+        "choices"
+      ],
+      "latency_ms": 2217
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count"
+      ],
+      "latency_ms": 13751
+    }
+  ]
+}

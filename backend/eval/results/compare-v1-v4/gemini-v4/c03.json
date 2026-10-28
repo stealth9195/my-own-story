@@ -1,0 +1,365 @@
+{
+  "case_id": "c03",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "robot",
+    "star",
+    "bear",
+    "cake"
+  ],
+  "card_names": [
+    "로봇",
+    "별",
+    "곰",
+    "케이크"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "밤하늘에 반짝이는 별 아래서 곰이 생일 케이크를 바라보고 있었어요. 하지만 케이크가 너무 커서 혼자 다 먹을 수 없었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "star",
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "wind"
+        },
+        {
+          "text": "곰은 친구들과 케이크를 나누고 싶지 않아 뾰루퉁해졌어요. 그때 숲속에서 뚝딱 소리와 함께 로봇이 나타났어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "surprised"
+              },
+              {
+                "id": "robot",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "로봇이 다가와 케이크를 한 조각 달라고 말했어요. 곰은 깜짝 놀라 뒷걸음질을 쳤어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "scared"
+              },
+              {
+                "id": "robot",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "pop"
+        }
+      ],
+      "choices": [
+        {
+          "id": "apple",
+          "label": "사과 주기"
+        },
+        {
+          "id": "balloon",
+          "label": "풍선 터뜨리기"
+        },
+        {
+          "id": "fox",
+          "label": "여우 부르기"
+        }
+      ],
+      "chosen": "fox",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 3942
+        }
+      ],
+      "latency_ms": 3942
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "곰은 케이크를 지키려고 튼튼한 상자를 가져왔어요. 하지만 로봇이 윙윙 소리를 내며 다가왔어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "thinking"
+              },
+              {
+                "id": "robot",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "cake",
+              "treasure_box"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "로봇은 상자를 열어 케이크를 자르기 시작했어요. 곰은 화가 나서 발을 쿵쿵 굴렀어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "surprised"
+              },
+              {
+                "id": "robot",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "로봇이 잘라낸 첫 조각을 곰에게 내밀었어요. 곰은 조심스럽게 케이크를 받아 들었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "robot",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "pop"
+        },
+        {
+          "text": "달콤한 케이크를 함께 한 입 베어 물자 곰의 입가에 미소가 번졌어요. 곰은 남은 케이크를 로봇에게 활짝 웃으며 건넸어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "robot",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake",
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "id": "cat",
+          "label": "고양이"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        },
+        {
+          "id": "rose",
+          "label": "장미"
+        }
+      ],
+      "chosen": "cat",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": false,
+          "errors": [
+            "choices",
+            "unsafe"
+          ],
+          "latency_ms": 12177
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 6304
+        }
+      ],
+      "latency_ms": 18481
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "그때 고양이가 살금살금 걸어와 냄새를 맡았어요. 고양이도 달콤한 케이크를 보고 눈을 반짝였어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "robot",
+                "state": "talking"
+              },
+              {
+                "id": "cat",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "곰은 주저하다가 케이크 한 조각을 더 잘라 내밀었어요. 고양이는 기쁘게 받아 들고 맛있게 먹었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "cat",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "셋은 나란히 앉아 케이크를 나누어 먹었어요. 맛있는 케이크를 함께 먹으니 마음이 따뜻해졌어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "robot",
+                "state": "idle"
+              },
+              {
+                "id": "cat",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake",
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "rabbit",
+          "label": "토끼"
+        },
+        {
+          "id": "moon",
+          "label": "달"
+        },
+        {
+          "id": "rainbow",
+          "label": "무지개"
+        }
+      ],
+      "chosen": "rabbit",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 6169
+        }
+      ],
+      "latency_ms": 6169
+    }
+  ],
+  "failed_at": 3,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count",
+        "choices"
+      ],
+      "latency_ms": 3391
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count",
+        "choices"
+      ],
+      "latency_ms": 3413
+    }
+  ]
+}

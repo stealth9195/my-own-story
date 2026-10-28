@@ -1,0 +1,342 @@
+{
+  "case_id": "c10",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "dinosaur",
+    "rose",
+    "cake"
+  ],
+  "card_names": [
+    "공룡",
+    "장미",
+    "케이크"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "예쁜 장미가 가득한 숲속에 달콤한 케이크가 놓였어요. 아기 공룡은 케이크를 혼자서 다 먹고 싶었답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "rose",
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        },
+        {
+          "text": "아기 공룡은 친구들에게 케이크를 나누어 주기가 싫었어요. 그래서 케이크를 품에 꼭 안고 숨으려 했지요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "scared"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "하지만 케이크가 너무 커서 혼자 숨기에는 자꾸 걸렸어요. 아기 공룡은 어떻게 해야 할지 고민에 빠졌답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "id": "fox",
+          "label": "여우"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        }
+      ],
+      "chosen": "balloon",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 3603
+        }
+      ],
+      "latency_ms": 3603
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "아기 공룡은 커다란 풍선에 케이크를 묶어 하늘로 띄우려 했어요. 하지만 바람이 불자 케이크가 둥실 떠올라 나뭇가지에 걸리고 말았답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "rose",
+              "cake",
+              "balloon"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "케이크를 꺼내려고 발을 동동 구르는데 곰이 다가왔어요. 곰은 커다란 손으로 나뭇가지를 살살 흔들어 케이크를 내려주었답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "thinking"
+              },
+              {
+                "id": "bear",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "아기 공룡은 고마운 마음에 케이크를 똑같이 잘라 곰에게 건넸어요. 곰이 맛있게 먹는 모습을 보자 아기 공룡의 얼굴에 환한 미소가 번졌답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "id": "rabbit",
+          "label": "토끼"
+        },
+        {
+          "id": "robot",
+          "label": "로봇"
+        },
+        {
+          "id": "star",
+          "label": "별"
+        }
+      ],
+      "chosen": "rabbit",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": false,
+          "errors": [
+            "choices"
+          ],
+          "latency_ms": 8911
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 12371
+        }
+      ],
+      "latency_ms": 21282
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "맛있는 케이크를 나누어 먹은 뒤에 토끼가 싱글벙글 다가왔어요. 토끼는 아기 공룡에게 반짝이는 보물 상자를 선물로 주었답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "treasure_box"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        },
+        {
+          "text": "아기 공룡은 보물 상자를 열어 보고 싶었지만 자물쇠가 단단히 잠겨 있었어요. 열쇠가 어디에 있는지 몰라 아기 공룡은 또 걱정이 되었답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "thinking"
+              },
+              {
+                "id": "rabbit",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "treasure_box"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "토끼와 함께 숲길을 걸으며 열쇠를 찾기로 마음먹었어요. 아기 공룡은 커다란 수풀 속을 조심스럽게 살펴보았답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "walking"
+              },
+              {
+                "id": "rabbit",
+                "state": "walking"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "warm",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "수풀 사이에서 반짝이는 무지개가 떠오르며 열쇠가 나타났어요. 아기 공룡은 보물 상자를 열고 토끼와 함께 기쁜 환호를 질렀답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rainbow",
+              "treasure_box"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "id": "cat",
+          "label": "고양이"
+        },
+        {
+          "id": "ship",
+          "label": "배"
+        },
+        {
+          "id": "moon",
+          "label": "달"
+        }
+      ],
+      "chosen": "cat",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 8202
+        }
+      ],
+      "latency_ms": 8202
+    }
+  ],
+  "failed_at": 3,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count"
+      ],
+      "latency_ms": 12084
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "choices"
+      ],
+      "latency_ms": 8895
+    }
+  ]
+}

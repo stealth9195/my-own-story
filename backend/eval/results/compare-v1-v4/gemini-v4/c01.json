@@ -1,0 +1,231 @@
+{
+  "case_id": "c01",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "rabbit",
+    "rose",
+    "star"
+  ],
+  "card_names": [
+    "토끼",
+    "장미",
+    "별"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "까만 밤하늘에 반짝이는 별이 가득했어요. 예쁜 장미꽃 위로 노란 별빛이 사르르 내려앉았지요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [],
+            "objects": [
+              "star",
+              "rose"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "그 예쁜 별빛을 보려고 토끼가 숲속 길을 걸어 나왔어요. 반짝이는 별을 꼭 한 번 만져보고 싶었답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "calm",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "하지만 키가 작은 토끼는 손을 뻗어도 별에 닿지 않았어요. 속상한 토끼는 어떻게 해야 별을 만질 수 있을지 고민했지요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "balloon",
+          "label": "알록달록 풍선"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        },
+        {
+          "id": "apple",
+          "label": "빨간 사과"
+        }
+      ],
+      "chosen": "balloon",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 3629
+        }
+      ],
+      "latency_ms": 3629
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "토끼는 커다란 풍선을 불어 하늘 높이 띄워 보았어요. 하지만 바람이 불어와 풍선은 자꾸만 다른 곳으로 날아갔지요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "balloon",
+              "star"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "풍선을 타고 올라갈 수 없다는 걸 알게 된 토끼는 살짝 울상이 되었어요. 그때 숲속 친구인 곰이 나타나 토끼를 따뜻하게 안아 주었답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "bear",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "토끼는 곰의 목도리를 단단히 잡고 곰의 어깨 위에 꽈악 올라탔어요. 까치발을 영차영차 들었더니 손끝에 노란 별빛이 간지럽게 닿았지요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        },
+        {
+          "text": "혼자서는 닿지 않던 반짝이는 별을 친구와 함께 만져서 정말 행복했어요. 토끼는 웃으며 곰과 함께 밤하늘을 예쁘게 바라보았답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star",
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "ship",
+          "label": "배"
+        },
+        {
+          "id": "cake",
+          "label": "케이크"
+        },
+        {
+          "id": "rainbow",
+          "label": "무지개"
+        }
+      ],
+      "chosen": "cake",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 3060
+        }
+      ],
+      "latency_ms": 3060
+    }
+  ],
+  "failed_at": 2,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count"
+      ],
+      "latency_ms": 3230
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "choices"
+      ],
+      "latency_ms": 6496
+    }
+  ]
+}

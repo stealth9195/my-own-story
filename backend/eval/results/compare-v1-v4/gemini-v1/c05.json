@@ -1,0 +1,41 @@
+{
+  "case_id": "c05",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v1",
+  "cards": [
+    "dinosaur",
+    "cake",
+    "rabbit",
+    "star",
+    "rose"
+  ],
+  "card_names": [
+    "공룡",
+    "케이크",
+    "토끼",
+    "별",
+    "장미"
+  ],
+  "status": "failed",
+  "segments": [],
+  "failed_at": 0,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "choices",
+        "cards_missing"
+      ],
+      "latency_ms": 3473
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "choices"
+      ],
+      "latency_ms": 10637
+    }
+  ]
+}

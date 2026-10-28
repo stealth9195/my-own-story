@@ -1,0 +1,478 @@
+{
+  "case_id": "c04",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "cat",
+    "rose",
+    "rainbow"
+  ],
+  "card_names": [
+    "고양이",
+    "장미",
+    "무지개"
+  ],
+  "status": "done",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "예쁜 장미 꽃밭에 아기 고양이가 놀러 왔어요. 하늘 위로 알록달록 무지개가 반짝였어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "고양이는 무지개 너머로 날아가고 싶었어요. 하지만 작은 날개가 없어서 둥둥 떠오를 수 없었지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "고양이는 무지개에 닿기 위해 무엇을 찾아야 할까요?",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "idle"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "exciting",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "id": "ship",
+          "label": "배"
+        },
+        {
+          "id": "apple",
+          "label": "사과"
+        }
+      ],
+      "chosen": "balloon",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 3944
+        }
+      ],
+      "latency_ms": 3944
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "고양이는 알록달록 풍선을 여러 개 모았어요. 줄을 단단히 쥐고 하늘로 둥실 떠올랐지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "balloon",
+              "rose"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "pop"
+        },
+        {
+          "text": "하지만 바람이 불어와 고양이는 무지개 대신 숲속으로 휙 날아가 버렸어요. 장미 꽃밭 위에서 그만 멈춰 섰지요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "고양이는 울지 않고 두리번거렸어요. 무지개에 닿으려면 이번엔 무엇을 도와달라고 해야 할까요?",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "owl",
+          "label": "부엉이"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        },
+        {
+          "id": "treasure_box",
+          "label": "보물 상자"
+        }
+      ],
+      "chosen": "owl",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2367
+        }
+      ],
+      "latency_ms": 2367
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "나무 위에서 부엉이가 눈을 반짝이며 나타났어요. 고양이는 부엉이에게 무지개로 가는 길을 물어보았지요.",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "talking"
+              },
+              {
+                "id": "owl",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "부엉이는 날개를 활짝 펴며 높은 나무 위를 가리켰어요. 저 멀리 반짝이는 별을 따라가면 무지개가 나온다고 알려주었지요.",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "owl",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "wind"
+        },
+        {
+          "text": "고양이는 부엉이에게 고맙다고 인사하며 별을 따라 걸었어요. 반짝이는 별빛을 보며 무지개 다리 위로 사뿐히 걸어 올라갔답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star",
+              "rainbow"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "id": "moon",
+          "label": "달"
+        },
+        {
+          "id": "rabbit",
+          "label": "토끼"
+        },
+        {
+          "id": "cake",
+          "label": "케이크"
+        }
+      ],
+      "chosen": "rabbit",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 3210
+        }
+      ],
+      "latency_ms": 3210
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "무지개 다리 위에서 고양이는 토끼를 만났어요. 토끼는 길을 잃어버려서 함께 걱정했지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "talking"
+              },
+              {
+                "id": "rabbit",
+                "state": "scared"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "고양이는 토끼의 손을 꼭 잡았어요. 혼자가 아니라 둘이 되니 무서운 마음이 싹 사라졌지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        },
+        {
+          "text": "둘은 서로를 도우며 다리 끝까지 걸어갔어요. 마침내 알록달록 무지개 너머 멋진 세상에 도착했답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "walking"
+              },
+              {
+                "id": "rabbit",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "rainbow",
+              "rose"
+            ]
+          },
+          "mood": "calm",
+          "sfx": "wind"
+        }
+      ],
+      "choices": [
+        {
+          "id": "bear",
+          "label": "곰"
+        },
+        {
+          "id": "robot",
+          "label": "로봇"
+        },
+        {
+          "id": "dragon",
+          "label": "아기 용"
+        }
+      ],
+      "chosen": "dragon",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": false,
+          "errors": [
+            "page_count",
+            "choices"
+          ],
+          "latency_ms": 4149
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 3428
+        }
+      ],
+      "latency_ms": 7577
+    },
+    {
+      "type": "ending",
+      "pages": [
+        {
+          "text": "무지개 끝에 도착한 고양이와 토끼는 깜짝 놀랐어요. 그곳에는 아기 용이 커다란 케이크를 안고 서 있었지요.",
+          "scene": {
+            "background": "castle",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "surprised"
+              },
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "warm",
+          "sfx": "pop"
+        },
+        {
+          "text": "아기 용은 친구들과 맛있는 생일 파티를 하고 싶었어요. 하지만 혼자서는 너무 많아서 다 먹을 수 없었지요.",
+          "scene": {
+            "background": "castle",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "talking"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "고양이와 토끼는 망설이지 않고 아기 용에게 다가갔어요. 함께 힘을 모아 달콤한 케이크 조각을 예쁘게 나누어 담았지요.",
+          "scene": {
+            "background": "castle",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "walking"
+              },
+              {
+                "id": "rabbit",
+                "state": "walking"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "warm",
+          "sfx": null
+        },
+        {
+          "text": "셋이서 함께 나누어 먹으니 케이크가 훨씬 더 맛있어졌어요. 고양이는 멋진 친구들과 함께여서 정말 행복했답니다.",
+          "scene": {
+            "background": "castle",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [],
+      "chosen": null,
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 10641
+        }
+      ],
+      "latency_ms": 10641
+    }
+  ],
+  "failed_at": null
+}

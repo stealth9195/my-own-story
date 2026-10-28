@@ -1,0 +1,130 @@
+{
+  "case_id": "c01",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v1",
+  "cards": [
+    "rabbit",
+    "rose",
+    "star"
+  ],
+  "card_names": [
+    "토끼",
+    "장미",
+    "별"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "예쁜 풀밭 위에 귀여운 토끼가 살고 있었어요. 토끼는 향기로운 장미 꽃밭에서 콧노래를 불렀지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "따스한 햇살 아래서 장미 향기를 맡으며 신나게 놀았답니다. 그때 하늘에서 반짝반짝 별 모양의 빛이 내려왔어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "반짝이는 별빛은 숲속 길을 환하게 비춰주었어요. 토끼는 궁금해서 깡충깡충 숲속으로 걸어갔답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "footsteps"
+        }
+      ],
+      "choices": [
+        {
+          "id": "moon",
+          "label": "커다란 달"
+        },
+        {
+          "id": "cake",
+          "label": "맛있는 케이크"
+        },
+        {
+          "id": "dragon",
+          "label": "아기 용"
+        }
+      ],
+      "chosen": "moon",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": false,
+          "errors": [
+            "choices",
+            "cards_missing"
+          ],
+          "latency_ms": 2226
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 4191
+        }
+      ],
+      "latency_ms": 6417
+    }
+  ],
+  "failed_at": 1,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "choices"
+      ],
+      "latency_ms": 2249
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "choices"
+      ],
+      "latency_ms": 4885
+    }
+  ]
+}

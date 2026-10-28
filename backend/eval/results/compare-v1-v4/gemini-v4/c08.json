@@ -1,0 +1,334 @@
+{
+  "case_id": "c08",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "rabbit",
+    "dinosaur",
+    "rainbow"
+  ],
+  "card_names": [
+    "토끼",
+    "공룡",
+    "무지개"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "예쁜 무지개 다리 건너에 토끼가 살고 있었어요. 토끼는 아기 공룡과 같이 놀고 싶었답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        },
+        {
+          "text": "하지만 아기 공룡이 너무 커서 토끼는 다가가기 겁이 났어요. 어떻게 해야 공룡과 친해질 수 있을까요?",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "scared"
+              },
+              {
+                "id": "dinosaur",
+                "state": "idle"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "토끼는 용기를 내어 공룡에게 다가갔지만, 그만 발을 헛디디고 말았어요. 그때 토끼 눈앞에 반짝이는 무엇인가 나타났어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "id": "cake",
+          "label": "달콤한 케이크"
+        },
+        {
+          "id": "balloon",
+          "label": "알록달록 풍선"
+        },
+        {
+          "id": "rose",
+          "label": "빨간 장미꽃"
+        }
+      ],
+      "chosen": "cake",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 10192
+        }
+      ],
+      "latency_ms": 10192
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "눈앞에 나타난 건 맛있고 달콤한 케이크였어요. 토끼는 케이크를 들고 공룡에게 조심조심 다가갔답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "walking"
+              },
+              {
+                "id": "dinosaur",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "cake",
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "pop"
+        },
+        {
+          "text": "공룡은 달콤한 냄새를 맡고 눈을 반짝였어요. 토끼는 두근거리는 마음으로 케이크를 건넸지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "talking"
+              },
+              {
+                "id": "dinosaur",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        },
+        {
+          "text": "공룡은 싱글벙글 웃으며 케이크를 받아 맛있게 나누어 먹었어요. 무지개 다리 아래서 둘은 가장 좋은 친구가 되었답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        }
+      ],
+      "choices": [
+        {
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "id": "star",
+          "label": "별"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        },
+        {
+          "id": "bear",
+          "label": "곰"
+        }
+      ],
+      "chosen": "star",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 4837
+        }
+      ],
+      "latency_ms": 4837
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "어느덧 밤이 찾아오고 하늘에는 예쁜 별들이 반짝였어요. 토끼와 공룡은 나란히 누워서 반짝이는 별을 올려다보았답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "토끼는 가장 예쁜 별을 공룡에게 선물하고 싶었어요. 하지만 손을 뻗어도 별은 너무 높이 있어서 닿지 않았답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "토끼는 직접 별을 따는 대신 바닥에 예쁜 별 그림을 그려보기로 했어요. 공룡은 토끼의 그림을 보며 환하게 웃어주었답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "dinosaur",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "직접 별을 잡지 못해도 함께 나누는 마음이 더 소중하다는 걸 알게 되었어요. 둘은 반짝이는 밤하늘 아래서 행복하게 잠들었답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "sleeping"
+              },
+              {
+                "id": "dinosaur",
+                "state": "sleeping"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "calm",
+          "sfx": "snore"
+        }
+      ],
+      "choices": [
+        {
+          "id": "moon",
+          "label": "달"
+        },
+        {
+          "id": "ship",
+          "label": "배"
+        },
+        {
+          "id": "treasure_box",
+          "label": "보물 상자"
+        }
+      ],
+      "chosen": "treasure_box",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 7696
+        }
+      ],
+      "latency_ms": 7696
+    }
+  ],
+  "failed_at": 3,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count",
+        "choices"
+      ],
+      "latency_ms": 6178
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "choices"
+      ],
+      "latency_ms": 4521
+    }
+  ]
+}

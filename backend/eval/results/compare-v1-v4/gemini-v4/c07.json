@@ -1,0 +1,230 @@
+{
+  "case_id": "c07",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "robot",
+    "cat",
+    "rose",
+    "cake"
+  ],
+  "card_names": [
+    "로봇",
+    "고양이",
+    "장미",
+    "케이크"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "예쁜 장미가 가득 핀 정원에 커다란 케이크가 놓였어요. 꼬마 로봇은 달콤한 케이크를 혼자서 다 먹고 싶었답니다.",
+          "scene": {
+            "background": "castle",
+            "time": "day",
+            "characters": [
+              {
+                "id": "robot",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "rose",
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        },
+        {
+          "text": "하지만 케이크가 너무 커서 로봇의 작은 손으로는 촛불도 켜기 힘들었어요. 그때 살금살금 다가온 고양이가 케이크를 쳐다보았어요.",
+          "scene": {
+            "background": "castle",
+            "time": "day",
+            "characters": [
+              {
+                "id": "robot",
+                "state": "surprised"
+              },
+              {
+                "id": "cat",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "로봇은 고양이에게 케이크를 빼앗길까 봐 마음이 조급해졌어요. 어떻게 하면 이 큰 케이크를 안전하게 지킬 수 있을까요?",
+          "scene": {
+            "background": "castle",
+            "time": "day",
+            "characters": [
+              {
+                "id": "robot",
+                "state": "thinking"
+              },
+              {
+                "id": "cat",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        },
+        {
+          "id": "apple",
+          "label": "사과"
+        }
+      ],
+      "chosen": "apple",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 7152
+        }
+      ],
+      "latency_ms": 7152
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "로봇은 얼른 빨간 사과를 꺼내 케이크 옆에 꽁꽁 숨겼어요. 하지만 고양이는 사과에는 관심이 없고 커다란 케이크만 바라보았지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "robot",
+                "state": "thinking"
+              },
+              {
+                "id": "cat",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "cake",
+              "apple",
+              "rose"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "로봇이 속상해서 울컥 눈물이 날 것 같았어요. 그때 고양이가 꼬리를 살랑이며 사과를 톡 치고는 웃었답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "robot",
+                "state": "scared"
+              },
+              {
+                "id": "cat",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake",
+              "apple"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "로봇은 마음을 고쳐먹고 케이크와 사과를 함께 나누어 먹기로 했어요. 둘이서 같이 먹으니 달콤함이 두 배가 되었지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "robot",
+                "state": "happy"
+              },
+              {
+                "id": "cat",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake",
+              "apple"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "id": "star",
+          "label": "반짝이는 별"
+        },
+        {
+          "id": "rainbow",
+          "label": "알록달록 무지개"
+        },
+        {
+          "id": "bear",
+          "label": "곰돌이"
+        }
+      ],
+      "chosen": "star",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 7309
+        }
+      ],
+      "latency_ms": 7309
+    }
+  ],
+  "failed_at": 2,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count"
+      ],
+      "latency_ms": 7620
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count"
+      ],
+      "latency_ms": 6778
+    }
+  ]
+}

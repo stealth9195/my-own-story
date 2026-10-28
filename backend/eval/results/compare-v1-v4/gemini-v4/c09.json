@@ -1,0 +1,41 @@
+{
+  "case_id": "c09",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "dragon",
+    "star",
+    "cat",
+    "bear",
+    "robot"
+  ],
+  "card_names": [
+    "아기 용",
+    "별",
+    "고양이",
+    "곰",
+    "로봇"
+  ],
+  "status": "failed",
+  "segments": [],
+  "failed_at": 0,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "cards_missing"
+      ],
+      "latency_ms": 5028
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count",
+        "choices"
+      ],
+      "latency_ms": 4322
+    }
+  ]
+}

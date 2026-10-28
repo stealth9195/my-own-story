@@ -1,0 +1,238 @@
+{
+  "case_id": "c07",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v1",
+  "cards": [
+    "robot",
+    "cat",
+    "rose",
+    "cake"
+  ],
+  "card_names": [
+    "로봇",
+    "고양이",
+    "장미",
+    "케이크"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "예쁜 꽃이 가득한 초원 위에 귀여운 고양이가 살고 있었어요. 고양이는 오늘 누군가를 만나기로 하고 신나게 기다렸답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "기다리던 친구는 바로 깡충깡충 춤을 추는 멋쟁이 로봇이었어요. 로봇은 손에 맛있는 간식을 들고 다가왔지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "surprised"
+              },
+              {
+                "id": "robot",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "pop"
+        },
+        {
+          "text": "달콤한 케이크를 본 고양이가 싱글벙글 웃었어요. 그때, 저기 풀숲에서 누군가가 빼꼼 고개를 내밀었답니다. 그건 바로...",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              },
+              {
+                "id": "robot",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "cake",
+              "rose"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "wind"
+        }
+      ],
+      "choices": [
+        {
+          "id": "dragon",
+          "label": "아기 용"
+        },
+        {
+          "id": "balloon",
+          "label": "알록달록 풍선"
+        },
+        {
+          "id": "puppy",
+          "label": "귀여운 강아지"
+        }
+      ],
+      "chosen": "puppy",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 3783
+        }
+      ],
+      "latency_ms": 3783
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "풀숲에서 빼꼼 고개를 내민 친구는 바로 귀여운 강아지였어요. 강아지는 꼬리를 붕붕 흔들며 다가왔지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              },
+              {
+                "id": "robot",
+                "state": "idle"
+              },
+              {
+                "id": "puppy",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        },
+        {
+          "text": "강아지는 로봇이 가져온 케이크를 보고 입맛을 싹 다셨어요. 세 친구는 초원에 동그랗게 모여 앉았답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "talking"
+              },
+              {
+                "id": "robot",
+                "state": "talking"
+              },
+              {
+                "id": "puppy",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake",
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "로봇이 조심스럽게 케이크 상자를 열자 알록달록 예쁜 장미꽃이 뿅 하고 튀어나왔어요. 그 속에서 신비로운 빛이 반짝였답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "surprised"
+              },
+              {
+                "id": "puppy",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake",
+              "rose"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        },
+        {
+          "id": "treasure_box",
+          "label": "보물 상자"
+        },
+        {
+          "id": "star",
+          "label": "별"
+        }
+      ],
+      "chosen": "magic_wand",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 3077
+        }
+      ],
+      "latency_ms": 3077
+    }
+  ],
+  "failed_at": 2,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "choices",
+        "unchosen_used"
+      ],
+      "latency_ms": 3156
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "choices",
+        "unchosen_used"
+      ],
+      "latency_ms": 3453
+    }
+  ]
+}

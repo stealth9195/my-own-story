@@ -1,0 +1,228 @@
+{
+  "case_id": "c05",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "dinosaur",
+    "cake",
+    "rabbit",
+    "star",
+    "rose"
+  ],
+  "card_names": [
+    "공룡",
+    "케이크",
+    "토끼",
+    "별",
+    "장미"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "예쁜 별이 빛나는 밤이었어요. 토끼는 맛있는 케이크를 혼자서만 먹고 싶었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "star",
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "wind"
+        },
+        {
+          "text": "하지만 커다란 공룡이 다가와 케이크를 자꾸 쳐다보았어요. 토끼는 뺏길까 봐 걱정되었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "scared"
+              },
+              {
+                "id": "dinosaur",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "cake",
+              "star"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "토끼는 케이크를 숨기려고 주위를 둘러보았어요. 그때 빨간 장미 덤불이 눈에 들어왔어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "rose",
+              "cake"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        }
+      ],
+      "chosen": "balloon",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 4625
+        }
+      ],
+      "latency_ms": 4625
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "토끼는 풍선을 꺼내 케이크를 묶으려고 했어요. 하지만 풍선이 너무 가벼워서 케이크가 둥실 떠올랐어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "dinosaur",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "balloon",
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "pop"
+        },
+        {
+          "text": "둥실 떠오른 케이크를 본 공룡은 까치발을 들고 껑충 뛰었어요. 공룡의 커다란 손에 케이크가 닿을 듯 말 듯 했어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "thinking"
+              },
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "balloon",
+              "cake"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": null
+        },
+        {
+          "text": "토끼는 혼자 먹으려던 마음을 톡 털어내고 줄을 당겨 케이크를 낮추었어요. 그리고 공룡과 함께 노란 초를 불며 달콤한 케이크를 맛있게 나누어 먹었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "id": "bear",
+          "label": "곰"
+        },
+        {
+          "id": "rainbow",
+          "label": "무지개"
+        },
+        {
+          "id": "treasure_box",
+          "label": "보물 상자"
+        }
+      ],
+      "chosen": "treasure_box",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 7864
+        }
+      ],
+      "latency_ms": 7864
+    }
+  ],
+  "failed_at": 2,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "choices"
+      ],
+      "latency_ms": 1984
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "choices"
+      ],
+      "latency_ms": 8211
+    }
+  ]
+}

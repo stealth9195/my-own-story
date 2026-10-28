@@ -1,0 +1,129 @@
+{
+  "case_id": "c06",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "bear",
+    "rainbow",
+    "dragon"
+  ],
+  "card_names": [
+    "곰",
+    "무지개",
+    "아기 용"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "알록달록 무지개가 뜬 하늘 아래, 곰이 아기 용과 함께 맛있는 케이크를 보았어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "thinking"
+              },
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rainbow",
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "곰은 케이크를 혼자서만 전부 먹고 싶었지만, 아기 용도 자꾸만 군침을 삼켰어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "surprised"
+              },
+              {
+                "id": "dragon",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "어떻게 하면 아기 용과 사이좋게 케이크를 나눌 수 있을까요?",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "apple",
+          "label": "사과 꺼내기"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉 흔들기"
+        },
+        {
+          "id": "balloon",
+          "label": "풍선 불기"
+        }
+      ],
+      "chosen": "magic_wand",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 3256
+        }
+      ],
+      "latency_ms": 3256
+    }
+  ],
+  "failed_at": 1,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "choices"
+      ],
+      "latency_ms": 9331
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "choices"
+      ],
+      "latency_ms": 5161
+    }
+  ]
+}
