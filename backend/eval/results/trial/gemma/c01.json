@@ -1,0 +1,28 @@
+{
+  "case_id": "c01",
+  "model": "gemma-4-31b-it",
+  "version": "v1",
+  "cards": [
+    "rabbit",
+    "rose",
+    "star"
+  ],
+  "card_names": [
+    "토끼",
+    "장미",
+    "별"
+  ],
+  "status": "failed",
+  "segments": [],
+  "failed_at": 0,
+  "failed_attempts": [
+    {
+      "model": "gemma-4-31b-it",
+      "ok": false,
+      "errors": [
+        "llm_error:None"
+      ],
+      "latency_ms": 0
+    }
+  ]
+}

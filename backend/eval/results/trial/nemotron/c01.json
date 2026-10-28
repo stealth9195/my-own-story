@@ -1,0 +1,367 @@
+{
+  "case_id": "c01",
+  "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "version": "v1",
+  "cards": [
+    "rabbit",
+    "rose",
+    "star"
+  ],
+  "card_names": [
+    "토끼",
+    "장미",
+    "별"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "아침 해가 따뜻하게 떠오르자 토끼가 푸른 풀밭에서 눈을 떴어요. 살랑살랑 부는 바람 속에서 빨간 장미 한 송이가 햇살에 반짝였어요. 토끼는 장미 향기에 이끌려 조심스럽게 다가갔어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "calm",
+          "sfx": "birds"
+        },
+        {
+          "text": "토끼가 장미 곁으로 다가가자 향기가 콧구멍을 간지럽혔어요. 그때 하늘에서 반짝이는 별 하나가 내려왔어요. 별은 토끼의 코 끝에 살포시 닿았어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "별이 빛을 뿜으며 토끼에게 작은 선물을 주었어요. 토끼는 기분이 좋아서 방긋 웃었어요. 그때 눈앞에 무언가 나타났어요, 그건 바로...",
+          "scene": {
+            "background": "meadow",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "bell"
+        }
+      ],
+      "choices": [
+        {
+          "id": "rabbit",
+          "label": "토끼"
+        },
+        {
+          "id": "fox",
+          "label": "여우"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        },
+        {
+          "id": "star",
+          "label": "별"
+        }
+      ],
+      "chosen": "rabbit",
+      "attempts": [
+        {
+          "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 55830
+        }
+      ],
+      "latency_ms": 55830
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "반짝이는 별이 토끼에게 작은 당근 빛을 주었어요. 토끼는 기뻐서 깡충깡충 뛰었어요. 그때 풀숲에서 또 다른 토끼가 나타났어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "두 토끼는 서로 눈을 마주치고 웃으며 인사를 나눴어요. 새로 온 토끼는 귀여운 분홍 리본을 매고 있었어요. 함께 장미 향기를 맡으며 놀기로 했어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "talking"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "calm",
+          "sfx": "birds"
+        },
+        {
+          "text": "장미 옆에서 무지개가 피어오르자 부드러운 바람이 불어왔어요. 토끼들은 무지개 아래로 뛰어들며 신나게 놀았어요. 그때 저 멀리에서 무언가 반짝이는 것이 보였어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "walking"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rainbow",
+              "rose"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "wind"
+        }
+      ],
+      "choices": [
+        {
+          "id": "rabbit",
+          "label": "또 다른 토끼"
+        },
+        {
+          "id": "dragon",
+          "label": "아기 용"
+        },
+        {
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "id": "owl",
+          "label": "부엉이"
+        }
+      ],
+      "chosen": "dragon",
+      "attempts": [
+        {
+          "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 68696
+        }
+      ],
+      "latency_ms": 68696
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "무지개 너머에서 꼬물꼬물 작은 아기 용이 걸어왔어요. 반짝이는 비늘과 귀여운 날개를 가진 아기 용이 방긋 웃었어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "아기 용이 입에서 작은 불꽃 대신 달콤한 솜사탕 향기를 뿜었어요. 토끼들은 신기해서 코를 킁킁거리며 다가갔어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "rainbow"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "pop"
+        },
+        {
+          "text": "아기 용이 꼬리를 살랑이며 토끼들을 등에 태워 주었어요. 하늘로 둥실 떠오르자 마을 전체가 한눈에 내려다보였어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "dragon",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "rose",
+              "rainbow",
+              "balloon"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "wind"
+        },
+        {
+          "text": "구름 위에서 아기 용이 재미난 놀이를 제안했어요. 토끼들은 눈을 반짝이며 고개를 끄덕였어요. 그때 구름 뒤에서 무언가 나타났어요. 그건 바로...",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "thinking"
+              },
+              {
+                "id": "rabbit",
+                "state": "thinking"
+              },
+              {
+                "id": "dragon",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "id": "dragon",
+          "label": "아기 용"
+        },
+        {
+          "id": "cat",
+          "label": "고양이"
+        },
+        {
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "id": "owl",
+          "label": "부엉이"
+        }
+      ],
+      "chosen": "apple",
+      "attempts": [
+        {
+          "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 31677
+        }
+      ],
+      "latency_ms": 31677
+    }
+  ],
+  "failed_at": 3,
+  "failed_attempts": [
+    {
+      "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "ok": false,
+      "errors": [
+        "choices"
+      ],
+      "latency_ms": 19968
+    },
+    {
+      "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "ok": false,
+      "errors": [
+        "page_count"
+      ],
+      "latency_ms": 74545
+    }
+  ]
+}

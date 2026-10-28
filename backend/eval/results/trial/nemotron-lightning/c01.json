@@ -1,0 +1,374 @@
+{
+  "case_id": "c01",
+  "model": "nvidia/nemotron-3.5-lightning:free",
+  "version": "v1",
+  "cards": [
+    "rabbit",
+    "rose",
+    "star"
+  ],
+  "card_names": [
+    "토끼",
+    "장미",
+    "별"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "햇살이 따뜻하게 내리쬐는 풀밭에서 토끼가 하품을 했어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "토끼는 품에 안고 있던 장미를 보며 동그랗게 눈을 떴어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "하늘을 올려다본 토끼가 별을 가리키며 신나했어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "birds"
+        }
+      ],
+      "choices": [
+        {
+          "id": "dragon",
+          "label": "아기 용"
+        },
+        {
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        }
+      ],
+      "chosen": "dragon",
+      "attempts": [
+        {
+          "model": "nvidia/nemotron-3.5-lightning:free",
+          "ok": false,
+          "errors": [
+            "page_count",
+            "choices"
+          ],
+          "latency_ms": 3870
+        },
+        {
+          "model": "nvidia/nemotron-3.5-lightning:free",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 5001
+        }
+      ],
+      "latency_ms": 8871
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "토끼가 별을 따라가자 마법 같은 길이 나타났어요. 토끼는 꽃무늬 셔츠를 입고 신나게 뛰어갔답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "드디어 별이 반짝이는 곳에 도착한 토끼! 토끼는 놀라운 친구를 만났어요. 바로 아기 용이었답니다.",
+          "scene": {
+            "background": "castle",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "토끼와 아기 용은 함께 마법의 모험을 시작했어요. 토끼는 친구를 좋아하고 아기 용은 신나는 놀이를 좋아했답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "walking"
+              },
+              {
+                "id": "dragon",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "moon"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        },
+        {
+          "text": "두 친구는 별을 보며 예쁜 이야기를 만들었어요. 토끼와 아기 용은 영원한 친구가 되었답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "sleeping"
+              },
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "id": "puppy",
+          "label": "강아지"
+        },
+        {
+          "id": "balloon",
+          "label": "풍선"
+        }
+      ],
+      "chosen": "puppy",
+      "attempts": [
+        {
+          "model": "nvidia/nemotron-3.5-lightning:free",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 6616
+        }
+      ],
+      "latency_ms": 6616
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "토끼와 아기 용은 반짝이는 별 위에서 신나게 뛰어놀았답니다. 두 친구는 친구와 함께하니까 너무 행복했어요.",
+          "scene": {
+            "background": "castle",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": null
+        },
+        {
+          "text": "그때 멀리서 귀여운 강아지 한 마리가 토끼와 아기 용을 찾아왔답니다. 강아지는 씩씩하게 달려오면서 꼬리를 흔들었어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "puppy",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "idle"
+              },
+              {
+                "id": "dragon",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "balloon"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        },
+        {
+          "text": "강아지는 토끼와 아기 용에게 인사를 건네고 함께 놀이하기로 했답니다. 세 친구는 알콩달콩 재미있는 시간을 보냈어요.",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "puppy",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "thinking"
+              },
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "세 친구는 노을이 질 때까지 신나게 뛰놀고 집으로 돌아가기로 약속했답니다. 친구와 함께한 시간은 너무나 소중했어요.",
+          "scene": {
+            "background": "village",
+            "time": "night",
+            "characters": [
+              {
+                "id": "puppy",
+                "state": "idle"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "dragon",
+                "state": "idle"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "warm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "fox",
+          "label": "여우"
+        },
+        {
+          "id": "rose",
+          "label": "장미"
+        },
+        {
+          "id": "moon",
+          "label": "달"
+        },
+        {
+          "id": "rainbow",
+          "label": "무지개"
+        }
+      ],
+      "chosen": "moon",
+      "attempts": [
+        {
+          "model": "nvidia/nemotron-3.5-lightning:free",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 6450
+        }
+      ],
+      "latency_ms": 6450
+    }
+  ],
+  "failed_at": 3,
+  "failed_attempts": [
+    {
+      "model": "nvidia/nemotron-3.5-lightning:free",
+      "ok": false,
+      "errors": [
+        "page_count",
+        "choices"
+      ],
+      "latency_ms": 24717
+    },
+    {
+      "model": "nvidia/nemotron-3.5-lightning:free",
+      "ok": false,
+      "errors": [
+        "choices"
+      ],
+      "latency_ms": 4244
+    }
+  ]
+}

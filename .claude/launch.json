@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "story-lab",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": ["run", "--directory", "backend", "--env-file", ".env", "uvicorn", "app.lab.server:app", "--port", "8000"],
+      "port": 8000
+    }
+  ]
+}

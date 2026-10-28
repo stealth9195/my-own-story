@@ -1,0 +1,492 @@
+{
+  "case_id": "c01",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v1",
+  "cards": [
+    "rabbit",
+    "rose",
+    "star"
+  ],
+  "card_names": [
+    "토끼",
+    "장미",
+    "별"
+  ],
+  "status": "done",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "예쁜 풀밭 위에 귀여운 토끼가 살고 있었어요. 토끼는 오늘도 반짝반짝 빛나는 별을 보며 신나게 뛰어놀았답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "토끼는 맛있는 간식을 찾아 살랑살랑 산책을 시작했어요. 그러다 빨갛고 예쁜 장미꽃이 활짝 핀 정원을 발견했지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "장미꽃 곁에 다가가자 신기한 일이 벌어졌어요. 꽃잎 사이에서 작은 빛이 반짝이며 누군가 말을 걸어왔답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "id": "rose",
+          "label": "말하는 장미꽃"
+        },
+        {
+          "id": "dragon",
+          "label": "아기 용"
+        },
+        {
+          "id": "cake",
+          "label": "달콤한 케이크"
+        }
+      ],
+      "chosen": "rose",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2165
+        }
+      ],
+      "latency_ms": 2165
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "빛이 반짝이더니 예쁜 장미꽃 요정이 나타났어요. 요정은 토끼에게 반갑게 인사를 건넸답니다. 요정의 날개가 알록달록 무지개 빛으로 빛났어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "rose",
+              "rainbow"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "장미 요정은 토끼를 보며 환하게 웃었어요. 그리고 예쁜 목소리로 비밀 보물을 찾아가라고 말했지요. 토끼의 가슴이 콩닥콩닥 설레기 시작했어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "treasure_box"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        },
+        {
+          "text": "요정이 손을 톡 치자 반짝이는 길이 나타났어요. 토끼는 콩콩 뛰어오르며 앞으로 걸어갔지요. 그때 길 끝에서 누군가 아는 체를 했어요. 그건 바로...",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "footsteps"
+        }
+      ],
+      "choices": [
+        {
+          "id": "rose",
+          "label": "장미 요정"
+        },
+        {
+          "id": "bear",
+          "label": "커다란 곰"
+        },
+        {
+          "id": "dragon",
+          "label": "아기 용"
+        },
+        {
+          "id": "star",
+          "label": "별의 친구"
+        }
+      ],
+      "chosen": "bear",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2337
+        }
+      ],
+      "latency_ms": 2337
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "길 끝에서 만난 친구는 바로 둥글고 커다란 곰이었어요. 곰은 토끼를 보며 반갑게 손을 흔들어 주었답니다.\n곰은 토끼에게 다가와 맛있는 꿀을 함께 나누어 먹자고 말했어요. 토끼는 곰의 다정한 마음에 기분이 참 좋아졌지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "토끼와 곰은 사이좋게 꿀을 나누어 먹고 길을 떠났어요. 얼마쯤 걸어가자 반짝이는 별 모양의 문이 나타났답니다.\n문 앞에 도착하자 스르르 문이 열리며 멋진 놀이터가 보였어요. 토끼는 너무 신 나서 깡총깡총 뛰어갔지요.",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "walking"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "door_open"
+        },
+        {
+          "text": "놀이터 가운데에는 아주 커다란 보물 상자가 숨겨져 있었어요. 과연 상자 안에는 무엇이 들어있을까요?\n토끼와 곰은 두근거리는 마음으로 상자 앞으로 다가갔답니다. 그때 상자 문이 살짝 열리며 빛이 뿜어져 나왔어요. 그건 바로...",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "bear",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "treasure_box",
+              "star"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        },
+        {
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "id": "robot",
+          "label": "로봇"
+        }
+      ],
+      "chosen": "apple",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2163
+        }
+      ],
+      "latency_ms": 2163
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "상자 안에서 반짝이며 나온 것은 빨갛고 동그란 사과였어요. 사과는 따스한 노을빛을 받아 보석처럼 예쁘게 빛났답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "apple",
+              "treasure_box"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "사과가 톡 하고 튀어 오르더니 알록달록한 무지개 다리가 되었어요. 토끼와 곰은 신 나서 무지개 다리를 건너기 시작했답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "walking"
+              },
+              {
+                "id": "bear",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "다리를 건너자 밤하늘에 반짝이는 별들이 두 손을 흔들며 반겨주었어요. 토끼는 달콤한 사과를 한 입 베어 물며 즐거워했답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star",
+              "moon",
+              "apple"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "apple",
+          "label": "반짝이는 사과"
+        },
+        {
+          "id": "balloon",
+          "label": "알록달록 풍선"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        },
+        {
+          "id": "dragon",
+          "label": "아기 용"
+        }
+      ],
+      "chosen": "dragon",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 3034
+        }
+      ],
+      "latency_ms": 3034
+    },
+    {
+      "type": "ending",
+      "pages": [
+        {
+          "text": "무지개 다리를 건너자 몽실몽실 구름 위 세상이 나타났어요. 그곳에서 귀여운 아기 용이 싱글벙글 웃으며 다가왔답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "아기 용은 반짝이는 별가루를 살살 뿌리며 토끼를 환영해 주었어요. 별가루가 닿는 곳마다 예쁜 꽃들이 피어났답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "토끼와 곰, 그리고 아기 용은 함께 모여 밤하늘을 구경했어요. 반짝이는 별빛 아래서 모두 함께 행복한 웃음을 터뜨렸지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star",
+              "moon"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "오늘 하루는 정말 기쁘고 신나는 모험이었답니다. 토끼는 따스한 품속에서 포근한 꿈을 꾸며 기분 좋게 잠들었어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "sleeping"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        }
+      ],
+      "choices": [],
+      "chosen": null,
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2028
+        }
+      ],
+      "latency_ms": 2028
+    }
+  ],
+  "failed_at": null
+}

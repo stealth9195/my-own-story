@@ -1,0 +1,603 @@
+{
+  "case_id": "c01",
+  "model": "nvidia/nemotron-3.5-super-vl:free",
+  "version": "v1",
+  "cards": [
+    "rabbit",
+    "rose",
+    "star"
+  ],
+  "card_names": [
+    "토끼",
+    "장미",
+    "별"
+  ],
+  "status": "done",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "토끼가 풀밭에서 장미꽃을 찾았어요. 꽃 향기가 달콤했어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "calm",
+          "sfx": "birds"
+        },
+        {
+          "text": "하늘에 반짝이는 별이 보였어요. 토끼가 별을 가리켰어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": null
+        },
+        {
+          "text": "토끼가 장미를 들고 별을 보며 생각했어요. 어떤 일이 생길까요?",
+          "scene": {
+            "background": "meadow",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "fox",
+          "label": "여우"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        },
+        {
+          "id": "cake",
+          "label": "케이크"
+        },
+        {
+          "id": "balloon",
+          "label": "풍선"
+        }
+      ],
+      "chosen": "fox",
+      "attempts": [
+        {
+          "model": "nvidia/nemotron-3.5-super-vl:free",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2291
+        }
+      ],
+      "latency_ms": 2291
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "그때 꼬리를 살랑거리며 여우가 나타났어요. \"안녕, 토끼!\" 여우가 말했어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "fox",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "calm",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "여우가 장미꽃 냄새를 맡았어요. \"정말 향기로운 꽃이구나!\" 여우가 말했어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "idle"
+              },
+              {
+                "id": "fox",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        },
+        {
+          "text": "토끼가 장미꽃 한 송이를 여우에게 주었어요. 여우가 기뻐서 뛰어올랐어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "fox",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "pop"
+        },
+        {
+          "text": "별이 더 반짝반짝 빛났어요. 반짝이는 빛이 두 친구를 감싸 안았어요. 그때 하늘에서 요술봉이 내려오기 시작했어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "fox",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        },
+        {
+          "id": "rose",
+          "label": "장미"
+        },
+        {
+          "id": "moon",
+          "label": "달"
+        },
+        {
+          "id": "rainbow",
+          "label": "무지개"
+        }
+      ],
+      "chosen": "rose",
+      "attempts": [
+        {
+          "model": "nvidia/nemotron-3.5-super-vl:free",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2882
+        }
+      ],
+      "latency_ms": 2882
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "요술봉이 반짝이며 토끼 앞에 떨어졌어요. 토끼가 신기한 표정으로 요술봉을 들어 올렸어요. 별빛이 더 밝게 빛났어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "fox",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "magic_wand",
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "토끼가 요술봉을 흔들었어요. 장미꽃에서 반짝이는 빛이 나왔어요. 별들이 춤추기 시작했어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "fox",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "magic_wand",
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "두 친구가 함께 웃으며 별빛 아래에서 춤을 추었어요. 장미꽃 향기가 더 달콤해졌어요. 그때 반짝이는 무언가가 가까워졌어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "fox",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "magic_wand",
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "rose",
+          "label": "장미"
+        },
+        {
+          "id": "star",
+          "label": "별"
+        },
+        {
+          "id": "cake",
+          "label": "케이크"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        }
+      ],
+      "chosen": "cake",
+      "attempts": [
+        {
+          "model": "nvidia/nemotron-3.5-super-vl:free",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2465
+        }
+      ],
+      "latency_ms": 2465
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "반짝이는 빛이 케이크였어요. 맛있는 케이크가 토끼 앞에 착 떨어졌어요. 토끼와 여우가 케이크를 보며 눈을 반짝였어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "fox",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake",
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "pop"
+        },
+        {
+          "text": "토끼가 케이크 한 조각을 여우에게 주었어요. 여우가 맛있게 먹었어요. 달콤한 향기가 풀밭에 퍼졌어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "fox",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake",
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        },
+        {
+          "text": "별들이 케이크 위에 반짝반짝 올라탔어요. 케이크가 빛나기 시작했어요. 토끼가 신기한 표정으로 케이크를 보았어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "fox",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake",
+              "star",
+              "magic_wand"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "그때 케이크가 살며시 움직였어요. 케이크 안에서 작은 목소리가 들렸어요. \"안녕하세요! 친구가 되고 싶어요!\" 그때 토끼 앞에 무언가 나타났어요. 그건 바로...",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "fox",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "cake",
+              "magic_wand"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "id": "rose",
+          "label": "장미"
+        },
+        {
+          "id": "cake",
+          "label": "케이크"
+        },
+        {
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        }
+      ],
+      "chosen": "magic_wand",
+      "attempts": [
+        {
+          "model": "nvidia/nemotron-3.5-super-vl:free",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 3159
+        }
+      ],
+      "latency_ms": 3159
+    },
+    {
+      "type": "ending",
+      "pages": [
+        {
+          "text": "그건 바로 작은 요정 언니였어요. 반짝이는 날개를 가진 요정이 케이크 위에 서 있었어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "fox",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "pop"
+        },
+        {
+          "text": "요정 언니가 토끼의 요술봉을 바라보며 미소지었어요. \"고마워요. 별빛이 더 아름답게 빛나고 있네요.\"",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "fox",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "magic_wand",
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "토끼가 요술봉을 흔드자 반짝반짝 별 가루가 쏟아졌어요. 장미꽃이 은빛으로 반짝였어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "fox",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "여우와 요정 언니, 토끼가 케이크를 함께 나누어 먹었어요. 달콤한 맛이 입안에 퍼졌어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "fox",
+                "state": "happy"
+              },
+              {
+                "id": "owl",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "cake",
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "밤하늘 별들이 반짝이며 축하해 주었어요. 세 친구는 따뜻하게 안고 행복한 꿈을 꾸었어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "fox",
+                "state": "happy"
+              },
+              {
+                "id": "owl",
+                "state": "sleeping"
+              }
+            ],
+            "objects": [
+              "rose",
+              "moon"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        }
+      ],
+      "choices": [],
+      "chosen": null,
+      "attempts": [
+        {
+          "model": "nvidia/nemotron-3.5-super-vl:free",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 20301
+        }
+      ],
+      "latency_ms": 20301
+    }
+  ],
+  "failed_at": null
+}

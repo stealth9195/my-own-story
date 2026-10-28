@@ -1,0 +1,545 @@
+{
+  "case_id": "c01",
+  "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "version": "v1",
+  "cards": [
+    "rabbit",
+    "rose",
+    "star"
+  ],
+  "card_names": [
+    "토끼",
+    "장미",
+    "별"
+  ],
+  "status": "done",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "반짝이는 별 하나가 풀밭에 톡 떨어졌어요. 토끼가 폴짝폴짝 뛰어와 별을 바라보았어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "토끼가 별을 만지려는데 향기로운 장미가 활짝 피어났어요. 장미 꽃잎이 별빛을 받아 반짝반짝 빛났어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star",
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "wind"
+        },
+        {
+          "text": "별이 장미 위로 살포시 내려앉았어요. 토끼는 두 눈을 동그랗게 뜨고 기다렸어요. 그때 하늘에서 무언가 나타났어요. 그건 바로...",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "star",
+              "rose"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "id": "puppy",
+          "label": "강아지"
+        },
+        {
+          "id": "owl",
+          "label": "부엉이"
+        },
+        {
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "id": "fox",
+          "label": "여우"
+        }
+      ],
+      "chosen": "puppy",
+      "attempts": [
+        {
+          "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 12441
+        }
+      ],
+      "latency_ms": 12441
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "하늘에서 보들보들한 강아지가 내려왔어요. 강아지는 꼬리를 살랑살랑 흔들며 토끼에게 다가왔어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "puppy",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "강아지 코끝에서 반짝이는 가루가 솔솔 나왔어요. 장미와 별이 가루를 먹고 더 환하게 빛났어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "puppy",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "강아지가 으르렁 소리로 신나는 노래를 불렀어요. 토끼도 덩달아 폴짝폴짝 춤을 추었어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "puppy",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "id": "cake",
+          "label": "케이크"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        },
+        {
+          "id": "rainbow",
+          "label": "무지개"
+        }
+      ],
+      "chosen": "cake",
+      "attempts": [
+        {
+          "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 5695
+        }
+      ],
+      "latency_ms": 5695
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "강아지가 노래를 마치자 하늘에서 달콤한 케이크가 내려왔어요. 토끼와 강아지는 입맛을 다시며 쳐다보았어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "puppy",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake",
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "pop"
+        },
+        {
+          "text": "케이크 위에는 별모양 초가 꽂혀 있었어요. 토끼가 후 불자 초가 꺼지며 소원이 이루어졌어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "puppy",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake",
+              "star",
+              "rose"
+            ]
+          },
+          "mood": "calm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "다 같이 케이크를 나눠 먹으니 배가 부르르르 울렸어요. 그때 저 멀리에서 달콤한 냄새가 솔솔 풍겨왔어요. 그건 바로...",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "puppy",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake",
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "id": "magic_wand",
+          "label": "요술봉"
+        },
+        {
+          "id": "treasure_box",
+          "label": "보물 상자"
+        }
+      ],
+      "chosen": "magic_wand",
+      "attempts": [
+        {
+          "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 8710
+        }
+      ],
+      "latency_ms": 8710
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "달콤한 냄새를 따라 토끼와 강아지가 숲으로 걸어갔어요. 나무 뒤에 반짝이는 요술봉이 숨어 있었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "walking"
+              },
+              {
+                "id": "puppy",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "magic_wand"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "토끼가 요술봉을 집어 들자 따뜻한 빛이 퍼졌어요. 장미와 별이 요술봉 주위로 모여들었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "puppy",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "magic_wand",
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "요술봉 끝에서 무지개 빛 실타래가 나왔어요. 실타래가 하늘로 올라가며 예쁜 다리를 만들었어요. 토끼와 강아지는 신이 나서 다리를 올려다보았어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "puppy",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "magic_wand",
+              "rainbow"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "id": "ship",
+          "label": "하늘 배"
+        },
+        {
+          "id": "dinosaur",
+          "label": "공룡 친구"
+        },
+        {
+          "id": "owl",
+          "label": "지혜로운 부엉이"
+        }
+      ],
+      "chosen": "ship",
+      "attempts": [
+        {
+          "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 23312
+        }
+      ],
+      "latency_ms": 23312
+    },
+    {
+      "type": "ending",
+      "pages": [
+        {
+          "text": "토끼와 강아지는 무지개 다리를 폴짝폴짝 올라갔어요. 발아래 구름이 폭신폭신했어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "puppy",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "rainbow",
+              "ship"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "다리 끝에 닿자 둥실둥실 배 한 척이 기다리고 있었어요. 배는 별빛을 담아 반짝반짝 빛났어요.",
+          "scene": {
+            "background": "sea",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "puppy",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "ship",
+              "star"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "토끼와 강아지는 배에 올라타 하늘 바다로 떠났어요. 장미와 요술봉도 같이 실렸어요.",
+          "scene": {
+            "background": "sea",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "walking"
+              },
+              {
+                "id": "puppy",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "ship",
+              "rose",
+              "magic_wand"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "배는 달님 앞까지 살랑살랑 갔어요. 달님이 환하게 웃으며 따뜻한 우유를 한 잔 주셨어요.",
+          "scene": {
+            "background": "sea",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "puppy",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "ship",
+              "moon"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "토끼와 강아지는 달님과 작별 인사를 하고 무지개 다리를 내려와 푹신한 풀밭에서 잠들었어요. 별과 장미가 자장가를 불러주었답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "sleeping"
+              },
+              {
+                "id": "puppy",
+                "state": "sleeping"
+              }
+            ],
+            "objects": [
+              "star",
+              "rose",
+              "rainbow"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        }
+      ],
+      "choices": [],
+      "chosen": null,
+      "attempts": [
+        {
+          "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 12499
+        }
+      ],
+      "latency_ms": 12499
+    }
+  ],
+  "failed_at": null
+}

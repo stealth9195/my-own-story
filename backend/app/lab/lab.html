@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이야기 실험실</title>
+<style>
+  :root { --bg:#faf7f2; --card:#fff; --ink:#2b2b2b; --muted:#777; --accent:#e07a5f; --ok:#3a7d44; --bad:#c0392b; --line:#e6e0d6; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 24px 16px 80px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .muted { color: var(--muted); font-size: 13px; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-top: 16px; }
+  .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+  label { font-size: 14px; }
+  select, input[type=number] { font: inherit; padding: 6px 8px; border:1px solid var(--line); border-radius: 8px; }
+  .cards { display:grid; grid-template-columns: repeat(auto-fill, minmax(96px,1fr)); gap:8px; margin-top: 10px; }
+  .chip { border:1px solid var(--line); border-radius: 10px; padding: 10px 6px; text-align:center; cursor:pointer; user-select:none; background:#fff; }
+  .chip.on { border-color: var(--accent); background: #fdeee9; font-weight: 600; }
+  button { font: inherit; padding: 8px 14px; border-radius: 8px; border: none; background: var(--accent); color:#fff; cursor:pointer; }
+  button:disabled { background:#ccc; cursor: default; }
+  button.ghost { background: #fff; color: var(--ink); border:1px solid var(--line); }
+  .seg h2 { font-size: 16px; margin: 0 0 6px; }
+  .meta { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .meta .ok { color: var(--ok); } .meta .bad { color: var(--bad); }
+  .page { padding: 8px 0; border-top: 1px dashed var(--line); }
+  .page:first-of-type { border-top: none; }
+  .text { font-size: 17px; line-height: 1.7; }
+  .scene { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .choices { display:flex; gap:8px; flex-wrap:wrap; margin-top: 10px; }
+  .error { color: var(--bad); font-size: 14px; white-space: pre-wrap; }
+  .loading { color: var(--muted); font-size: 14px; }
+  audio { width: 100%; margin-top: 8px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>이야기 실험실</h1>
+  <div class="muted">모델·카드·선택지를 골라 구간별 생성 결과, 시간, 음성을 확인합니다. 결과는 서버 메모리에만 있어요.</div>
+
+  <section>
+    <div class="row">
+      <label>이야기 모델 <select id="model"></select></label>
+      <label>선택 횟수 <input id="choiceCount" type="number" min="2" max="5" value="4" style="width:64px"></label>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <label>음성 모델 <select id="ttsModel"></select></label>
+      <label>목소리 <select id="voice"></select></label>
+      <span class="muted">음성은 모델마다 하루 10회라 버튼을 눌렀을 때만 만들어요.</span>
+    </div>
+    <div class="muted" style="margin-top:12px">카드 3~5장 선택</div>
+    <div class="cards" id="cards"></div>
+    <div class="row" style="margin-top:12px">
+      <button id="startBtn" disabled>이야기 시작</button>
+      <span class="muted" id="pickCount">0장 선택</span>
+    </div>
+  </section>
+
+  <div id="story"></div>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const picked = new Set();
+let storyId = null;
+
+function option(sel, values) {
+  sel.innerHTML = values.map(v => `<option value="${v}">${v}</option>`).join("");
+}
+
+async function api(path, body) {
+  const res = await fetch(path, body ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : {});
+  if (!res.ok) {
+    let detail;
+    try { detail = (await res.json()).detail; } catch { detail = res.statusText; }
+    throw { status: res.status, detail };
+  }
+  return res;
+}
+
+async function init() {
+  const cfg = await (await api("/api/config")).json();
+  option($("model"), cfg.models);
+  option($("ttsModel"), cfg.tts_models);
+  option($("voice"), cfg.voices);
+  $("cards").innerHTML = cfg.cards.map(c => `<div class="chip" data-id="${c.id}">${c.name}</div>`).join("");
+  document.querySelectorAll(".chip").forEach(el => el.onclick = () => {
+    const id = el.dataset.id;
+    if (picked.has(id)) picked.delete(id); else if (picked.size < 5) picked.add(id);
+    el.classList.toggle("on", picked.has(id));
+    $("pickCount").textContent = `${picked.size}장 선택`;
+    $("startBtn").disabled = picked.size < 3 || cfg.models.length === 0;
+  });
+  if (cfg.models.length === 0) $("pickCount").textContent = "API 키가 있는 모델이 없어요 (.env 확인)";
+}
+
+function errorText(e) {
+  if (e.detail && e.detail.attempts) {
+    return "생성 실패\n" + e.detail.attempts.map(a => `- ${a.model}: ${a.errors.join(", ")} (${(a.latency_ms/1000).toFixed(1)}초)`).join("\n");
+  }
+  return `오류 ${e.status ?? ""}: ${typeof e.detail === "string" ? e.detail : JSON.stringify(e.detail)}`;
+}
+
+function renderSegment(seg) {
+  const el = document.createElement("section");
+  el.className = "seg";
+  const attempts = seg.attempts.map(a => `<span class="${a.ok ? "ok" : "bad"}">${a.ok ? "성공" : a.errors.join(",")}</span>`).join(" → ");
+  const label = { intro: "도입", middle: "중간", ending: "결말" }[seg.type];
+  el.innerHTML = `
+    <h2>${seg.index + 1}. ${label}</h2>
+    <div class="meta">${seg.model_used} · ${(seg.latency_ms / 1000).toFixed(1)}초 · 시도: ${attempts}</div>
+    ${seg.pages.map(p => `
+      <div class="page">
+        <div class="text">${p.text}</div>
+        <div class="scene">배경 ${p.scene.background}(${p.scene.time}) · 등장 ${p.scene.characters.map(c => `${c.id}:${c.state}`).join(", ") || "-"} · 사물 ${p.scene.objects.join(", ") || "-"} · 분위기 ${p.mood} · 효과음 ${p.sfx ?? "-"}</div>
+      </div>`).join("")}
+    <div class="row" style="margin-top:8px"><button class="ghost tts">이 구간 음성 듣기</button><span class="muted tts-status"></span></div>
+  `;
+  const ttsBtn = el.querySelector(".tts");
+  ttsBtn.onclick = async () => {
+    ttsBtn.disabled = true;
+    const status = el.querySelector(".tts-status");
+    status.textContent = "음성 만드는 중...";
+    const t0 = performance.now();
+    try {
+      const res = await api("/api/tts", { text: seg.pages.map(p => p.text).join(" "), voice: $("voice").value, model: $("ttsModel").value });
+      const url = URL.createObjectURL(await res.blob());
+      const audio = document.createElement("audio");
+      audio.controls = true; audio.src = url; audio.autoplay = true;
+      el.appendChild(audio);
+      status.textContent = `${((performance.now() - t0) / 1000).toFixed(1)}초 · ${$("ttsModel").value} / ${$("voice").value}`;
+    } catch (e) {
+      status.textContent = e.status === 429 ? "이 음성 모델의 오늘 한도를 다 썼어요. 다른 모델을 골라보세요." : errorText(e);
+      ttsBtn.disabled = false;
+    }
+  };
+  if (seg.choices.length) {
+    const box = document.createElement("div");
+    box.className = "choices";
+    seg.choices.forEach(c => {
+      const b = document.createElement("button");
+      b.textContent = c.label;
+      b.onclick = () => { box.querySelectorAll("button").forEach(x => x.disabled = true); b.style.background = "#3a7d44"; next(c.id); };
+      box.appendChild(b);
+    });
+    el.appendChild(box);
+  } else {
+    el.insertAdjacentHTML("beforeend", `<div class="muted" style="margin-top:10px">끝.</div>`);
+  }
+  $("story").appendChild(el);
+  el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function run(path, body) {
+  const loading = document.createElement("section");
+  loading.className = "loading";
+  loading.textContent = "이야기를 쓰는 중...";
+  $("story").appendChild(loading);
+  const t0 = performance.now();
+  const timer = setInterval(() => loading.textContent = `이야기를 쓰는 중... ${((performance.now() - t0) / 1000).toFixed(0)}초`, 500);
+  try {
+    const seg = await (await api(path, body)).json();
+    storyId = seg.story_id;
+    loading.remove();
+    renderSegment(seg);
+  } catch (e) {
+    loading.className = "error";
+    loading.textContent = errorText(e);
+  } finally {
+    clearInterval(timer);
+  }
+}
+
+$("startBtn").onclick = () => {
+  $("story").innerHTML = "";
+  run("/api/stories", { cards: [...picked], model: $("model").value, choice_count: Number($("choiceCount").value) });
+};
+function next(choiceId) { run(`/api/stories/${storyId}/next`, { choice_id: choiceId }); }
+
+init().catch(e => { $("pickCount").textContent = errorText(e); });
+</script>
+</body>
+</html>
