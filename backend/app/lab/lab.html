@@ -18,12 +18,16 @@
   .cards { display:grid; grid-template-columns: repeat(auto-fill, minmax(96px,1fr)); gap:8px; margin-top: 10px; }
   .chip { border:1px solid var(--line); border-radius: 10px; padding: 10px 6px; text-align:center; cursor:pointer; user-select:none; background:#fff; }
   .chip.on { border-color: var(--accent); background: #fdeee9; font-weight: 600; }
+  .chip.trait { background: #f4f1fb; }
+  .chip.trait.on { background: #e6defa; border-color: #7a5cc7; }
+  .chip .kind { display:block; font-size: 11px; color: var(--muted); font-weight: 400; }
+  .choices button.phrase { background: #7a5cc7; }
   button { font: inherit; padding: 8px 14px; border-radius: 8px; border: none; background: var(--accent); color:#fff; cursor:pointer; }
   button:disabled { background:#ccc; cursor: default; }
   button.ghost { background: #fff; color: var(--ink); border:1px solid var(--line); }
   .seg h2 { font-size: 16px; margin: 0 0 6px; }
   .meta { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
-  .meta .ok { color: var(--ok); } .meta .bad { color: var(--bad); }
+  .meta .ok { color: var(--ok); } .meta .bad { color: var(--bad); } .meta .warn { color: #b7791f; }
   .page { padding: 8px 0; border-top: 1px dashed var(--line); }
   .page:first-of-type { border-top: none; }
   .text { font-size: 17px; line-height: 1.7; }
@@ -52,11 +56,16 @@
       <label>속도 <select id="ttsStyle"><option value="slow">천천히</option><option value="normal">보통</option></select></label>
       <span class="muted">음성은 모델마다 하루 10회라 버튼을 눌렀을 때만 만들어요.</span>
     </div>
-    <div class="muted" style="margin-top:12px">카드 3~5장 선택</div>
+    <div class="row" style="margin-top:14px">
+      <strong id="stepQuestion" style="font-size:17px"></strong>
+      <button class="ghost" id="reshuffle" style="margin-left:auto">다시 뽑기</button>
+    </div>
+    <div class="muted" id="picksSummary" style="margin-top:4px"></div>
     <div class="cards" id="cards"></div>
     <div class="row" style="margin-top:12px">
+      <button class="ghost" id="backBtn" disabled>이전</button>
       <button id="startBtn" disabled>이야기 시작</button>
-      <span class="muted" id="pickCount">0장 선택</span>
+      <span class="muted" id="pickCount"></span>
     </div>
   </section>
 
@@ -65,7 +74,6 @@
 
 <script>
 const $ = (id) => document.getElementById(id);
-const picked = new Set();
 let storyId = null;
 
 function option(sel, values) {
@@ -91,26 +99,76 @@ async function init() {
   if (cfg.models.length > 1) $("fallback").value = cfg.models[1];
   $("promptVersion").value = cfg.prompt_versions[cfg.prompt_versions.length - 1];
   option($("voice"), cfg.voices);
-  $("cards").innerHTML = cfg.cards.map(c => `<div class="chip" data-id="${c.id}">${c.name}</div>`).join("");
-  document.querySelectorAll(".chip").forEach(el => el.onclick = () => {
-    const id = el.dataset.id;
-    if (picked.has(id)) picked.delete(id); else if (picked.size < 5) picked.add(id);
-    el.classList.toggle("on", picked.has(id));
-    $("pickCount").textContent = `${picked.size}장 선택`;
-    $("startBtn").disabled = picked.size < 3 || cfg.models.length === 0;
-  });
-  if (cfg.models.length === 0) $("pickCount").textContent = "API 키가 있는 모델이 없어요 (.env 확인)";
+  noModels = cfg.models.length === 0;
+  await loadStartOptions();
 }
+
+// 처음 선택 4단계: 주인공 → 성격 → 배경 → 사물 (후보는 서버가 무작위로 뽑음)
+const STEPS = [
+  { key: "heroes", ask: () => "이번 이야기의 주인공은 누구일까요?" },
+  { key: "traits", ask: (p) => `${p[0].name}${josa(p[0].name)} 한마디로 말하면...` },
+  { key: "backgrounds", ask: () => "어디에서, 어떤 날 일어난 이야기일까요?" },
+  { key: "objects", ask: (p) => `${p[0].name}${josa(p[0].name, "이가")} 가지고 있던 것은?` },
+];
+let startOptions = null, step = 0, noModels = false;
+const picks = [];
+
+// 받침에 따라 조사 고르기: "곰은 / 토끼는", "곰이 / 토끼가"
+function josa(word, pair = "은는") {
+  const code = word.charCodeAt(word.length - 1) - 0xac00;
+  const hasFinal = code >= 0 && code % 28 !== 0;
+  return pair === "은는" ? (hasFinal ? "은" : "는") : (hasFinal ? "이" : "가");
+}
+
+async function loadStartOptions() {
+  startOptions = await (await api("/api/start-options")).json();
+  step = 0; picks.length = 0;
+  renderStep();
+}
+
+function renderStep() {
+  const done = step >= STEPS.length;
+  $("picksSummary").textContent = picks.length ? "고른 것: " + picks.map(p => (p.emoji ? p.emoji + " " : "") + p.name).join(" · ") : "";
+  $("backBtn").disabled = picks.length === 0;
+  $("startBtn").disabled = !done || noModels;
+  $("pickCount").textContent = noModels ? "API 키가 있는 모델이 없어요 (.env 확인)" : (done ? "준비 완료!" : `${step + 1} / ${STEPS.length} 단계`);
+  if (done) { $("stepQuestion").textContent = "이야기를 시작해 볼까요?"; $("cards").innerHTML = ""; return; }
+  const s = STEPS[step];
+  $("stepQuestion").textContent = s.ask(picks);
+  const items = startOptions[s.key];
+  $("cards").innerHTML = items.map((c, i) =>
+    `<div class="chip ${c.emoji ? "trait" : ""}" data-i="${i}">${c.emoji ? c.emoji + " " : ""}${c.name}</div>`).join("");
+  document.querySelectorAll(".chip").forEach(el => el.onclick = () => {
+    picks.push(items[Number(el.dataset.i)]);
+    step += 1;
+    renderStep();
+  });
+}
+
+$("backBtn").onclick = () => { picks.pop(); step = picks.length; renderStep(); };
+$("reshuffle").onclick = () => loadStartOptions();
 
 // 오류 코드를 사람이 읽는 말로
 const ERR = { "llm_error:429": "분당 한도 초과(429)", "llm_error:None": "응답 없음/시간 초과", choices: "선택지 문제",
   page_count: "페이지 수", cards_missing: "카드 누락", wrong_hero: "주인공 오류", unchosen_used: "안 고른 선택지 등장",
-  json: "JSON 형식", schema: "형식 누락", unsafe: "금지어", not_korean: "한글 아님", too_long: "너무 김", empty_text: "빈 본문" };
+  "llm_error:503": "서버 과부하(503)", json: "JSON 형식", mixed_choices: "선택지 종류 섞임", schema: "형식 누락", unsafe: "금지어", not_korean: "한글 아님", too_long: "너무 김", empty_text: "빈 본문" };
 const errName = (x) => ERR[x] ?? x;
+
+// 시도 하나의 실패 원인을 자세히: 모델이 보낸 선택지, 검증에서 빠진 항목, 페이지 수, API 오류 내용
+function attemptDetail(a) {
+  const lines = [`- ${a.model}: ${a.errors.map(errName).join(", ")} (${(a.latency_ms/1000).toFixed(1)}초)`];
+  if (a.message) lines.push(`    API 오류 내용: ${a.message}`);
+  if (!a.message) {
+    lines.push(`    페이지 수: ${a.page_count}장`);
+    lines.push(`    모델이 보낸 선택지: ${a.sent_choices.length ? a.sent_choices.join(", ") : "(비어 있음)"}`);
+    if (a.dropped.length) lines.push(`    검증에서 빠진 항목: ${a.dropped.join(", ")}`);
+  }
+  return lines.join("\n");
+}
 
 function errorText(e) {
   if (e.detail && e.detail.attempts) {
-    return "생성 실패\n" + e.detail.attempts.map(a => `- ${a.model}: ${a.errors.map(errName).join(", ")} (${(a.latency_ms/1000).toFixed(1)}초)`).join("\n");
+    return "생성 실패\n" + e.detail.attempts.map(attemptDetail).join("\n");
   }
   return `오류 ${e.status ?? ""}: ${typeof e.detail === "string" ? e.detail : JSON.stringify(e.detail)}`;
 }
@@ -118,7 +176,7 @@ function errorText(e) {
 function renderSegment(seg) {
   const el = document.createElement("section");
   el.className = "seg";
-  const attempts = seg.attempts.map(a => `<span class="${a.ok ? "ok" : "bad"}">${a.ok ? `성공(${a.model.split("/").pop()})` : a.errors.map(errName).join(",")}</span>`).join(" → ");
+  const attempts = seg.attempts.map(a => `<span class="${a.ok ? "ok" : "bad"}" title="${a.ok ? "" : attemptDetail(a).replace(/"/g, "'")}">${a.ok ? `성공(${a.model.split("/").pop()})` : a.errors.map(errName).join(",")}</span>${a.ok && a.warnings?.length ? ` <span class="warn" title="규칙 위반이지만 결과를 그대로 사용">⚠ ${a.warnings.map(errName).join(", ")}</span>` : ""}`).join(" → ");
   const label = { intro: "도입", middle: "중간", ending: "결말" }[seg.type];
   el.innerHTML = `
     <h2>${seg.index + 1}. ${label}</h2>
@@ -154,6 +212,7 @@ function renderSegment(seg) {
     seg.choices.forEach(c => {
       const b = document.createElement("button");
       b.textContent = c.label;
+      if (c.kind === "phrase") b.classList.add("phrase");
       b.onclick = () => { box.querySelectorAll("button").forEach(x => x.disabled = true); b.style.background = "#3a7d44"; next(c.id); };
       box.appendChild(b);
     });
@@ -187,7 +246,7 @@ async function run(path, body) {
 
 $("startBtn").onclick = () => {
   $("story").innerHTML = "";
-  run("/api/stories", { cards: [...picked], model: $("model").value, choice_count: Number($("choiceCount").value), prompt_version: $("promptVersion").value, fallback_model: $("fallback").value || null });
+  run("/api/stories", { cards: picks.map(p => p.id), model: $("model").value, choice_count: Number($("choiceCount").value), prompt_version: $("promptVersion").value, fallback_model: $("fallback").value || null });
 };
 function next(choiceId) { run(`/api/stories/${storyId}/next`, { choice_id: choiceId }); }
 

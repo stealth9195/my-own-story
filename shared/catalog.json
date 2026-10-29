@@ -134,7 +134,8 @@
       "name": "펭귄",
       "tags": [
         "동물"
-      ]
+      ],
+      "card": true
     },
     {
       "id": "elephant",
@@ -218,7 +219,8 @@
       "name": "유니콘",
       "tags": [
         "상상"
-      ]
+      ],
+      "card": true
     },
     {
       "id": "fairy",
@@ -232,6 +234,62 @@
       "name": "눈사람",
       "tags": [
         "겨울"
+      ]
+    },
+    {
+      "id": "wizard",
+      "name": "마법사",
+      "tags": [
+        "사람"
+      ]
+    },
+    {
+      "id": "boy",
+      "name": "남자아이",
+      "tags": [
+        "사람"
+      ]
+    },
+    {
+      "id": "girl",
+      "name": "여자아이",
+      "tags": [
+        "사람"
+      ]
+    },
+    {
+      "id": "grandma",
+      "name": "할머니",
+      "tags": [
+        "사람"
+      ]
+    },
+    {
+      "id": "grandpa",
+      "name": "할아버지",
+      "tags": [
+        "사람"
+      ]
+    },
+    {
+      "id": "prince",
+      "name": "왕자",
+      "tags": [
+        "사람"
+      ]
+    },
+    {
+      "id": "chef",
+      "name": "요리사",
+      "tags": [
+        "사람"
+      ]
+    },
+    {
+      "id": "firefighter",
+      "name": "소방관",
+      "tags": [
+        "사람"
       ]
     }
   ],
@@ -529,6 +587,136 @@
       "id": "exciting_loop",
       "name": "신나는 음악",
       "mood": "exciting"
+    }
+  ],
+  "traits": [
+    {
+      "id": "brave",
+      "name": "용감한",
+      "emoji": "🦁",
+      "tags": [
+        "느낌·행동"
+      ],
+      "card": true
+    },
+    {
+      "id": "mischievous",
+      "name": "장난꾸러기",
+      "emoji": "😜",
+      "tags": [
+        "느낌·행동"
+      ],
+      "card": true
+    },
+    {
+      "id": "sleepy",
+      "name": "졸린",
+      "emoji": "😴",
+      "tags": [
+        "느낌·행동"
+      ],
+      "card": true
+    },
+    {
+      "id": "dancing",
+      "name": "춤추는",
+      "emoji": "💃",
+      "tags": [
+        "느낌·행동"
+      ],
+      "card": true
+    },
+    {
+      "id": "curious",
+      "name": "궁금한 게 많은",
+      "emoji": "🔍",
+      "tags": [
+        "느낌·행동"
+      ],
+      "card": true
+    },
+    {
+      "id": "shy",
+      "name": "수줍은",
+      "emoji": "☺️",
+      "tags": [
+        "느낌·행동"
+      ],
+      "card": true
+    },
+    {
+      "id": "lively",
+      "name": "활발한",
+      "emoji": "⚡",
+      "tags": [
+        "성격"
+      ],
+      "card": true
+    },
+    {
+      "id": "kind",
+      "name": "다정한",
+      "emoji": "💗",
+      "tags": [
+        "성격"
+      ],
+      "card": true
+    },
+    {
+      "id": "timid",
+      "name": "겁이 많은",
+      "emoji": "🙈",
+      "tags": [
+        "성격"
+      ],
+      "card": true
+    },
+    {
+      "id": "singing",
+      "name": "노래하는",
+      "emoji": "🎵",
+      "tags": [
+        "성격"
+      ],
+      "card": true
+    }
+  ],
+  "situations": [
+    {
+      "id": "rainy_day",
+      "name": "비 오는 날",
+      "emoji": "🌧️",
+      "tags": [
+        "상황"
+      ],
+      "card": true
+    },
+    {
+      "id": "birthday",
+      "name": "생일",
+      "emoji": "🎉",
+      "tags": [
+        "상황"
+      ],
+      "card": true
+    },
+    {
+      "id": "snowy_day",
+      "name": "눈 오는 날",
+      "emoji": "❄️",
+      "tags": [
+        "상황"
+      ],
+      "card": true
+    },
+    {
+      "id": "picnic",
+      "name": "소풍 날",
+      "emoji": "🧺",
+      "tags": [
+        "상황"
+      ],
+      "card": true
     }
   ]
 }

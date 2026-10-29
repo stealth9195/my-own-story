@@ -19,7 +19,8 @@ def test_defaults_exist():
 def test_cards_are_choice_ids_and_at_least_10():
     cat = load_catalog()
     assert len(cat.card_ids()) >= 10
-    assert set(cat.card_ids()) <= cat.choice_ids()
+    item_cards = [c for c in cat.card_ids() if cat.kind_of(c) != "trait"]
+    assert set(item_cards) <= cat.choice_ids()
 
 
 def test_bgm_mood_refers_to_existing_mood():

@@ -5,7 +5,9 @@ from pydantic import BaseModel
 
 from app.config import REPO_ROOT
 
-KINDS = ["backgrounds", "times", "characters", "objects", "states", "moods", "sfx"]
+KINDS = ["backgrounds", "times", "characters", "objects", "traits", "situations", "states", "moods", "sfx"]
+# traits: 시작 선택 '성격'(용감한 등), situations: 시작 선택 '배경' 중 상황(비 오는 날 등).
+# 둘 다 그림 대신 이모지를 쓰고 장면 id가 아니다
 
 
 class Asset(BaseModel):
@@ -13,6 +15,7 @@ class Asset(BaseModel):
     name: str
     tags: list[str] = []
     card: bool = False
+    emoji: str | None = None
 
 
 class Bgm(BaseModel):
@@ -28,6 +31,8 @@ class Catalog(BaseModel):
     times: list[Asset]
     characters: list[Asset]
     objects: list[Asset]
+    traits: list[Asset] = []
+    situations: list[Asset] = []
     states: list[Asset]
     moods: list[Asset]
     sfx: list[Asset]
@@ -43,7 +48,24 @@ class Catalog(BaseModel):
         return self.ids("characters") | self.ids("objects")
 
     def card_ids(self) -> list[str]:
-        return [a.id for a in self.characters + self.objects if a.card]
+        return [a.id for a in self.characters + self.objects + self.traits if a.card]
+
+    def kind_of(self, asset_id: str) -> str:
+        """시작 선택 종류: character / object / trait / background / situation"""
+        for kind, items in (("character", self.characters), ("object", self.objects),
+                            ("trait", self.traits), ("background", self.backgrounds),
+                            ("situation", self.situations)):
+            if any(a.id == asset_id for a in items):
+                return kind
+        raise KeyError(asset_id)
+
+    def emoji_of(self, asset_id: str) -> str | None:
+        return next((a.emoji for a in self.traits + self.situations if a.id == asset_id), None)
+
+    def start_ids(self) -> set[str]:
+        """처음 선택에 쓸 수 있는 모든 id (주인공·성격·배경·사물)"""
+        return (self.ids("characters") | self.ids("traits") | self.ids("backgrounds")
+                | self.ids("situations") | self.ids("objects"))
 
     def name_of(self, asset_id: str) -> str:
         for kind in KINDS:

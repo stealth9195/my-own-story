@@ -74,5 +74,6 @@ def test_generator_applies_rules_from_context():
     good = segment_json(pages=3, choices=("moon", "apple", "ship"))
     r = generate_segment(CTX, "middle", primary=FakeLLM("p", [bad, good]), secondary=None,
                          catalog=cat, banned=banned, version="v2")
-    assert [a.ok for a in r.attempts] == [False, True]
-    assert r.attempts[0].errors == ["choices"]
+    assert [a.ok for a in r.attempts] == [True]
+    assert "dragon" in r.attempts[0].dropped
+    assert "dragon" not in [c.id for c in r.segment.choices]

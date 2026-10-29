@@ -47,7 +47,9 @@ class Page(BaseModel):
 
 
 class Choice(BaseModel):
-    id: str
+    # item: 캐릭터·사물(그림 있음, id는 카탈로그 값) / phrase: 묘사·행동 문장(그림 없음, id는 검증기가 붙임)
+    kind: Literal["item", "phrase"] = "item"
+    id: str = ""
     label: str
 
 

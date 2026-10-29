@@ -25,7 +25,7 @@ def test_config_lists_cards_and_models():
     client, _ = make([])
     data = client.get("/api/config").json()
     assert "fake" in data["models"]
-    assert {"id": "rabbit", "name": "토끼"} in data["cards"]
+    assert any(c["id"] == "rabbit" and c["name"] == "토끼" for c in data["cards"])
     assert data["tts_models"] and data["voices"]
 
 

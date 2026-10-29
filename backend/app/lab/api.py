@@ -3,6 +3,7 @@
 
 import json
 import os
+import random
 import uuid
 from collections.abc import Callable
 from dataclasses import asdict
@@ -85,7 +86,8 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
         seg_type = story["types"][index]
         try:
             gen = generate_segment(story["ctx"], seg_type, primary=story["llm"], secondary=story["fallback"],
-                                   catalog=catalog, banned=banned, version=story["version"])
+                                   catalog=catalog, banned=banned, version=story["version"],
+                                   lenient=True)  # 실험 서버: 결과 먼저, 규칙 위반은 경고로
         except GenerationFailed as e:
             raise HTTPException(502, {"message": "생성 실패",
                                       "attempts": [asdict(a) for a in e.attempts]})
@@ -109,7 +111,8 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
     @app.get("/api/config")
     def config():
         return {
-            "cards": [{"id": c, "name": catalog.name_of(c)} for c in catalog.card_ids()],
+            "cards": [{"id": c, "name": catalog.name_of(c), "kind": catalog.kind_of(c),
+                       "emoji": catalog.emoji_of(c)} for c in catalog.card_ids()],
             "models": list(models),
             "tts_models": gemini_tts.MODELS,
             "voices": gemini_tts.VOICES,
@@ -117,10 +120,25 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
             "prompt_versions": prompt_versions(),
         }
 
+    @app.get("/api/start-options")
+    def start_options():
+        """처음 선택 4단계 후보를 전체 목록에서 무작위로 뽑는다."""
+        def pick(ids, n):
+            return [{"id": i, "name": catalog.name_of(i), "kind": catalog.kind_of(i),
+                     "emoji": catalog.emoji_of(i)} for i in random.sample(sorted(ids), n)]
+        return {
+            "heroes": pick(catalog.ids("characters"), 5),
+            "traits": pick(catalog.ids("traits"), 4),
+            "backgrounds": pick(catalog.ids("backgrounds") | catalog.ids("situations"), 4),
+            "objects": pick(catalog.ids("objects"), 4),
+        }
+
     @app.post("/api/stories")
     def start(req: StartRequest):
-        if not set(req.cards) <= set(catalog.card_ids()):
+        if not set(req.cards) <= catalog.start_ids():
             raise HTTPException(400, "없는 카드")
+        if not any(catalog.kind_of(c) == "character" for c in req.cards):
+            raise HTTPException(400, "캐릭터 카드를 1장 이상 골라야 해요")
         if req.model not in models:
             raise HTTPException(400, "없는 모델")
         if req.fallback_model and req.fallback_model not in models:

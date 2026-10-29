@@ -1,4 +1,5 @@
 import json
+import random
 import re
 from dataclasses import dataclass, field
 
@@ -20,6 +21,11 @@ class ValidationResult:
     segment: Segment | None
     errors: list[str] = field(default_factory=list)
     dropped: list[str] = field(default_factory=list)
+    # 실패 원인 확인용: 모델이 보낸 선택지(id 또는 문장)와 페이지 수
+    sent_choices: list[str] = field(default_factory=list)
+    page_count: int = 0
+    filled: list[str] = field(default_factory=list)  # 선택지가 모자라 후보에서 채운 것
+    warnings: list[str] = field(default_factory=list)  # 관대한 모드에서 통과시킨 규칙 위반
 
 
 FENCE = re.compile(r"```(?:json)?\s*(\{.*?\})\s*```", re.DOTALL)
@@ -76,6 +82,25 @@ def _clean_scene(scene: Scene, catalog: Catalog, dropped: list[str]) -> Scene:
     return scene
 
 
+MAX_PHRASE_CHARS = 20
+# 관대한 모드에서도 거절하는 오류: 읽을 수 없는 응답, 빈 본문, 한글 아님, 아이에게 부적절한 내용
+HARD_ERRORS = {"json", "schema", "empty_text", "not_korean", "unsafe"}
+
+
+def _clean_phrases(choices: list[Choice], banned: list[str], dropped: list[str],
+                   forbidden: set[str]) -> list[Choice]:
+    """문장형 선택지: 한글, 20자 이하, 금지어 없음, 이전에 나온 문장 아님, 중복 없음."""
+    result: list[Choice] = []
+    for c in choices:
+        label = c.label.strip()
+        if (not HANGUL.search(label) or len(label) > MAX_PHRASE_CHARS or label in forbidden
+                or find_banned(label, banned) or label in [r.label for r in result]):
+            dropped.append(label)
+            continue
+        result.append(Choice(kind="phrase", id=f"phrase-{len(result) + 1}", label=label))
+    return result[:MAX_CHOICES]
+
+
 def _clean_choices(choices: list[Choice], catalog: Catalog, dropped: list[str],
                    forbidden: set[str]) -> list[Choice]:
     seen: set[str] = set()
@@ -114,6 +139,9 @@ def validate_segment(
     forbidden_choices: set[str] = frozenset(),
     forbidden_scene: set[str] = frozenset(),
     cards: list[str] | None = None,
+    forbidden_phrases: set[str] = frozenset(),
+    fill_pool: list[str] | None = None,
+    lenient: bool = False,
 ) -> ValidationResult:
     """forbidden_choices: 이미 나온 선택지(새 선택지에서 제거).
     forbidden_scene: 고르지 않은 선택지(장면에 나오면 실패)."""
@@ -123,11 +151,13 @@ def validate_segment(
     try:
         pages = [Page.model_validate(p) for p in data.get("pages", [])]
         choices = [Choice.model_validate(c) for c in data.get("choices") or []]
+        sent_choices = [c.id or c.label for c in choices]
     except (ValidationError, TypeError, AttributeError):
         return ValidationResult(ok=False, segment=None, errors=["schema"])
 
     errors: list[str] = []
     dropped: list[str] = []
+    filled: list[str] = []
 
     low, high = PAGE_RANGES[segment_type]
     if not low <= len(pages) <= high:
@@ -156,21 +186,51 @@ def validate_segment(
         # 같은 구간 장면에 이미 나온 것도 선택지로 쓰지 않는다
         in_scene = {c.id for p in pages for c in p.scene.characters} | {
             o for p in pages for o in p.scene.objects}
-        choices = _clean_choices(choices, catalog, dropped, set(forbidden_choices) | in_scene)
-        if len(choices) < MIN_CHOICES:
+        kinds = {c.kind for c in choices}
+        if len(kinds) > 1:
+            errors.append("mixed_choices")
+            if lenient:  # 섞였으면 물건형만 남긴다
+                choices = [c for c in choices if c.kind == "item"]
+        if choices and all(c.kind == "phrase" for c in choices):
+            choices = _clean_phrases(choices, banned, dropped, set(forbidden_phrases))
+            if lenient and len(choices) < MIN_CHOICES:  # 문장형이 모자라면 물건형 후보로 대신한다
+                choices = []
+        if (lenient or len(kinds) <= 1) and not (choices and choices[0].kind == "phrase"):
+            choices = _clean_choices(choices, catalog, dropped, set(forbidden_choices) | in_scene)
+            # 물건형은 에셋 목록에서 가져오는 것이라, 모델이 비우거나 지어내도 후보에서 채운다
+            if fill_pool and len(choices) < MIN_CHOICES:
+                used = {c.id for c in choices} | in_scene | set(forbidden_choices)
+                spare = [i for i in fill_pool if i not in used and i in catalog.choice_ids()]
+                random.shuffle(spare)
+                for i in spare[:MAX_CHOICES - len(choices)]:
+                    choices.append(Choice(kind="item", id=i, label=catalog.name_of(i)))
+                    filled.append(i)
+        if len(choices) < MIN_CHOICES and (lenient or "mixed_choices" not in errors):
             errors.append("choices")
 
     scene_ids = {c.id for p in pages for c in p.scene.characters} | {
         o for p in pages for o in p.scene.objects}
     if scene_ids & forbidden_scene:
         errors.append("unchosen_used")
-    if segment_type == "intro" and cards and pages:
-        errors += _check_intro_cards(pages, set(cards), catalog)
+    # 느낌·행동 카드는 장면 id가 아니라서 도입 장면 검사에서 뺀다
+    item_cards = {c for c in (cards or []) if c in catalog.choice_ids()}
+    if segment_type == "intro" and item_cards and pages:
+        errors += _check_intro_cards(pages, item_cards, catalog)
+    # 배경(장소) 카드를 골랐으면 첫 장면이 그 장소여야 한다
+    places = [c for c in (cards or []) if c in catalog.ids("backgrounds")]
+    if segment_type == "intro" and places and pages and pages[0].scene.background not in places:
+        errors.append("background_mismatch")
 
     texts = [p.text for p in pages] + [c.label for c in choices]
     if any(find_banned(t, banned) for t in texts):
         errors.append("unsafe")
 
     errors = list(dict.fromkeys(errors))
+    warnings: list[str] = []
+    if lenient:  # 형식·안전 문제만 거절하고 나머지는 경고로 남긴다
+        warnings = [e for e in errors if e not in HARD_ERRORS]
+        errors = [e for e in errors if e in HARD_ERRORS]
     segment = Segment(type=segment_type, pages=pages, choices=choices)
-    return ValidationResult(ok=not errors, segment=segment, errors=errors, dropped=dropped)
+    return ValidationResult(ok=not errors, segment=segment, errors=errors, dropped=dropped,
+                            sent_choices=sent_choices, page_count=len(pages), filled=filled,
+                            warnings=warnings)

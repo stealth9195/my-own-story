@@ -1,9 +1,10 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Protocol
 
 from app.catalog import Catalog
 from app.llm.client import LLMError, LLMResponse
-from app.story.prompt import StoryContext, build_messages, forbidden_choices, unchosen_ids
+from app.story.prompt import (StoryContext, allowed_choices, build_messages, forbidden_choices,
+                              offered_phrases, unchosen_ids)
 from app.story.schema import Segment, SegmentType
 from app.story.validator import validate_segment
 
@@ -20,6 +21,12 @@ class Attempt:
     ok: bool
     errors: list[str]
     latency_ms: int
+    # 실패 원인 확인용
+    dropped: list[str] = field(default_factory=list)       # 검증에서 빠진 항목
+    sent_choices: list[str] = field(default_factory=list)  # 모델이 보낸 선택지
+    page_count: int = 0
+    message: str = ""                                      # API 오류 내용
+    warnings: list[str] = field(default_factory=list)      # 관대한 모드에서 통과시킨 규칙 위반
 
 
 @dataclass
@@ -46,21 +53,26 @@ def generate_segment(
     banned: list[str],
     version: str = "v2",
     max_page_chars: int = 150,
+    lenient: bool = False,
 ) -> GenerationResult:
     """기본 1차 → (검증 실패 시) 기본 2차 → 예비 1회. 기본에서 LLMError면 바로 예비로."""
     messages = build_messages(ctx, segment_type, catalog, version)
     rules = {"forbidden_choices": forbidden_choices(ctx), "forbidden_scene": unchosen_ids(ctx),
-             "cards": ctx.cards}
+             "cards": ctx.cards, "forbidden_phrases": offered_phrases(ctx),
+             "fill_pool": allowed_choices(ctx, catalog)}
     attempts: list[Attempt] = []
 
     def try_once(llm: LLM) -> Segment | None:
         try:
             resp = llm.complete(messages)
         except LLMError as e:
-            attempts.append(Attempt(llm.model, False, [f"llm_error:{e.status}"], 0))
+            attempts.append(Attempt(llm.model, False, [f"llm_error:{e.status}"], 0, message=str(e)[:200]))
             raise
-        result = validate_segment(resp.text, segment_type, catalog, banned, max_page_chars, **rules)
-        attempts.append(Attempt(llm.model, result.ok, result.errors, resp.latency_ms))
+        result = validate_segment(resp.text, segment_type, catalog, banned, max_page_chars,
+                                  lenient=lenient, **rules)
+        attempts.append(Attempt(llm.model, result.ok, result.errors, resp.latency_ms,
+                                dropped=result.dropped, sent_choices=result.sent_choices,
+                                page_count=result.page_count, warnings=result.warnings))
         return result.segment if result.ok else None
 
     def done(segment: Segment, llm: LLM) -> GenerationResult:
