@@ -5,6 +5,7 @@ import logging
 import random
 import time
 import uuid
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict
 
 from fastapi import FastAPI, HTTPException
@@ -36,7 +37,7 @@ def _fail(status: int, code: str):
 
 
 def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
-               tts: TTSFn | None = None, limits: Limits | None = None,
+               backups: list[LLM] = (), tts: TTSFn | None = None, limits: Limits | None = None,
                rng: random.Random | None = None) -> FastAPI:
     app = FastAPI(title="my-own-story")
     app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins,
@@ -51,14 +52,35 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
         seg_type = segment_types(story.choice_count)[index]
         ctx = StoryContext(cards=story.cards, history=history, chosen=chosen,
                            total_segments=story.choice_count + 1)
+
+        def run(first: LLM, second: LLM | None):
+            return generate_segment(ctx, seg_type, primary=first, secondary=second,
+                                    catalog=catalog, banned=banned, version=settings.prompt_version,
+                                    max_page_chars=settings.max_page_chars, lenient=True)
+
+        # 대비 모델은 기본과 동시에 출발시켜, 기본·예비가 다 실패해도 다시 기다리지 않게 한다.
+        # 기본·예비가 성공하면 대비 결과는 버린다 (Gemma 는 하루 한도가 커서 버려도 부담이 적음)
+        pool = ThreadPoolExecutor(max_workers=len(backups)) if backups else None
+        futures = [pool.submit(run, b, None) for b in backups] if pool else []
         try:
-            gen = generate_segment(ctx, seg_type, primary=primary, secondary=secondary,
-                                   catalog=catalog, banned=banned, version=settings.prompt_version,
-                                   max_page_chars=settings.max_page_chars, lenient=True)
+            gen = run(primary, secondary)
         except GenerationFailed as e:
-            log_event("segment_failed", story_id=story.id, index=index, type=seg_type,
-                      attempts=[asdict(a) for a in e.attempts])
-            _fail(502, "generation_failed")
+            attempts = list(e.attempts)
+            gen = None
+            for f in as_completed(futures):
+                try:
+                    gen = f.result()
+                    gen.attempts = attempts + gen.attempts
+                    break
+                except GenerationFailed as be:
+                    attempts += be.attempts
+            if gen is None:
+                log_event("segment_failed", story_id=story.id, index=index, type=seg_type,
+                          attempts=[asdict(a) for a in attempts])
+                _fail(502, "generation_failed")
+        finally:
+            if pool:
+                pool.shutdown(wait=False, cancel_futures=True)
         log_event("segment", story_id=story.id, index=index, type=seg_type, model_used=gen.model_used,
                   latency_ms=gen.latency_ms, attempts=[asdict(a) for a in gen.attempts],
                   warnings=sorted({w for a in gen.attempts for w in a.warnings}))
@@ -152,17 +174,24 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
     return app
 
 
-def build_clients(s: Settings) -> tuple[OpenAICompatClient, OpenAICompatClient | None]:
-    primary = OpenAICompatClient(s.primary_base_url, s.primary_api_key, s.primary_model,
-                                 json_mode=s.primary_json_mode, timeout=s.primary_timeout)
+def build_clients(s: Settings) -> tuple[OpenAICompatClient, OpenAICompatClient | None,
+                                        list[OpenAICompatClient]]:
+    """기본·예비·대비 LLM. 키를 따로 안 넣으면 GEMINI_API_KEY 를 쓴다."""
+    primary = OpenAICompatClient(s.primary_base_url, s.primary_api_key or s.gemini_api_key,
+                                 s.primary_model, json_mode=s.primary_json_mode, timeout=s.primary_timeout)
     secondary = None
-    if s.secondary_base_url and s.secondary_api_key and s.secondary_model:
-        secondary = OpenAICompatClient(s.secondary_base_url, s.secondary_api_key, s.secondary_model,
-                                       json_mode=s.secondary_json_mode, timeout=s.secondary_timeout)
-    return primary, secondary
+    if s.secondary_model:
+        secondary = OpenAICompatClient(s.secondary_base_url, s.secondary_api_key or s.gemini_api_key,
+                                       s.secondary_model, json_mode=s.secondary_json_mode,
+                                       timeout=s.secondary_timeout)
+    backups = [OpenAICompatClient(s.backup_base_url, s.backup_api_key or s.gemini_api_key, model,
+                                  json_mode=s.backup_json_mode, merge_system=s.backup_merge_system,
+                                  timeout=s.backup_timeout) for model in s.backup_models]
+    return primary, secondary, backups
 
 
 def build_app() -> FastAPI:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     s = Settings()
-    return create_app(s, *build_clients(s))
+    primary, secondary, backups = build_clients(s)
+    return create_app(s, primary, secondary, backups=backups)

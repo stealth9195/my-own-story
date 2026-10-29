@@ -1,6 +1,7 @@
 import json
 import logging
 import random
+import threading
 
 from fastapi.testclient import TestClient
 
@@ -156,3 +157,48 @@ def test_next_regeneration_limited():
     r = nxt(client, r0, [r0["segment"]], ["cake"])  # 선택을 바꿔도 같은 구간
     assert r.status_code == 429 and r.json()["detail"]["code"] == "regen_limit"
     assert llm.calls == 3
+
+
+def make_backup(primary, secondary, backups):
+    app = create_app(settings(), primary, secondary, backups=backups, tts=lambda text, voice: b"",
+                     rng=random.Random(0))
+    return TestClient(app)
+
+
+def test_backup_used_when_primary_and_secondary_fail(caplog):
+    caplog.set_level(logging.INFO, logger="story")
+    backup = FakeLLM("gemma-a", [seg(0)])
+    client = make_backup(FakeLLM("p", [LLMError("x", status=500)]),
+                         FakeLLM("s", [LLMError("x", status=500)]), [backup])
+    r = start(client)
+    assert r.status_code == 200 and r.json()["index"] == 0
+    assert any('"model_used": "gemma-a"' in rec.getMessage() for rec in caplog.records)
+
+
+def test_backup_runs_but_primary_result_used(caplog):
+    caplog.set_level(logging.INFO, logger="story")
+    started = threading.Event()
+
+    class Backup(FakeLLM):
+        def complete(self, messages, temperature=0.9):
+            started.set()
+            return super().complete(messages, temperature)
+
+    class Primary(FakeLLM):
+        def complete(self, messages, temperature=0.9):
+            assert started.wait(2), "대비 모델이 기본과 동시에 출발하지 않음"
+            return super().complete(messages, temperature)
+
+    client = make_backup(Primary("p", [seg(0)]), None, [Backup("gemma-a", [seg(0)])])
+    assert start(client).status_code == 200
+    assert any('"model_used": "p"' in rec.getMessage() for rec in caplog.records)
+
+
+def test_all_fail_includes_backup_attempts(caplog):
+    caplog.set_level(logging.INFO, logger="story")
+    client = make_backup(FakeLLM("p", [LLMError("x", status=500)]), None,
+                         [FakeLLM("gemma-a", [LLMError("y", status=429)])])
+    r = start(client)
+    assert r.status_code == 502
+    assert any("gemma-a" in rec.getMessage() and "llm_error:429" in rec.getMessage()
+               for rec in caplog.records)
