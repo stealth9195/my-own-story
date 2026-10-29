@@ -20,8 +20,11 @@ def sign_segment(secret: str, story: StoryKey, index: int, segment: Segment) -> 
     return hmac.new(secret.encode(), payload.encode(), hashlib.sha256).hexdigest()
 
 
+def verify_segment(secret: str, story: StoryKey, index: int, item: SignedSegment) -> Segment:
+    if not hmac.compare_digest(sign_segment(secret, story, index, item.segment), item.sig):
+        raise BadSignature(index)
+    return item.segment
+
+
 def verify_history(secret: str, story: StoryKey, history: list[SignedSegment]) -> list[Segment]:
-    for index, item in enumerate(history):
-        if not hmac.compare_digest(sign_segment(secret, story, index, item.segment), item.sig):
-            raise BadSignature(index)
-    return [item.segment for item in history]
+    return [verify_segment(secret, story, index, item) for index, item in enumerate(history)]

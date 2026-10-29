@@ -39,6 +39,23 @@ class NextRequest(BaseModel):
     chosen: list[str]
 
 
+class TTSRequest(BaseModel):
+    """서버가 만든 구간만 읽는다 (서명 확인)."""
+    story: StoryKey
+    index: int = Field(ge=0)
+    segment: SignedSegment
+
+
+EventType = Literal["card_select", "choice_time", "drop_off", "complete", "replay", "mute", "error"]
+
+
+class EventRequest(BaseModel):
+    anon_id: str = Field(min_length=1, max_length=64)
+    story_id: str | None = Field(default=None, max_length=64)
+    type: EventType
+    payload: dict = {}
+
+
 class SegmentResponse(BaseModel):
     story: StoryKey
     index: int

@@ -13,4 +13,4 @@ def wav_to_mp3(wav: bytes, kbps: int = 48) -> bytes:
     enc.set_in_sample_rate(rate)
     enc.set_channels(channels)
     enc.set_quality(2)
-    return enc.encode(pcm) + enc.flush()
+    return bytes(enc.encode(pcm) + enc.flush())  # lameenc 는 bytearray 를 돌려준다

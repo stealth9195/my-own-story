@@ -1,17 +1,22 @@
 """서비스 API. 실행: uv run --env-file .env uvicorn --factory app.main:build_app --port 8000"""
 
+import json
 import logging
 import random
+import time
 import uuid
 from dataclasses import asdict
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 
 from app.api.limits import Limits
 from app.api.log import log_event
-from app.api.schemas import NextRequest, SegmentResponse, SignedSegment, StartRequest, StoryKey
-from app.api.signing import BadSignature, sign_segment, verify_history
-from app.api.tts_service import TTSFn, default_tts
+from app.api.schemas import (EventRequest, NextRequest, SegmentResponse, SignedSegment, StartRequest,
+                             StoryKey, TTSRequest)
+from app.api.signing import BadSignature, sign_segment, verify_history, verify_segment
+from app.api.tts_service import TTSFn, default_tts, synthesize_segment
 from app.api.voice import pick_voice
 from app.catalog import load_catalog
 from app.config import Settings
@@ -21,6 +26,9 @@ from app.story.prompt import StoryContext
 from app.story.safety import load_banned_words
 from app.story.schema import Segment
 from app.story.start import segment_types, start_options, valid_cards
+from app.tts.gemini import TTSError
+
+MAX_EVENT_PAYLOAD = 2000  # 사용 기록 payload 글자 수 (JSON)
 
 
 def _fail(status: int, code: str):
@@ -31,6 +39,8 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
                tts: TTSFn | None = None, limits: Limits | None = None,
                rng: random.Random | None = None) -> FastAPI:
     app = FastAPI(title="my-own-story")
+    app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins,
+                       allow_methods=["GET", "POST"], allow_headers=["Content-Type"])
     catalog, banned = load_catalog(), load_banned_words()
     tts = tts or default_tts(settings.gemini_api_key, settings.typecast_api_key)
     limits = limits or Limits(settings.daily_stories_per_user, settings.daily_stories_total)
@@ -87,6 +97,35 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
             if choice not in {c.id for c in seg.choices}:
                 _fail(400, "bad_choice")
         return generate(req.story, history, req.chosen)
+
+    @app.post("/api/tts")
+    def segment_tts(req: TTSRequest):
+        try:
+            segment = verify_segment(settings.story_secret, req.story, req.index, req.segment)
+        except BadSignature:
+            _fail(400, "bad_signature")
+        if req.story.voice.provider == "browser":
+            _fail(400, "browser_voice")
+        if not limits.allow_tts(req.story.id, req.index):
+            _fail(429, "tts_limit")
+        text = "\n".join(p.text for p in segment.pages)
+        started = time.perf_counter()
+        try:
+            audio = synthesize_segment(text, req.story.voice, tts)
+        except TTSError as e:
+            log_event("tts_failed", story_id=req.story.id, index=req.index,
+                      voice=req.story.voice.model_dump(), status=e.status)
+            _fail(502, "tts_failed")
+        log_event("tts", story_id=req.story.id, index=req.index, voice=req.story.voice.model_dump(),
+                  chars=len(text), bytes=len(audio), latency_ms=int((time.perf_counter() - started) * 1000))
+        return Response(audio, media_type="audio/mpeg")
+
+    @app.post("/api/events", status_code=204)
+    def event(req: EventRequest):
+        if len(json.dumps(req.payload, ensure_ascii=False)) > MAX_EVENT_PAYLOAD:
+            _fail(413, "payload_too_big")
+        log_event("client", anon_id=req.anon_id, story_id=req.story_id, type=req.type, payload=req.payload)
+        return Response(status_code=204)
 
     return app
 

@@ -26,6 +26,7 @@ def test_mp3_24k():  # Gemini TTS
     wav = sine_wav(24000)
     out = wav_to_mp3(wav)
     assert is_mp3(out) and len(out) < len(wav) / 4
+    assert type(out) is bytes  # lameenc 는 bytearray 를 돌려줌 → Response 가 처리 못 함
 
 
 def test_mp3_44k():  # Typecast
