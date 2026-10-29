@@ -4,7 +4,8 @@ from typing import Protocol
 from app.catalog import Catalog
 from app.llm.client import LLMError, LLMResponse
 from app.story.prompt import (StoryContext, _version_number, allowed_choices, build_messages,
-                              chosen_item, forbidden_choices, offered_phrases, unchosen_ids)
+                              choose_ending_kind, chosen_item, forbidden_choices, offered_phrases,
+                              unchosen_ids)
 
 # 관대한 모드에서도 한 번은 다시 쓰게 하는 경고: 아이의 선택이 이야기에 반영되지 않은 경우
 RETRY_WARNINGS = {"chosen_missing", "unchosen_used"}
@@ -57,14 +58,20 @@ def generate_segment(
     version: str = "v2",
     max_page_chars: int = 150,
     lenient: bool = False,
+    ending_kind: str | None = None,
 ) -> GenerationResult:
     """기본 1차 → (검증 실패 시) 기본 2차 → 예비 1회. 기본에서 LLMError면 바로 예비로."""
-    messages = build_messages(ctx, segment_type, catalog, version)
+    v8 = _version_number(version) >= 8
+    if v8 and ending_kind is None:  # v8: 끝맺음 종류는 코드가 정한다 (재시도해도 같은 종류)
+        ending_kind = choose_ending_kind(ctx, segment_type)
+    messages = build_messages(ctx, segment_type, catalog, version, ending_kind=ending_kind if v8 else None)
     rules = {"forbidden_choices": forbidden_choices(ctx), "forbidden_scene": unchosen_ids(ctx),
              "cards": ctx.cards, "forbidden_phrases": offered_phrases(ctx),
              "fill_pool": allowed_choices(ctx, catalog), "chosen_item": chosen_item(ctx) if _version_number(version) >= 6 else None}
     if _version_number(version) >= 7:  # v7: 선택지 3개, 도입·결말 3페이지, 중간 2~3페이지
         rules |= {"max_choices": 3, "page_range": (2, 3) if segment_type == "middle" else (3, 3)}
+    if v8:
+        rules |= {"intro_v8": True, "expected_kind": ending_kind}
     attempts: list[Attempt] = []
 
     def try_once(llm: LLM) -> Segment | None:

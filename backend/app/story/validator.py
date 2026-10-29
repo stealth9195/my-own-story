@@ -83,6 +83,8 @@ def _clean_scene(scene: Scene, catalog: Catalog, dropped: list[str]) -> Scene:
 
 
 MAX_PHRASE_CHARS = 20
+# 문장형 선택지는 빈칸을 채워 문장을 끝내는 답이라 '요', '다', 문장부호로 끝나야 한다 ('...', '~보니' 같은 미완성은 뺌)
+SENTENCE_END = re.compile(r"(요|다)[!.?~]*$|[!?]$")
 # 관대한 모드에서도 거절하는 오류: 읽을 수 없는 응답, 빈 본문, 한글 아님, 아이에게 부적절한 내용
 HARD_ERRORS = {"json", "schema", "empty_text", "not_korean", "unsafe"}
 
@@ -94,6 +96,7 @@ def _clean_phrases(choices: list[Choice], banned: list[str], dropped: list[str],
     for c in choices:
         label = c.label.strip()
         if (not HANGUL.search(label) or len(label) > MAX_PHRASE_CHARS or label in forbidden
+                or not SENTENCE_END.search(label)
                 or find_banned(label, banned) or label in [r.label for r in result]):
             dropped.append(label)
             continue
@@ -110,7 +113,7 @@ def _clean_choices(choices: list[Choice], catalog: Catalog, dropped: list[str],
             dropped.append(c.id)
         elif c.id not in seen:
             seen.add(c.id)
-            result.append(c)
+            result.append(Choice(kind="item", id=c.id, label=catalog.name_of(c.id)))
     return result[:MAX_CHOICES]
 
 
@@ -130,6 +133,22 @@ def _check_intro_cards(pages: list[Page], cards: set[str], catalog: Catalog) -> 
     return errors
 
 
+def _check_intro_v8(pages: list[Page], cards: list[str], catalog: Catalog) -> list[str]:
+    """v8 발단: 첫 페이지에 주인공, 발단 안에 사물, 장소 카드는 발단 안의 배경으로."""
+    errors = []
+    heroes = {c for c in cards if catalog.kind_of(c) == "character"}
+    objects = {c for c in cards if catalog.kind_of(c) == "object"}
+    places = {c for c in cards if catalog.kind_of(c) == "background"}
+    if heroes and not heroes & {c.id for c in pages[0].scene.characters}:
+        errors.append("hero_missing")
+    shown = set().union(*(_page_ids(p) for p in pages))
+    if not objects <= shown:
+        errors.append("cards_missing")
+    if places and not places & {p.scene.background for p in pages}:
+        errors.append("background_mismatch")
+    return errors
+
+
 def validate_segment(
     raw: str,
     segment_type: SegmentType,
@@ -145,6 +164,8 @@ def validate_segment(
     chosen_item: str | None = None,
     max_choices: int = MAX_CHOICES,
     page_range: tuple[int, int] | None = None,
+    intro_v8: bool = False,
+    expected_kind: str | None = None,
 ) -> ValidationResult:
     """forbidden_choices: 이미 나온 선택지(새 선택지에서 제거).
     forbidden_scene: 고르지 않은 선택지(장면에 나오면 실패)."""
@@ -155,6 +176,7 @@ def validate_segment(
         pages = [Page.model_validate(p) for p in data.get("pages", [])]
         choices = [Choice.model_validate(c) for c in data.get("choices") or []]
         sent_choices = [c.id or c.label for c in choices]
+        sent_kinds = {c.kind for c in choices}
     except (ValidationError, TypeError, AttributeError):
         return ValidationResult(ok=False, segment=None, errors=["schema"])
 
@@ -221,12 +243,19 @@ def validate_segment(
         errors.append("chosen_missing")
     # 느낌·행동 카드는 장면 id가 아니라서 도입 장면 검사에서 뺀다
     item_cards = {c for c in (cards or []) if c in catalog.choice_ids()}
-    if segment_type == "intro" and item_cards and pages:
-        errors += _check_intro_cards(pages, item_cards, catalog)
-    # 배경(장소) 카드를 골랐으면 첫 장면이 그 장소여야 한다
-    places = [c for c in (cards or []) if c in catalog.ids("backgrounds")]
-    if segment_type == "intro" and places and pages and pages[0].scene.background not in places:
-        errors.append("background_mismatch")
+    if intro_v8:
+        if segment_type == "intro" and cards and pages:
+            errors += _check_intro_v8(pages, cards, catalog)
+    else:
+        if segment_type == "intro" and item_cards and pages:
+            errors += _check_intro_cards(pages, item_cards, catalog)
+        # 배경(장소) 카드를 골랐으면 첫 장면이 그 장소여야 한다
+        places = [c for c in (cards or []) if c in catalog.ids("backgrounds")]
+        if segment_type == "intro" and places and pages and pages[0].scene.background not in places:
+            errors.append("background_mismatch")
+    # v8: 코드가 정한 선택지 종류(물건형/문장형)와 다르게 보냈으면
+    if expected_kind and sent_kinds and sent_kinds != {expected_kind}:
+        errors.append("wrong_kind")
 
     texts = [p.text for p in pages] + [c.label for c in choices]
     if any(find_banned(t, banned) for t in texts):

@@ -74,9 +74,9 @@ class Catalog(BaseModel):
                     return a.name
         raise KeyError(asset_id)
 
-    def prompt_listing(self) -> str:
+    def prompt_listing(self, exclude: set[str] = frozenset()) -> str:
         lines = []
-        for kind in KINDS:
+        for kind in (k for k in KINDS if k not in exclude):
             items = ", ".join(f"{a.id}({a.name})" for a in getattr(self, kind))
             lines.append(f"{kind}: {items}")
         return "\n".join(lines)
