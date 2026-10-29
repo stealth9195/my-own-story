@@ -42,3 +42,10 @@ export function storyTitle(saved: SavedStory): string {
 export function segmentText(seg: Segment): string {
   return seg.pages.map((p) => p.text).join("\n");
 }
+
+// 받침이 있으면 앞 조사(은/이), 없으면 뒤 조사(는/가). 예: 곰은, 오리는
+export function withJosa(word: string, withFinal: string, withoutFinal: string): string {
+  const code = word.charCodeAt(word.length - 1) - 0xac00;
+  const hasFinal = code >= 0 && code <= 11171 && code % 28 !== 0;
+  return word + (hasFinal ? withFinal : withoutFinal);
+}

@@ -1,0 +1,15 @@
+.waiting {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  font-size: 20px;
+  color: var(--muted);
+}
+.waiting-emoji { font-size: 96px; animation: bounce 0.9s ease-in-out infinite; }
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-24px); }
+}

@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import type { SegmentResponse, StoryKey } from "./api";
-import { addSegment, choose, nextArgs, pageAt, pageStartTimes, segmentText, storyTitle } from "./story";
+import { addSegment, choose, nextArgs, pageAt, pageStartTimes, segmentText, storyTitle, withJosa } from "./story";
 
 const story: StoryKey = { id: "s1", cards: ["duck", "kind", "birthday", "crown"], choice_count: 4,
                           voice: { provider: "gemini", model: "m", voice: "Kore" } };
@@ -47,4 +47,11 @@ test("storyTitle uses hero emoji and name", () => {
 
 test("segmentText joins pages", () => {
   expect(segmentText(res(0).segment.segment)).toBe("가나\n다라마");
+});
+
+test("withJosa picks particle by final consonant", () => {
+  expect(withJosa("오리", "은", "는")).toBe("오리는");
+  expect(withJosa("곰", "은", "는")).toBe("곰은");
+  expect(withJosa("오리", "이", "가")).toBe("오리가");
+  expect(withJosa("소방관", "이", "가")).toBe("소방관이");
 });
