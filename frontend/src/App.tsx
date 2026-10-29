@@ -4,6 +4,7 @@ import { stopAll } from "./audio";
 import { emojiOf } from "./catalog";
 import Home from "./screens/Home";
 import Problem from "./screens/Problem";
+import Reading from "./screens/Reading";
 import StartPick from "./screens/StartPick";
 import Waiting from "./screens/Waiting";
 import { getAnonId, saveStory } from "./storage";
@@ -51,13 +52,9 @@ export default function App() {
     case "problem":
       return <Problem code={problem!.code} onRetry={problem!.retry} onHome={goHome} />;
     case "reading":
-      // 읽기 화면은 Task 5 에서 만든다. 지금은 받은 글만 보여 준다
-      return (
-        <main className="temp">
-          {current?.segments.at(-1)?.segment.pages.map((p, i) => <p key={i}>{p.text}</p>)}
-          <button className="big-button soft" onClick={goHome}>🏠 처음으로</button>
-        </main>
-      );
+      // key: 이야기가 바뀌면 읽기 화면을 새로 만든다 (이전 이야기 상태가 남지 않게)
+      return <Reading key={current!.story.id} saved={current!} onUpdate={setCurrent} onHome={goHome}
+                      onNew={() => { stopAll(); setScreen("pick"); }} />;
     case "shelf":
       return <main className="temp"><p>책장은 곧 만들어요</p><button className="big-button soft" onClick={goHome}>🏠 처음으로</button></main>;
   }

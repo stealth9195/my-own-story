@@ -30,13 +30,13 @@ export function unlockAudio(): void {
 }
 
 // 질문·선택지 읽기용 브라우저 음성 (무료). 끝나면 resolve. 지원하지 않으면 바로 resolve
-export function speak(text: string): Promise<void> {
+export function speak(text: string, rate = 0.95): Promise<void> {
   if (typeof speechSynthesis === "undefined" || !text) return Promise.resolve();
   speechSynthesis.cancel();
   return new Promise((resolve) => {
     const u = new SpeechSynthesisUtterance(text);
     u.lang = "ko-KR";
-    u.rate = 0.95;
+    u.rate = rate;
     const done = () => { clearTimeout(timer); resolve(); };
     // 일부 브라우저는 끝 이벤트를 안 보내서, 글 길이로 넉넉히 잡은 시간이 지나면 끝난 것으로 본다
     const timer = setTimeout(done, 2000 + text.length * 250);
@@ -46,7 +46,38 @@ export function speak(text: string): Promise<void> {
   });
 }
 
+// 재생 순번. 화면을 떠나거나 다음 구간으로 가면 새 번호를 받는다.
+// 음성은 받는 데 10초 넘게 걸릴 수 있어서, 도착했을 때 번호가 바뀌었으면 재생하지 않는다
+let token = 0;
+
+export function playToken(): number {
+  token += 1;
+  return token;
+}
+
+export function isCurrent(t: number): boolean {
+  return t === token;
+}
+
 export function stopAll(): void {
+  playToken();
   if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
   player?.pause();
+}
+
+// 읽기 속도 (TTS 지시문 대신 재생 속도로 조절, 기기에 저장)
+export const SPEEDS = { slow: 0.85, normal: 1.0 } as const;
+export type Speed = keyof typeof SPEEDS;
+
+export function getSpeed(): Speed {
+  try {
+    return localStorage.getItem("speed") === "normal" ? "normal" : "slow";
+  } catch {
+    return "slow";
+  }
+}
+
+export function setSpeed(s: Speed): void {
+  try { localStorage.setItem("speed", s); } catch { /* 저장 못 해도 이번 재생에는 적용 */ }
+  if (player) player.playbackRate = SPEEDS[s];
 }

@@ -1,0 +1,196 @@
+import { useEffect, useRef, useState } from "react";
+import { ApiError, fetchSegmentAudio, nextSegment, sendEvent } from "../api";
+import type { Choice } from "../api";
+import { getSpeed, isCurrent, player, playToken, setSpeed, speak, SPEEDS, stopAll } from "../audio";
+import type { Speed } from "../audio";
+import { emojiOf } from "../catalog";
+import { getAnonId, getAudio, saveAudio, saveStory } from "../storage";
+import type { SavedStory } from "../storage";
+import { addSegment, choose, nextArgs, pageAt, pageStartTimes } from "../story";
+import Problem from "./Problem";
+import Waiting from "./Waiting";
+import "./Reading.css";
+
+type Props = { saved: SavedStory; onUpdate: (s: SavedStory) => void; onHome: () => void; onNew: () => void };
+
+// loading: 음성 받는 중(다음 장 잠금) / playing: 음성 재생 중 / manual: 음성 없이 버튼으로 넘김
+// choices: 선택지 / waiting: 다음 구간 만드는 중 / problem: 오류 / end: 결말까지 들음
+type Phase = "loading" | "playing" | "manual" | "choices" | "waiting" | "problem" | "end";
+
+// 같은 구간 음성 요청을 하나로 묶는다. 개발 모드(StrictMode)는 화면 준비를 두 번 실행하는데,
+// 그때마다 서버 음성을 부르면 구간당 2번 한도와 Gemini 하루 한도를 헛되이 쓴다
+const audioRequests = new Map<string, Promise<Blob>>();
+
+function loadAudio(saved: SavedStory, index: number): Promise<Blob> {
+  const key = `${saved.story.id}:${index}`;
+  let req = audioRequests.get(key);
+  if (!req) {
+    req = fetchSegmentAudio(saved.story, index, saved.segments[index])
+      .then(async (mp3) => { await saveAudio(saved.story.id, index, mp3); return mp3; })
+      .finally(() => audioRequests.delete(key));
+    audioRequests.set(key, req);
+  }
+  return req;
+}
+
+export default function Reading({ saved, onUpdate, onHome, onNew }: Props) {
+  const last = saved.segments.length - 1;
+  const [view, setView] = useState(last);       // 보여 주는 구간 (다시 듣기 때는 0부터)
+  const [replaying, setReplaying] = useState(false);
+  const [page, setPage] = useState(0);
+  const [phase, setPhase] = useState<Phase>("loading");
+  const [focus, setFocus] = useState<string | null>(null);
+  const [problem, setProblem] = useState("unknown");
+  const [speed, setSpeedState] = useState<Speed>(getSpeed());
+  // useRef: 화면을 다시 그려도 유지되지만, 바뀌어도 다시 그리지는 않는 값 (마지막 선택 요청 기억)
+  const pending = useRef<SavedStory | null>(null);
+
+  const signed = saved.segments[view];
+  const seg = signed.segment;
+  const isEnding = seg.type === "ending";
+
+  // 구간이 바뀔 때마다: 글을 먼저 보여 주고, 음성을 받아 오면 자동 재생
+  useEffect(() => {
+    const t = playToken();
+    setPage(0);
+    setFocus(null);
+    setPhase("loading");
+
+    const finish = () => {
+      if (!isCurrent(t)) return;
+      if (replaying && view < last) {
+        setView(view + 1);  // 다시 듣기: 다음 구간으로
+      } else if (seg.type === "ending") {
+        setReplaying(false);
+        setPhase("end");
+        if (!replaying) sendEvent(getAnonId(), "complete", saved.story.id);
+      } else {
+        setPhase("choices");
+        speak(seg.choices.map((c) => c.label).join(", "));
+      }
+    };
+
+    async function run() {
+      if (saved.story.voice.provider === "browser") {
+        // 서버 음성 한도가 없을 때: 처음부터 끝까지 브라우저 음성
+        setPhase("playing");
+        for (let i = 0; i < seg.pages.length; i++) {
+          if (!isCurrent(t)) return;
+          setPage(i);
+          await speak(seg.pages[i].text, SPEEDS[getSpeed()]);
+        }
+        finish();
+        return;
+      }
+      let mp3 = await getAudio(saved.story.id, view);
+      if (!mp3) {
+        try {
+          mp3 = await loadAudio(saved, view);
+        } catch {
+          if (isCurrent(t)) setPhase("manual");  // 음성 실패: 글만 보여 주고 버튼으로 넘김
+          return;
+        }
+      }
+      const audio = player;
+      if (!isCurrent(t) || !audio) return;  // 기다리는 동안 화면을 떠났으면 재생하지 않음
+      const url = URL.createObjectURL(mp3);
+      audio.src = url;
+      audio.playbackRate = SPEEDS[getSpeed()];
+      let starts = [0];
+      audio.onloadedmetadata = () => { starts = pageStartTimes(seg.pages.map((p) => p.text), audio.duration); };
+      audio.ontimeupdate = () => { if (isCurrent(t)) setPage(pageAt(audio.currentTime, starts)); };
+      audio.onended = () => { URL.revokeObjectURL(url); finish(); };
+      audio.play().then(() => { if (isCurrent(t)) setPhase("playing"); })
+        .catch(() => { if (isCurrent(t)) setPhase("manual"); });
+    }
+    run();
+    // 화면을 떠나면(또는 구간이 바뀌면) 재생을 멈춘다
+    return () => { if (isCurrent(t)) stopAll(); };
+  }, [view, replaying]);  // eslint-disable-line react-hooks/exhaustive-deps
+
+  function nextPage() {
+    if (page < seg.pages.length - 1) setPage(page + 1);
+    else if (isEnding) setPhase("end");
+    else { setPhase("choices"); speak(seg.choices.map((c) => c.label).join(", ")); }
+  }
+
+  async function request(s: SavedStory) {
+    pending.current = s;
+    setPhase("waiting");
+    try {
+      const { story, history, chosen } = nextArgs(s);
+      const res = await nextSegment(getAnonId(), story, history, chosen);
+      const updated = addSegment(s, res, s.createdAt);
+      await saveStory(updated);
+      onUpdate(updated);
+      setView(updated.segments.length - 1);
+    } catch (e) {
+      setProblem(e instanceof ApiError ? e.code : "unknown");
+      setPhase("problem");
+    }
+  }
+
+  function tapChoice(c: Choice) {
+    if (focus !== c.id) {  // 첫 터치: 읽어 주기
+      setFocus(c.id);
+      speak(c.label);
+      return;
+    }
+    const s = choose(saved, c.id);
+    saveStory(s);
+    onUpdate(s);
+    request(s);
+  }
+
+  function toggleSpeed() {
+    const next: Speed = speed === "slow" ? "normal" : "slow";
+    setSpeed(next);
+    setSpeedState(next);
+  }
+
+  if (phase === "waiting") return <Waiting emoji={emojiOf(seg.pages.at(-1)?.scene.characters[0]?.id ?? saved.story.cards[0])} />;
+  if (phase === "problem") return <Problem code={problem} onRetry={() => request(pending.current!)} onHome={onHome} />;
+
+  const scene = seg.pages[page].scene;
+  const actors = [...scene.characters.map((c) => c.id), ...scene.objects].slice(0, 4);
+
+  return (
+    <main className="reading">
+      <header className="reading-top">
+        <button className="icon-button" onClick={onHome} aria-label="처음으로">🏠</button>
+        <span className="reading-step">{view + 1} / {saved.story.choice_count + 1}</span>
+        <button className="icon-button" onClick={toggleSpeed}>{speed === "slow" ? "🐢 천천히" : "🐇 보통"}</button>
+      </header>
+
+      <section className={`scene bg-${scene.background}`} aria-hidden="true">
+        <span className="scene-bg">{emojiOf(scene.background)}</span>
+        <div className="scene-actors">{actors.map((id, i) => <span key={i} className="actor">{emojiOf(id)}</span>)}</div>
+      </section>
+
+      <p className="reading-text">{seg.pages[page].text}</p>
+
+      {phase === "loading" && <p className="reading-status">🔊 목소리를 준비하고 있어요</p>}
+      {phase === "manual" && <button className="big-button" onClick={nextPage}>다음 ▶</button>}
+
+      {phase === "choices" && (
+        <div className={`choices ${seg.choices[0]?.kind === "phrase" ? "phrases" : ""}`}>
+          {seg.choices.map((c) => (
+            <button key={c.id} className={`choice${focus === c.id ? " focus" : ""}`} onClick={() => tapChoice(c)}>
+              {c.kind === "item" && <span className="choice-emoji">{emojiOf(c.id)}</span>}
+              <span className="choice-label">{c.label}</span>
+            </button>
+          ))}
+          <p className="reading-status">{focus ? "한 번 더 누르면 골라요" : "무엇이 나올까요?"}</p>
+        </div>
+      )}
+
+      {phase === "end" && (
+        <div className="ending">
+          <p className="ending-title">🌟 끝 🌟</p>
+          <button className="big-button" onClick={() => { setReplaying(true); setView(0); }}>🔁 다시 듣기</button>
+          <button className="big-button soft" onClick={onNew}>✨ 새 이야기</button>
+        </div>
+      )}
+    </main>
+  );
+}
