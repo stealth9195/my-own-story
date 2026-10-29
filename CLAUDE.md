@@ -113,6 +113,9 @@ uv sync
 :: 이야기 생성·음성 실험 서버 (http://localhost:8000)
 uv run --env-file .env uvicorn app.lab.server:app --port 8000
 
+:: 서비스 API (http://localhost:8001/docs)
+uv run --env-file .env uvicorn --factory app.main:build_app --port 8001
+
 :: 테스트 (외부 API 호출 없음)
 uv run pytest
 
@@ -135,13 +138,17 @@ uv run --env-file .env python -m eval.tts_check
   - 이야기 구간 데이터 모델·출력 검증기, 프롬프트 조립, OpenAI 호환 LLM 클라이언트
   - 구간 생성기(검증 실패 재시도 + 예비 모델 전환)
   - 모델 평가 도구(생성·익명 내보내기·수동 심사·요약), TTS 비교(Azure, Gemini)
-  - 실험 서버·화면(lab), 프롬프트 v1~v4
-- 다음 후보: 프론트(React) 시작, 에셋 제작(ComfyUI + FLUX), 저장(Supabase), 배포
+  - 실험 서버·화면(lab), 프롬프트 v1~v8, Typecast TTS
+  - 저장 없는 서비스 API(2차): 처음 선택 후보·이야기 시작·다음 구간·구간 음성(MP3)·사용 기록, 서명·메모리 한도 (`rules/api.md`)
+- 다음 후보: 프론트(React, IndexedDB 책장) 시작, 에셋 제작(ComfyUI + FLUX), 배포
 - 하지 않기로 함:
   - 임베딩으로 그림·소리 매칭 — 프롬프트에 목록을 넣고 ID 만 고르게 하는 것으로 충분
   - MVP 로그인 — 기기별 익명 ID 로 시작, 구글 로그인은 이후
   - LLM 오류 종류별로 예비 모델 전환 막기 — 아이 사용 중 끊김을 줄이는 쪽을 택함(시도 기록으로 원인 확인)
+  - DB(Supabase) — 마감에 맞춰 서버는 저장 없이, 책장은 프론트 IndexedDB. 기기를 바꾸면 책장 없음
+  - OpenRouter(Nemotron) — 무료 하루 50회, 품질 문제. LLM 은 모두 Google 모델
 - 남은 문제:
-  - LLM 호출 기록을 파일로 남기지 않음(시각·모델·상태·걸린 시간·토큰)
-  - 설정 기본값이 최신 프롬프트와 다름(`config.py` v2, `run_generate` v1) — `PROMPT_VERSION`·`--version` 으로 지정해야 함
+  - 구간 생성 10~25초(목표 10초 이내). 대기 시간(`PRIMARY_TIMEOUT`) 값 미정
+  - 서비스 API 리뷰에서 미룬 작은 문제: 동시 시작 시 초과 예약, 시작 실패에도 한도 차감, anon_id 바꿔 전체 한도 소진 등 (배포 전 확인)
+  - `run_generate` 기본 프롬프트가 v1 — `--version` 으로 지정해야 함
   - 범위 축소(DB 제외, 에셋 수 등)는 프로토타입 후 결정

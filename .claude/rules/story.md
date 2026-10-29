@@ -13,7 +13,7 @@ paths:
 ## 프롬프트 버전
 - 새 버전은 `prompts/vN/system.md` 폴더를 새로 만든다. **이전 버전 파일은 고치지 않는다.**
   - 왜: 모델 평가 결과를 버전끼리 비교해야 하고, 그 비교가 발표의 수치 전후 근거가 된다.
-- 사용할 버전은 `.env` 의 `PROMPT_VERSION`, 평가 스크립트는 `--version` 으로 고른다. 코드 기본값(`config.py` v2, `run_generate` v1)은 최신이 아니다.
+- 사용할 버전은 `.env` 의 `PROMPT_VERSION`, 평가 스크립트는 `--version` 으로 고른다. 코드 기본값(`run_generate` v1)은 최신이 아니다.
 
 ## 에셋 목록
 - `shared/catalog.json` 은 프론트와 백엔드가 같이 쓴다. 그림·효과음·음악 ID 는 여기 있는 값만 허용한다.
