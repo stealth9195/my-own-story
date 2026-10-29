@@ -143,6 +143,8 @@ def validate_segment(
     fill_pool: list[str] | None = None,
     lenient: bool = False,
     chosen_item: str | None = None,
+    max_choices: int = MAX_CHOICES,
+    page_range: tuple[int, int] | None = None,
 ) -> ValidationResult:
     """forbidden_choices: 이미 나온 선택지(새 선택지에서 제거).
     forbidden_scene: 고르지 않은 선택지(장면에 나오면 실패)."""
@@ -160,7 +162,7 @@ def validate_segment(
     dropped: list[str] = []
     filled: list[str] = []
 
-    low, high = PAGE_RANGES[segment_type]
+    low, high = page_range or PAGE_RANGES[segment_type]
     if not low <= len(pages) <= high:
         errors.append("page_count")
 
@@ -203,9 +205,10 @@ def validate_segment(
                 used = {c.id for c in choices} | in_scene | set(forbidden_choices)
                 spare = [i for i in fill_pool if i not in used and i in catalog.choice_ids()]
                 random.shuffle(spare)
-                for i in spare[:MAX_CHOICES - len(choices)]:
+                for i in spare[:max_choices - len(choices)]:
                     choices.append(Choice(kind="item", id=i, label=catalog.name_of(i)))
                     filled.append(i)
+        choices = choices[:max_choices]
         if len(choices) < MIN_CHOICES and (lenient or "mixed_choices" not in errors):
             errors.append("choices")
 

@@ -63,6 +63,8 @@ def generate_segment(
     rules = {"forbidden_choices": forbidden_choices(ctx), "forbidden_scene": unchosen_ids(ctx),
              "cards": ctx.cards, "forbidden_phrases": offered_phrases(ctx),
              "fill_pool": allowed_choices(ctx, catalog), "chosen_item": chosen_item(ctx) if _version_number(version) >= 6 else None}
+    if _version_number(version) >= 7:  # v7: 선택지 3개, 도입·결말 3페이지, 중간 2~3페이지
+        rules |= {"max_choices": 3, "page_range": (2, 3) if segment_type == "middle" else (3, 3)}
     attempts: list[Attempt] = []
 
     def try_once(llm: LLM) -> Segment | None:

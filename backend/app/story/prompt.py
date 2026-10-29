@@ -14,6 +14,41 @@ INSTRUCTIONS: dict[str, str] = {
 }
 
 
+# v7: 도입·결말 3페이지, 중간 2~3페이지, 선택지 3개 (아이가 듣기에 짧게, 선택지 수를 일정하게)
+INSTRUCTIONS_V7: dict[str, str] = {
+    "intro": "도입부를 3페이지로 써. 선택지 3개 포함.",
+    "middle": "아이의 선택을 반영해서 이야기를 2~3페이지 이어 써. 선택지 3개 포함.",
+    "ending": (
+        "아이의 선택을 반영해서 이야기를 3페이지로 따뜻하게 마무리해. "
+        '갑자기 끊기지 않게. "choices"는 빈 배열.'
+    ),
+}
+
+# v7: 5단계 플롯. 구간 수(선택 횟수 + 1)에 맞춰 단계를 나눠 준다
+STAGES = ["발단", "전개", "위기", "절정", "결말"]
+STAGE_GOALS = {
+    "발단": "인물과 배경을 소개하고 작은 문제(사건의 실마리)를 보여줘",
+    "전개": "문제가 본격적으로 드러나고 일이 얽혀",
+    "위기": "뜻밖의 일로 문제가 더 어려워져",
+    "절정": "문제가 가장 커진 순간, 주인공이 스스로 마음을 정하거나 용기를 내",
+    "결말": "문제가 풀리고 따뜻하게 마무리돼",
+}
+
+
+def plot_stage(index: int, total: int) -> str:
+    """구간 번호(0부터)를 5단계 플롯 이름으로. 중간 구간이 3개보다 적으면 단계를 합친다."""
+    if index == 0:
+        return "발단"
+    if index == total - 1:
+        return "결말"
+    middle = ["전개", "위기", "절정"]
+    m = total - 2
+    if m >= 3:
+        return middle[min((index - 1) * 3 // m, 2)]
+    groups = [middle] if m == 1 else [middle[:1], middle[1:]]
+    return "·".join(groups[index - 1])
+
+
 @dataclass
 class StoryContext:
     cards: list[str]
@@ -106,7 +141,11 @@ def build_messages(
             parts.append("이미 나온 문장 선택지 (다시 쓰지 마): " + " / ".join(sorted(offered_phrases(ctx))))
     if _version_number(version) >= 5 and ctx.total_segments:
         parts.append(f"지금은 전체 {ctx.total_segments}구간 중 {len(ctx.history) + 1}번째 구간이야.")
-    parts.append(INSTRUCTIONS[segment_type])
+    if _version_number(version) >= 7 and ctx.total_segments:
+        stage = plot_stage(len(ctx.history), ctx.total_segments)
+        goals = " / ".join(STAGE_GOALS[s] for s in stage.split("·"))
+        parts.append(f"이번 구간은 이야기의 '{stage}' 단계야: {goals}")
+    parts.append((INSTRUCTIONS_V7 if _version_number(version) >= 7 else INSTRUCTIONS)[segment_type])
 
     return [
         {"role": "system", "content": system},
