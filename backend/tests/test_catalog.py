@@ -32,3 +32,11 @@ def test_name_of_and_listing():
     cat = load_catalog()
     assert cat.name_of("rabbit") == "토끼"
     assert "rabbit(토끼)" in cat.prompt_listing()
+
+
+def test_scene_assets_have_emoji():
+    # 그림 에셋이 나오기 전까지 프론트는 이모지로 카드·장면을 보여 준다
+    cat = load_catalog()
+    missing = [a.id for kind in ("characters", "objects", "backgrounds") for a in getattr(cat, kind)
+               if not a.emoji]
+    assert missing == []

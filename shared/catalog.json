@@ -5,6 +5,7 @@
     {
       "id": "meadow",
       "name": "풀밭",
+      "emoji": "🌼",
       "tags": [
         "자연"
       ]
@@ -12,6 +13,7 @@
     {
       "id": "forest",
       "name": "숲",
+      "emoji": "🌲",
       "tags": [
         "자연"
       ]
@@ -19,6 +21,7 @@
     {
       "id": "sea",
       "name": "바다",
+      "emoji": "🌊",
       "tags": [
         "물"
       ]
@@ -26,6 +29,7 @@
     {
       "id": "castle",
       "name": "성",
+      "emoji": "🏰",
       "tags": [
         "건물"
       ]
@@ -33,6 +37,7 @@
     {
       "id": "village",
       "name": "마을",
+      "emoji": "🏘️",
       "tags": [
         "건물"
       ]
@@ -56,6 +61,7 @@
     {
       "id": "rabbit",
       "name": "토끼",
+      "emoji": "🐰",
       "tags": [
         "동물"
       ],
@@ -64,6 +70,7 @@
     {
       "id": "bear",
       "name": "곰",
+      "emoji": "🐻",
       "tags": [
         "동물"
       ],
@@ -72,6 +79,7 @@
     {
       "id": "fox",
       "name": "여우",
+      "emoji": "🦊",
       "tags": [
         "동물"
       ]
@@ -79,6 +87,7 @@
     {
       "id": "cat",
       "name": "고양이",
+      "emoji": "🐱",
       "tags": [
         "동물"
       ],
@@ -87,6 +96,7 @@
     {
       "id": "puppy",
       "name": "강아지",
+      "emoji": "🐶",
       "tags": [
         "동물"
       ]
@@ -94,6 +104,7 @@
     {
       "id": "dragon",
       "name": "아기 용",
+      "emoji": "🐲",
       "tags": [
         "상상"
       ],
@@ -102,6 +113,7 @@
     {
       "id": "princess",
       "name": "공주",
+      "emoji": "👸",
       "tags": [
         "사람"
       ]
@@ -109,6 +121,7 @@
     {
       "id": "robot",
       "name": "로봇",
+      "emoji": "🤖",
       "tags": [
         "기계"
       ],
@@ -117,6 +130,7 @@
     {
       "id": "owl",
       "name": "부엉이",
+      "emoji": "🦉",
       "tags": [
         "동물"
       ]
@@ -124,6 +138,7 @@
     {
       "id": "dinosaur",
       "name": "공룡",
+      "emoji": "🦖",
       "tags": [
         "동물"
       ],
@@ -132,6 +147,7 @@
     {
       "id": "penguin",
       "name": "펭귄",
+      "emoji": "🐧",
       "tags": [
         "동물"
       ],
@@ -140,6 +156,7 @@
     {
       "id": "elephant",
       "name": "코끼리",
+      "emoji": "🐘",
       "tags": [
         "동물"
       ]
@@ -147,6 +164,7 @@
     {
       "id": "lion",
       "name": "사자",
+      "emoji": "🦁",
       "tags": [
         "동물"
       ]
@@ -154,6 +172,7 @@
     {
       "id": "monkey",
       "name": "원숭이",
+      "emoji": "🐵",
       "tags": [
         "동물"
       ]
@@ -161,6 +180,7 @@
     {
       "id": "giraffe",
       "name": "기린",
+      "emoji": "🦒",
       "tags": [
         "동물"
       ]
@@ -168,6 +188,7 @@
     {
       "id": "turtle",
       "name": "거북이",
+      "emoji": "🐢",
       "tags": [
         "동물"
       ]
@@ -175,6 +196,7 @@
     {
       "id": "squirrel",
       "name": "다람쥐",
+      "emoji": "🐿️",
       "tags": [
         "동물"
       ]
@@ -182,6 +204,7 @@
     {
       "id": "hedgehog",
       "name": "고슴도치",
+      "emoji": "🦔",
       "tags": [
         "동물"
       ]
@@ -189,6 +212,7 @@
     {
       "id": "duck",
       "name": "오리",
+      "emoji": "🦆",
       "tags": [
         "동물"
       ]
@@ -196,6 +220,7 @@
     {
       "id": "frog",
       "name": "개구리",
+      "emoji": "🐸",
       "tags": [
         "동물"
       ]
@@ -203,6 +228,7 @@
     {
       "id": "butterfly",
       "name": "나비",
+      "emoji": "🦋",
       "tags": [
         "곤충"
       ]
@@ -210,6 +236,7 @@
     {
       "id": "whale",
       "name": "고래",
+      "emoji": "🐳",
       "tags": [
         "바다"
       ]
@@ -217,6 +244,7 @@
     {
       "id": "unicorn",
       "name": "유니콘",
+      "emoji": "🦄",
       "tags": [
         "상상"
       ],
@@ -225,6 +253,7 @@
     {
       "id": "fairy",
       "name": "요정",
+      "emoji": "🧚",
       "tags": [
         "상상"
       ]
@@ -232,6 +261,7 @@
     {
       "id": "snowman",
       "name": "눈사람",
+      "emoji": "⛄",
       "tags": [
         "겨울"
       ]
@@ -239,6 +269,7 @@
     {
       "id": "wizard",
       "name": "마법사",
+      "emoji": "🧙",
       "tags": [
         "사람"
       ]
@@ -246,6 +277,7 @@
     {
       "id": "boy",
       "name": "남자아이",
+      "emoji": "👦",
       "tags": [
         "사람"
       ]
@@ -253,6 +285,7 @@
     {
       "id": "girl",
       "name": "여자아이",
+      "emoji": "👧",
       "tags": [
         "사람"
       ]
@@ -260,6 +293,7 @@
     {
       "id": "grandma",
       "name": "할머니",
+      "emoji": "👵",
       "tags": [
         "사람"
       ]
@@ -267,6 +301,7 @@
     {
       "id": "grandpa",
       "name": "할아버지",
+      "emoji": "👴",
       "tags": [
         "사람"
       ]
@@ -274,6 +309,7 @@
     {
       "id": "prince",
       "name": "왕자",
+      "emoji": "🤴",
       "tags": [
         "사람"
       ]
@@ -281,6 +317,7 @@
     {
       "id": "chef",
       "name": "요리사",
+      "emoji": "🧑‍🍳",
       "tags": [
         "사람"
       ]
@@ -288,6 +325,7 @@
     {
       "id": "firefighter",
       "name": "소방관",
+      "emoji": "🧑‍🚒",
       "tags": [
         "사람"
       ]
@@ -297,6 +335,7 @@
     {
       "id": "rose",
       "name": "장미",
+      "emoji": "🌹",
       "tags": [
         "꽃"
       ],
@@ -305,6 +344,7 @@
     {
       "id": "star",
       "name": "별",
+      "emoji": "⭐",
       "tags": [
         "하늘"
       ],
@@ -313,6 +353,7 @@
     {
       "id": "cake",
       "name": "케이크",
+      "emoji": "🎂",
       "tags": [
         "음식"
       ],
@@ -321,6 +362,7 @@
     {
       "id": "balloon",
       "name": "풍선",
+      "emoji": "🎈",
       "tags": [
         "놀이"
       ]
@@ -328,6 +370,7 @@
     {
       "id": "treasure_box",
       "name": "보물 상자",
+      "emoji": "🧰",
       "tags": [
         "모험"
       ]
@@ -335,6 +378,7 @@
     {
       "id": "magic_wand",
       "name": "요술봉",
+      "emoji": "🪄",
       "tags": [
         "마법"
       ]
@@ -342,6 +386,7 @@
     {
       "id": "rainbow",
       "name": "무지개",
+      "emoji": "🌈",
       "tags": [
         "하늘"
       ],
@@ -350,6 +395,7 @@
     {
       "id": "moon",
       "name": "달",
+      "emoji": "🌙",
       "tags": [
         "하늘"
       ]
@@ -357,6 +403,7 @@
     {
       "id": "ship",
       "name": "배",
+      "emoji": "⛵",
       "tags": [
         "물"
       ]
@@ -364,6 +411,7 @@
     {
       "id": "apple",
       "name": "사과",
+      "emoji": "🍎",
       "tags": [
         "음식"
       ]
@@ -371,6 +419,7 @@
     {
       "id": "umbrella",
       "name": "우산",
+      "emoji": "☂️",
       "tags": [
         "생활"
       ]
@@ -378,6 +427,7 @@
     {
       "id": "kite",
       "name": "연",
+      "emoji": "🪁",
       "tags": [
         "놀이"
       ]
@@ -385,6 +435,7 @@
     {
       "id": "map",
       "name": "지도",
+      "emoji": "🗺️",
       "tags": [
         "모험"
       ]
@@ -392,6 +443,7 @@
     {
       "id": "lantern",
       "name": "등불",
+      "emoji": "🏮",
       "tags": [
         "빛"
       ]
@@ -399,6 +451,7 @@
     {
       "id": "flower_crown",
       "name": "꽃 왕관",
+      "emoji": "💐",
       "tags": [
         "꽃"
       ]
@@ -406,6 +459,7 @@
     {
       "id": "cookie",
       "name": "쿠키",
+      "emoji": "🍪",
       "tags": [
         "음식"
       ]
@@ -413,6 +467,7 @@
     {
       "id": "honey",
       "name": "꿀단지",
+      "emoji": "🍯",
       "tags": [
         "음식"
       ]
@@ -420,6 +475,7 @@
     {
       "id": "music_box",
       "name": "오르골",
+      "emoji": "🎵",
       "tags": [
         "음악"
       ]
@@ -427,6 +483,7 @@
     {
       "id": "crown",
       "name": "왕관",
+      "emoji": "👑",
       "tags": [
         "보물"
       ]
@@ -434,6 +491,7 @@
     {
       "id": "ball",
       "name": "공",
+      "emoji": "⚽",
       "tags": [
         "놀이"
       ]
@@ -441,6 +499,7 @@
     {
       "id": "bicycle",
       "name": "자전거",
+      "emoji": "🚲",
       "tags": [
         "탈것"
       ]
@@ -448,6 +507,7 @@
     {
       "id": "key",
       "name": "열쇠",
+      "emoji": "🔑",
       "tags": [
         "모험"
       ]
@@ -455,6 +515,7 @@
     {
       "id": "letter",
       "name": "편지",
+      "emoji": "💌",
       "tags": [
         "생활"
       ]
@@ -462,6 +523,7 @@
     {
       "id": "snowflake",
       "name": "눈송이",
+      "emoji": "❄️",
       "tags": [
         "겨울"
       ]
@@ -469,6 +531,7 @@
     {
       "id": "seashell",
       "name": "조개껍데기",
+      "emoji": "🐚",
       "tags": [
         "바다"
       ]
