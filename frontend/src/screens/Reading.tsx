@@ -11,7 +11,9 @@ import Problem from "./Problem";
 import Waiting from "./Waiting";
 import "./Reading.css";
 
-type Props = { saved: SavedStory; onUpdate: (s: SavedStory) => void; onHome: () => void; onNew: () => void };
+// resume: 책장에서 연 이야기. 다 들은 이야기는 결말 화면부터, 아니면 마지막 선택지부터 시작
+type Props = { saved: SavedStory; resume?: boolean; onUpdate: (s: SavedStory) => void; onHome: () => void;
+               onNew: () => void };
 
 // loading: 음성 받는 중(다음 장 잠금) / playing: 음성 재생 중 / manual: 음성 없이 버튼으로 넘김
 // choices: 선택지 / waiting: 다음 구간 만드는 중 / problem: 오류 / end: 결말까지 들음
@@ -33,7 +35,7 @@ function loadAudio(saved: SavedStory, index: number): Promise<Blob> {
   return req;
 }
 
-export default function Reading({ saved, onUpdate, onHome, onNew }: Props) {
+export default function Reading({ saved, resume = false, onUpdate, onHome, onNew }: Props) {
   const last = saved.segments.length - 1;
   const [view, setView] = useState(last);       // 보여 주는 구간 (다시 듣기 때는 0부터)
   const [replaying, setReplaying] = useState(false);
@@ -44,6 +46,8 @@ export default function Reading({ saved, onUpdate, onHome, onNew }: Props) {
   const [speed, setSpeedState] = useState<Speed>(getSpeed());
   // useRef: 화면을 다시 그려도 유지되지만, 바뀌어도 다시 그리지는 않는 값 (마지막 선택 요청 기억)
   const pending = useRef<SavedStory | null>(null);
+  const resuming = useRef(resume);  // 이어하기로 연 구간에서만 true
+  const requesting = useRef(false);
 
   const signed = saved.segments[view];
   const seg = signed.segment;
@@ -71,6 +75,20 @@ export default function Reading({ saved, onUpdate, onHome, onNew }: Props) {
     };
 
     async function run() {
+      // resuming 은 다른 구간으로 넘어갈 때 끈다 (개발 모드는 이 준비를 두 번 실행하므로 여기서 끄면 안 됨)
+      if (resuming.current) {
+        if (saved.done) {
+          setPage(seg.pages.length - 1);
+          setPhase("end");
+        } else if (saved.chosen.length === saved.segments.length) {
+          request(saved);  // 고른 뒤 다음 구간을 받기 전에 멈췄던 이야기
+        } else {
+          setPage(seg.pages.length - 1);
+          setPhase("choices");
+          speak(seg.choices.map((c) => c.label).join(", "));
+        }
+        return;
+      }
       if (saved.story.voice.provider === "browser") {
         // 서버 음성 한도가 없을 때: 처음부터 끝까지 브라우저 음성
         setPhase("playing");
@@ -115,18 +133,23 @@ export default function Reading({ saved, onUpdate, onHome, onNew }: Props) {
   }
 
   async function request(s: SavedStory) {
-    pending.current = s;
     setPhase("waiting");
+    if (requesting.current) return;  // 같은 요청이 이미 가는 중 (두 번 보내면 구간당 2번 한도를 씀)
+    requesting.current = true;
+    pending.current = s;
     try {
       const { story, history, chosen } = nextArgs(s);
       const res = await nextSegment(getAnonId(), story, history, chosen);
       const updated = addSegment(s, res, s.createdAt);
       await saveStory(updated);
+      resuming.current = false;
       onUpdate(updated);
       setView(updated.segments.length - 1);
     } catch (e) {
       setProblem(e instanceof ApiError ? e.code : "unknown");
       setPhase("problem");
+    } finally {
+      requesting.current = false;
     }
   }
 
@@ -187,7 +210,7 @@ export default function Reading({ saved, onUpdate, onHome, onNew }: Props) {
       {phase === "end" && (
         <div className="ending">
           <p className="ending-title">🌟 끝 🌟</p>
-          <button className="big-button" onClick={() => { setReplaying(true); setView(0); }}>🔁 다시 듣기</button>
+          <button className="big-button" onClick={() => { resuming.current = false; setReplaying(true); setView(0); }}>🔁 다시 듣기</button>
           <button className="big-button soft" onClick={onNew}>✨ 새 이야기</button>
         </div>
       )}

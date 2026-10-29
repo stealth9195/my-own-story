@@ -1,8 +1,8 @@
 # My own story (my-own-story)
 
 4~7세 아이가 취향 카드와 선택지로 이야기를 이어 가는 AI 구연동화 웹앱(PWA).
-백엔드 FastAPI, 프론트 React(Vite, TypeScript, 아직 없음), DB 현재 없음(이후 Supabase 예정).
-외부 API: Gemini(이야기 생성·TTS 후보 1), OpenRouter(이야기 생성), Azure Speech(TTS 후보 2).
+백엔드 FastAPI(저장 없음), 프론트 React 19(Vite, TypeScript, 일반 CSS), 책장은 브라우저 IndexedDB.
+외부 API: Gemini(이야기 생성·TTS), Typecast(예비 TTS). OpenRouter·Azure 는 실험(eval)에서만.
 **운영비 0원 — 무료 티어만 쓴다.** 유료 서비스·과금 위험이 있는 선택은 그 위험을 함께 알린다.
 세부 규칙은 `.claude/rules/` 에 있고 해당 파일을 다룰 때 자동으로 읽힌다.
 
@@ -115,6 +115,15 @@ uv run --env-file .env uvicorn app.lab.server:app --port 8000
 
 :: 서비스 API (http://localhost:8001/docs)
 uv run --env-file .env uvicorn --factory app.main:build_app --port 8001
+```
+
+```bat
+:: 프론트 (http://localhost:5173, /api 는 8001 로 넘김) — frontend 폴더에서
+npm ci
+npm run dev
+:: 테스트·빌드
+npm test
+npm run build
 
 :: 테스트 (외부 API 호출 없음)
 uv run pytest
@@ -140,7 +149,8 @@ uv run --env-file .env python -m eval.tts_check
   - 모델 평가 도구(생성·익명 내보내기·수동 심사·요약), TTS 비교(Azure, Gemini)
   - 실험 서버·화면(lab), 프롬프트 v1~v8, Typecast TTS
   - 저장 없는 서비스 API(2차): 처음 선택 후보·이야기 시작·다음 구간·구간 음성(MP3)·사용 기록, 서명·메모리 한도 (`rules/api.md`)
-- 다음 후보: 프론트(React, IndexedDB 책장) 시작, 에셋 제작(ComfyUI + FLUX), 배포
+  - 프론트 MVP(3차): 처음 선택 4단계 → 읽기(음성 자동 재생·자동 페이지 넘김) → 선택지 → 결말 → 책장·이어하기, 그림은 이모지 (`rules/frontend.md`)
+- 다음 후보: 4차 — 그림 에셋 넣기(ComfyUI 제작 중), 효과음·음악, PWA, 배포(Cloudflare Pages + Cloud Run), 아이폰 실제 확인
 - 하지 않기로 함:
   - 임베딩으로 그림·소리 매칭 — 프롬프트에 목록을 넣고 ID 만 고르게 하는 것으로 충분
   - MVP 로그인 — 기기별 익명 ID 로 시작, 구글 로그인은 이후
