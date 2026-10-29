@@ -66,6 +66,15 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
                                sig=sign_segment(settings.story_secret, story, index, gen.segment))
         return SegmentResponse(story=story, index=index, segment=signed, done=seg_type == "ending")
 
+    def charge_extra(voice, extra_calls: int, chars: int) -> None:
+        """예약분을 넘어 실제로 더 부른 만큼 사용량에 더한다 (재시도·같은 구간 두 번째 요청)."""
+        if extra_calls <= 0:
+            return
+        if voice.provider == "gemini":
+            limits.reserve_gemini(voice.model, extra_calls)
+        elif voice.provider == "typecast":
+            limits.reserve_typecast(chars * extra_calls)
+
     @app.get("/api/start-options")
     def get_start_options():
         return start_options(catalog, rng)
@@ -96,6 +105,8 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
         for seg, choice in zip(history, req.chosen):
             if choice not in {c.id for c in seg.choices}:
                 _fail(400, "bad_choice")
+        if not limits.allow_generate(req.story.id, len(history)):
+            _fail(429, "regen_limit")
         return generate(req.story, history, req.chosen)
 
     @app.post("/api/tts")
@@ -106,16 +117,27 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
             _fail(400, "bad_signature")
         if req.story.voice.provider == "browser":
             _fail(400, "browser_voice")
+        reserved = limits.tts_requests(req.story.id, req.index) == 0  # 구간마다 첫 호출 1번은 시작 때 예약됨
         if not limits.allow_tts(req.story.id, req.index):
             _fail(429, "tts_limit")
         text = "\n".join(p.text for p in segment.pages)
+        voice = req.story.voice
+        calls = 0
+
+        def counted(text: str, voice):
+            nonlocal calls
+            calls += 1
+            return tts(text, voice)
+
         started = time.perf_counter()
         try:
-            audio = synthesize_segment(text, req.story.voice, tts)
+            audio = synthesize_segment(text, voice, counted)
         except TTSError as e:
+            charge_extra(voice, calls - reserved, len(text))
             log_event("tts_failed", story_id=req.story.id, index=req.index,
                       voice=req.story.voice.model_dump(), status=e.status)
             _fail(502, "tts_failed")
+        charge_extra(voice, calls - reserved, len(text))
         log_event("tts", story_id=req.story.id, index=req.index, voice=req.story.voice.model_dump(),
                   chars=len(text), bytes=len(audio), latency_ms=int((time.perf_counter() - started) * 1000))
         return Response(audio, media_type="audio/mpeg")

@@ -20,7 +20,7 @@ class FakeTTS:
     def __call__(self, text, voice):
         self.calls += 1
         if self.fail:
-            raise TTSError("limit", status=429)
+            raise TTSError("busy", status=500)
         return sine_wav(24000, 0.2)
 
 
@@ -102,3 +102,28 @@ def test_cors_allows_dev_origin():
     r = client.options("/api/stories", headers={"Origin": "https://evil.example",
                                                 "Access-Control-Request-Method": "POST"})
     assert r.headers.get("access-control-allow-origin") is None
+
+
+def test_extra_tts_calls_charged():
+    # 시작 때 구간마다 1번씩 예약. 다시 부른 만큼(재시도·두 번째 요청)은 실제 사용량에 더한다
+    limits = Limits(per_user=3, total=30)
+    tts = FakeTTS()
+    client, _ = make([seg(0)], tts=tts, limits=limits)
+    r0 = start(client).json()
+    model = r0["story"]["voice"]["model"]
+    assert limits.gemini_left(model) == 7          # 선택 2번 → 3구간 예약
+    client.post("/api/tts", json=tts_req(r0))
+    assert limits.gemini_left(model) == 7          # 첫 호출은 예약분
+    client.post("/api/tts", json=tts_req(r0))
+    assert limits.gemini_left(model) == 6          # 두 번째 요청은 추가 사용
+
+
+def test_tts_rate_limited_not_retried():
+    class RateLimited(FakeTTS):
+        def __call__(self, text, voice):
+            self.calls += 1
+            raise TTSError("limit", status=429)
+    client, tts = make([seg(0)], tts=RateLimited())
+    r0 = start(client).json()
+    assert client.post("/api/tts", json=tts_req(r0)).status_code == 502
+    assert tts.calls == 1

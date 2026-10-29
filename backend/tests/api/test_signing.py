@@ -46,8 +46,15 @@ def test_other_secret_rejected():
 
 
 def test_settings_defaults():
-    s = Settings(primary_base_url="x", primary_api_key="k", primary_model="m", story_secret="s",
+    s = Settings(primary_base_url="x", primary_api_key="k", primary_model="m", story_secret="s" * 32,
                  _env_file=None)
     assert s.prompt_version == "v8"
     assert s.daily_stories_per_user == 3 and s.daily_stories_total == 30
     assert s.cors_origins == ["http://localhost:5173"]
+
+
+def test_settings_rejects_short_secret():
+    # 빈 비밀값이면 누구나 서명을 만들 수 있다 (.env.example 을 그대로 복사한 경우)
+    with pytest.raises(ValueError):
+        Settings(primary_base_url="x", primary_api_key="k", primary_model="m", story_secret="",
+                 _env_file=None)

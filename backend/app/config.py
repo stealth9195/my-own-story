@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     max_page_chars: int = 150
 
     # 서비스 API: 구간 서명 비밀값, TTS 키, 하루 한도(KST), 허용할 프론트 주소
-    story_secret: str
+    story_secret: str = Field(min_length=32)  # 비면 누구나 서명을 만들 수 있다
     gemini_api_key: str = ""
     typecast_api_key: str = ""
     daily_stories_per_user: int = 3

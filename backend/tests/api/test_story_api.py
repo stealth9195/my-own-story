@@ -12,7 +12,7 @@ from app.main import create_app
 from conftest import CHOICE_SETS, FakeLLM, segment_json
 
 CARDS = ["rabbit", "rose", "star"]
-SECRET = "test-secret-value"
+SECRET = "test-secret-value-" + "x" * 32
 
 
 def settings(**kw) -> Settings:
@@ -145,3 +145,14 @@ def test_log_has_no_secret(caplog):
     assert '"kind": "segment"' in text
     for secret in (SECRET, "primary-key-value", "gemini-key-value"):
         assert secret not in text
+
+
+def test_next_regeneration_limited():
+    # 같은 이력으로 다음 구간을 계속 다시 요청해 무료 한도를 다 쓰지 못하게 (구간마다 2번까지)
+    client, llm = make([seg(0), seg(1, "dragon"), seg(1, "dragon")])
+    r0 = start(client).json()
+    codes = [nxt(client, r0, [r0["segment"]], ["dragon"]).status_code for _ in range(3)]
+    assert codes == [200, 200, 429]
+    r = nxt(client, r0, [r0["segment"]], ["cake"])  # 선택을 바꿔도 같은 구간
+    assert r.status_code == 429 and r.json()["detail"]["code"] == "regen_limit"
+    assert llm.calls == 3

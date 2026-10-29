@@ -28,7 +28,7 @@ def test_retry_once_then_ok():
 
 
 def test_fail_twice_raises():
-    tts = FakeTTS([TTSError("limit", status=429), TTSError("limit", status=429)])
+    tts = FakeTTS([TTSError("busy", status=500), TTSError("busy", status=500)])
     with pytest.raises(TTSError):
         synthesize_segment("안녕", VOICE, tts)
     assert tts.calls == 2
@@ -39,3 +39,11 @@ def test_browser_voice_not_called():
     with pytest.raises(ValueError):
         synthesize_segment("안녕", Voice(provider="browser"), tts)
     assert tts.calls == 0
+
+
+def test_rate_limit_not_retried():
+    # 429 는 한도 초과라 바로 다시 불러도 실패하고 한도만 더 쓴다
+    tts = FakeTTS([TTSError("limit", status=429)])
+    with pytest.raises(TTSError):
+        synthesize_segment("안녕", VOICE, tts)
+    assert tts.calls == 1

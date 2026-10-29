@@ -7,6 +7,8 @@ from app.tts.gemini import TTSError
 
 # 본문 → WAV
 TTSFn = Callable[[str, Voice], bytes]
+# 한도 초과(429)·크레딧 부족(402)은 바로 다시 불러도 실패하고 한도만 더 쓴다
+NO_RETRY = {429, 402}
 
 
 def default_tts(gemini_key: str, typecast_key: str) -> TTSFn:
@@ -24,6 +26,8 @@ def synthesize_segment(text: str, voice: Voice, tts: TTSFn) -> bytes:
         raise ValueError("브라우저 TTS 이야기는 서버에서 음성을 만들지 않음")
     try:
         wav = tts(text, voice)
-    except TTSError:
+    except TTSError as e:
+        if e.status in NO_RETRY:
+            raise
         wav = tts(text, voice)
     return wav_to_mp3(wav)

@@ -55,3 +55,20 @@ def test_allow_tts_twice():
     limits = Limits(per_user=3, total=30, clock=Clock(datetime(2026, 10, 29, 12, tzinfo=KST)))
     assert [limits.allow_tts("a", 0) for _ in range(3)] == [True, True, False]
     assert limits.allow_tts("a", 1) is True
+
+
+def test_gemini_resets_at_pacific_midnight():
+    # Gemini 무료 한도는 태평양 시간 자정에 초기화된다 (KST 16~17시)
+    clock = Clock(datetime(2026, 10, 30, 10, tzinfo=KST))   # PDT 10/29 18:00
+    limits = Limits(per_user=3, total=30, clock=clock)
+    limits.reserve_gemini("m", 10)
+    clock.now = datetime(2026, 10, 30, 15, tzinfo=KST)      # PDT 10/29 23:00
+    assert limits.gemini_left("m") == 0
+    clock.now = datetime(2026, 10, 30, 17, tzinfo=KST)      # PDT 10/30 01:00
+    assert limits.gemini_left("m") == 10
+
+
+def test_allow_generate_twice_per_segment():
+    limits = Limits(per_user=3, total=30, clock=Clock(datetime(2026, 10, 29, 12, tzinfo=KST)))
+    assert [limits.allow_generate("a", 1) for _ in range(3)] == [True, True, False]
+    assert limits.allow_generate("a", 2) is True
