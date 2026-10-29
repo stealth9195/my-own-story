@@ -152,13 +152,17 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
     return app
 
 
-def build_app() -> FastAPI:
-    logging.basicConfig(level=logging.INFO, format="%(message)s")
-    s = Settings()
+def build_clients(s: Settings) -> tuple[OpenAICompatClient, OpenAICompatClient | None]:
     primary = OpenAICompatClient(s.primary_base_url, s.primary_api_key, s.primary_model,
-                                 json_mode=s.primary_json_mode)
+                                 json_mode=s.primary_json_mode, timeout=s.primary_timeout)
     secondary = None
     if s.secondary_base_url and s.secondary_api_key and s.secondary_model:
         secondary = OpenAICompatClient(s.secondary_base_url, s.secondary_api_key, s.secondary_model,
-                                       json_mode=s.secondary_json_mode)
-    return create_app(s, primary, secondary)
+                                       json_mode=s.secondary_json_mode, timeout=s.secondary_timeout)
+    return primary, secondary
+
+
+def build_app() -> FastAPI:
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+    s = Settings()
+    return create_app(s, *build_clients(s))
