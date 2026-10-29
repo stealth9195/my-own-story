@@ -38,7 +38,6 @@ function loadAudio(saved: SavedStory, index: number): Promise<Blob> {
 export default function Reading({ saved, resume = false, onUpdate, onHome, onNew }: Props) {
   const last = saved.segments.length - 1;
   const [view, setView] = useState(last);       // 보여 주는 구간 (다시 듣기 때는 0부터)
-  const [replaying, setReplaying] = useState(false);
   const [page, setPage] = useState(0);
   const [phase, setPhase] = useState<Phase>("loading");
   const [focus, setFocus] = useState<string | null>(null);
@@ -48,6 +47,8 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
   const pending = useRef<SavedStory | null>(null);
   const resuming = useRef(resume);  // 이어하기로 연 구간에서만 true
   const requesting = useRef(false);
+  // 다시 듣기 중인지. 화면에 보일 값이 아니라서 ref (state 로 두면 바뀔 때 구간 준비가 다시 실행돼 결말을 또 재생했음)
+  const replaying = useRef(false);
 
   const signed = saved.segments[view];
   const seg = signed.segment;
@@ -60,19 +61,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
     setFocus(null);
     setPhase("loading");
 
-    const finish = () => {
-      if (!isCurrent(t)) return;
-      if (replaying && view < last) {
-        setView(view + 1);  // 다시 듣기: 다음 구간으로
-      } else if (seg.type === "ending") {
-        setReplaying(false);
-        setPhase("end");
-        if (!replaying) sendEvent(getAnonId(), "complete", saved.story.id);
-      } else {
-        setPhase("choices");
-        speak(seg.choices.map((c) => c.label).join(", "));
-      }
-    };
+    const finish = () => { if (isCurrent(t)) afterSegment(); };
 
     async function run() {
       // resuming 은 다른 구간으로 넘어갈 때 끈다 (개발 모드는 이 준비를 두 번 실행하므로 여기서 끄면 안 됨)
@@ -124,12 +113,25 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
     run();
     // 화면을 떠나면(또는 구간이 바뀌면) 재생을 멈춘다
     return () => { if (isCurrent(t)) stopAll(); };
-  }, [view, replaying]);  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [view]);  // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 구간 하나를 다 읽은 뒤 (음성이 끝났거나, 음성 없이 마지막 쪽에서 "다음"을 눌렀을 때)
+  function afterSegment() {
+    if (replaying.current && view < last) {
+      setView(view + 1);  // 다시 듣기: 다음 구간으로 (지난 선택지는 보여 주지 않음)
+    } else if (isEnding) {
+      if (!replaying.current) sendEvent(getAnonId(), "complete", saved.story.id);
+      replaying.current = false;
+      setPhase("end");
+    } else {
+      setPhase("choices");
+      speak(seg.choices.map((c) => c.label).join(", "));
+    }
+  }
 
   function nextPage() {
     if (page < seg.pages.length - 1) setPage(page + 1);
-    else if (isEnding) setPhase("end");
-    else { setPhase("choices"); speak(seg.choices.map((c) => c.label).join(", ")); }
+    else afterSegment();
   }
 
   async function request(s: SavedStory) {
@@ -210,7 +212,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
       {phase === "end" && (
         <div className="ending">
           <p className="ending-title">🌟 끝 🌟</p>
-          <button className="big-button" onClick={() => { resuming.current = false; setReplaying(true); setView(0); }}>🔁 다시 듣기</button>
+          <button className="big-button" onClick={() => { resuming.current = false; replaying.current = true; setView(0); }}>🔁 다시 듣기</button>
           <button className="big-button soft" onClick={onNew}>✨ 새 이야기</button>
         </div>
       )}

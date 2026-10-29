@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { ApiError, fetchSegmentAudio, nextSegment, sendEvent, startStory } from "./api";
+import { ApiError, AUDIO_TIMEOUT_MS, fetchSegmentAudio, nextSegment, sendEvent, startStory, STORY_TIMEOUT_MS } from "./api";
 import type { SignedSegment, StoryKey } from "./api";
 
 const calls: { url: string; init?: RequestInit }[] = [];
@@ -64,5 +64,35 @@ describe("api", () => {
     globalThis.fetch = vi.fn(async () => { throw new TypeError("offline"); }) as typeof fetch;
     expect(() => sendEvent("anon", "complete", "s1")).not.toThrow();
     await new Promise((r) => setTimeout(r, 0));
+  });
+});
+
+describe("timeouts", () => {
+  // 응답이 오지 않는 fetch: abort 신호가 오면 그때 실패한다
+  function hangingFetch() {
+    globalThis.fetch = vi.fn((_url: string | URL | Request, init?: RequestInit) =>
+      new Promise<Response>((_, reject) => {
+        init?.signal?.addEventListener("abort", () => reject(new DOMException("aborted", "AbortError")));
+      })) as typeof fetch;
+  }
+
+  test("hung story request becomes network error", async () => {
+    vi.useFakeTimers();
+    hangingFetch();
+    const p = startStory("anon", story.cards).catch((e) => e);
+    await vi.advanceTimersByTimeAsync(STORY_TIMEOUT_MS + 1);
+    const err = await p;
+    expect(err).toBeInstanceOf(ApiError);
+    expect(err.code).toBe("network");
+    vi.useRealTimers();
+  });
+
+  test("hung audio request becomes network error", async () => {
+    vi.useFakeTimers();
+    hangingFetch();
+    const p = fetchSegmentAudio(story, 0, signed).catch((e) => e);
+    await vi.advanceTimersByTimeAsync(AUDIO_TIMEOUT_MS + 1);
+    expect((await p).code).toBe("network");
+    vi.useRealTimers();
   });
 });

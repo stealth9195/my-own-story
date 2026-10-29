@@ -60,16 +60,30 @@ export class ApiError extends Error {
 
 const BASE = import.meta.env.VITE_API_BASE ?? "";
 
-async function request(path: string, body?: unknown): Promise<Response> {
+// 응답을 기다리는 최대 시간. 휴대폰 네트워크가 끊겨 응답이 안 오면 아이가 대기 화면에 갇히므로
+// 시간이 지나면 "network" 오류로 바꿔 "다시 해볼까요?"를 보여 준다.
+// 서버는 구간 생성에 최대 약 2분(모델 대기 60초 + 다시 생성), 음성은 10~20초(재시도 포함하면 더) 걸릴 수 있다
+export const STORY_TIMEOUT_MS = 120_000;
+export const AUDIO_TIMEOUT_MS = 90_000;
+const DEFAULT_TIMEOUT_MS = 20_000;
+
+async function request(path: string, body?: unknown, timeoutMs = DEFAULT_TIMEOUT_MS): Promise<Response> {
+  const abort = new AbortController();
+  const timer = setTimeout(() => abort.abort(), timeoutMs);
   let res: Response;
   try {
-    res = await fetch(BASE + path, body === undefined ? undefined : {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+    res = await fetch(BASE + path, {
+      signal: abort.signal,
+      ...(body === undefined ? {} : {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }),
     });
   } catch {
     throw new ApiError(0, "network");
+  } finally {
+    clearTimeout(timer);
   }
   if (!res.ok) {
     const data = await res.json().catch(() => null);
@@ -83,16 +97,16 @@ export async function getStartOptions(): Promise<StartOptions> {
 }
 
 export async function startStory(anonId: string, cards: string[], choiceCount = 4): Promise<SegmentResponse> {
-  return (await request("/api/stories", { anon_id: anonId, cards, choice_count: choiceCount })).json();
+  return (await request("/api/stories", { anon_id: anonId, cards, choice_count: choiceCount }, STORY_TIMEOUT_MS)).json();
 }
 
 export async function nextSegment(anonId: string, story: StoryKey, history: SignedSegment[],
                                   chosen: string[]): Promise<SegmentResponse> {
-  return (await request("/api/stories/next", { anon_id: anonId, story, history, chosen })).json();
+  return (await request("/api/stories/next", { anon_id: anonId, story, history, chosen }, STORY_TIMEOUT_MS)).json();
 }
 
 export async function fetchSegmentAudio(story: StoryKey, index: number, segment: SignedSegment): Promise<Blob> {
-  return (await request("/api/tts", { story, index, segment })).blob();
+  return (await request("/api/tts", { story, index, segment }, AUDIO_TIMEOUT_MS)).blob();
 }
 
 // 사용 기록. 실패해도 무시한다 (기록 때문에 이야기가 멈추면 안 됨)
