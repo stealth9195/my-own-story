@@ -21,6 +21,7 @@ from app.story.generator import LLM, GenerationFailed, generate_segment
 from app.story.prompt import StoryContext
 from app.story.safety import load_banned_words
 from app.tts import gemini as gemini_tts
+from app.tts import typecast as typecast_tts
 
 BACKEND_DIR = Path(__file__).resolve().parents[2]
 PAGE = Path(__file__).with_name("lab.html")
@@ -74,7 +75,16 @@ def prompt_versions() -> list[str]:
 
 
 def default_tts(text: str, voice: str, model: str, style: str) -> bytes:
+    if model in typecast_tts.MODELS:
+        return typecast_tts.synthesize(text, voice, os.environ.get("TYPECAST_API_KEY", ""), model, style)
     return gemini_tts.synthesize(text, voice, os.environ.get("GEMINI_API_KEY", ""), model, style)
+
+
+def tts_voices() -> dict[str, list[dict]]:
+    """음성 모델마다 고를 수 있는 목소리 (값: id, 표시: name)"""
+    gemini = [{"id": v, "name": v} for v in gemini_tts.VOICES]
+    typecast = [{"id": i, "name": n} for i, n in typecast_tts.VOICES.items()]
+    return {**{m: gemini for m in gemini_tts.MODELS}, **{m: typecast for m in typecast_tts.MODELS}}
 
 
 def segment_types(choice_count: int) -> list[str]:
@@ -147,8 +157,8 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
                        "emoji": catalog.emoji_of(c)} for c in catalog.card_ids()],
             "models": list(models),
             "model_ids": {n: labels.get(n, n) for n in models},
-            "tts_models": gemini_tts.MODELS,
-            "voices": gemini_tts.VOICES,
+            "tts_models": gemini_tts.MODELS + typecast_tts.MODELS,
+            "voices": tts_voices(),
             "tts_styles": list(gemini_tts.STYLES),
             "prompt_versions": prompt_versions(),
         }
@@ -208,7 +218,7 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
         try:
             audio = tts_fn(req.text, req.voice, req.model, req.style)
         except gemini_tts.TTSError as e:
-            status = e.status if e.status in (400, 429) else 502
+            status = e.status if e.status in (400, 402, 429) else 502  # 402: Typecast 크레딧 부족
             raise HTTPException(status, str(e)[:300])
         return Response(audio, media_type="audio/wav")
 

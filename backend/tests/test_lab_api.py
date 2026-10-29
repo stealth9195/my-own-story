@@ -130,3 +130,30 @@ def test_unknown_fallback_model_rejected():
     r = client.post("/api/stories", json={"cards": CARDS, "model": "fake", "fallback_model": "nope",
                                           "choice_count": 2})
     assert r.status_code == 400
+
+
+def test_config_lists_voices_per_tts_model():
+    client, _ = make([])
+    data = client.get("/api/config").json()
+    assert "ssfm-v30" in data["tts_models"]
+    assert set(data["voices"]) == set(data["tts_models"])
+    assert {"id": "Kore", "name": "Kore"} in data["voices"]["gemini-2.5-flash-preview-tts"]
+
+
+def test_tts_credit_error_passes_status():
+    def fail(*args):
+        raise TTSError("credits", status=402)
+
+    client, _ = make([], tts=fail)
+    r = client.post("/api/tts", json={"text": "안녕", "voice": "tc_x", "model": "ssfm-v30"})
+    assert r.status_code == 402
+
+
+def test_default_tts_routes_by_model(monkeypatch):
+    from app.lab import api
+    calls = []
+    monkeypatch.setattr(api.typecast_tts, "synthesize", lambda *a: calls.append("typecast") or b"")
+    monkeypatch.setattr(api.gemini_tts, "synthesize", lambda *a: calls.append("gemini") or b"")
+    api.default_tts("안녕", "tc_x", "ssfm-v30", "slow")
+    api.default_tts("안녕", "Kore", "gemini-2.5-flash-preview-tts", "slow")
+    assert calls == ["typecast", "gemini"]

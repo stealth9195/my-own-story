@@ -59,7 +59,7 @@
       <label>음성 모델 <select id="ttsModel"></select></label>
       <label>목소리 <select id="voice"></select></label>
       <label>속도 <select id="ttsStyle"><option value="slow">천천히</option><option value="normal">보통</option></select></label>
-      <span class="muted">음성은 모델마다 하루 10회라 버튼을 눌렀을 때만 만들어요.</span>
+      <span class="muted">음성은 한도가 작아서(Gemini 모델마다 하루 10회, Typecast 월 15,000자) 버튼을 눌렀을 때만 만들어요.</span>
     </div>
     <div class="row" style="margin-top:14px">
       <strong id="stepQuestion" style="font-size:17px"></strong>
@@ -107,7 +107,12 @@ async function init() {
   $("fallback").innerHTML = `<option value="">없음</option>` + cfg.models.map(m => `<option value="${m}">${label(m)}</option>`).join("");
   if (cfg.models.length > 1) $("fallback").value = cfg.models[1];
   $("promptVersion").value = cfg.prompt_versions[cfg.prompt_versions.length - 1];
-  option($("voice"), cfg.voices);
+  // 음성 모델마다 목소리 목록이 다르다 (Gemini: 이름, Typecast: tc_ ID)
+  const fillVoices = () => {
+    $("voice").innerHTML = (cfg.voices[$("ttsModel").value] ?? []).map(v => `<option value="${v.id}">${v.name}</option>`).join("");
+  };
+  $("ttsModel").onchange = fillVoices;
+  fillVoices();
   noModels = cfg.models.length === 0;
   await loadStartOptions();
 }
@@ -209,9 +214,10 @@ function renderSegment(seg) {
       const audio = document.createElement("audio");
       audio.controls = true; audio.src = url; audio.autoplay = true;
       el.appendChild(audio);
-      status.textContent = `${((performance.now() - t0) / 1000).toFixed(1)}초 · ${$("ttsModel").value} / ${$("voice").value} / ${$("ttsStyle").selectedOptions[0].text}`;
+      status.textContent = `${((performance.now() - t0) / 1000).toFixed(1)}초 · ${$("ttsModel").value} / ${$("voice").selectedOptions[0]?.text} / ${$("ttsStyle").selectedOptions[0].text}`;
     } catch (e) {
-      status.textContent = e.status === 429 ? "이 음성 모델의 오늘 한도를 다 썼어요. 다른 모델을 골라보세요." : errorText(e);
+      status.textContent = e.status === 429 ? "이 음성 모델의 오늘 한도를 다 썼어요. 다른 모델을 골라보세요."
+        : e.status === 402 ? "Typecast 이번 달 크레딧을 다 썼어요. 다른 모델을 골라보세요." : errorText(e);
       ttsBtn.disabled = false;
     }
   };
