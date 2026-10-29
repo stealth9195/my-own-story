@@ -17,8 +17,16 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     choice_count: int = Field(default=4, ge=2, le=5)
-    prompt_version: str = "v2"
+    prompt_version: str = "v8"
     max_page_chars: int = 150
+
+    # 서비스 API: 구간 서명 비밀값, TTS 키, 하루 한도(KST), 허용할 프론트 주소
+    story_secret: str
+    gemini_api_key: str = ""
+    typecast_api_key: str = ""
+    daily_stories_per_user: int = 3
+    daily_stories_total: int = 30
+    cors_origins: list[str] = ["http://localhost:5173"]
 
     primary_base_url: str
     primary_api_key: str
