@@ -47,6 +47,11 @@
     <div class="row">
       <label>이야기 모델 <select id="model"></select></label>
       <label>예비 모델 <select id="fallback"></select></label>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <span>함께 동시에 돌릴 모델</span>
+      <span id="raceBox" class="row" style="gap:10px"></span>
+      <span class="muted">고르면 동시에 돌려 가장 먼저 끝난 결과를 씀 (예비 모델 대신, 한도는 모두 씀)</span>
       <label>프롬프트 <select id="promptVersion"></select></label>
       <label>선택 횟수 <input id="choiceCount" type="number" min="2" max="5" value="4" style="width:64px"></label>
     </div>
@@ -92,10 +97,14 @@ async function api(path, body) {
 
 async function init() {
   const cfg = await (await api("/api/config")).json();
-  option($("model"), cfg.models);
+  // 표시는 실제 모델 ID, 값은 models.json 의 name
+  const label = (m) => cfg.model_ids?.[m] ?? m;
+  $("model").innerHTML = cfg.models.map(m => `<option value="${m}">${label(m)}</option>`).join("");
+  $("raceBox").innerHTML = cfg.models.map(m =>
+    `<label style="font-size:13px"><input type="checkbox" class="race" value="${m}"> ${label(m)}</label>`).join("");
   option($("ttsModel"), cfg.tts_models);
   option($("promptVersion"), cfg.prompt_versions);
-  $("fallback").innerHTML = `<option value="">없음</option>` + cfg.models.map(m => `<option value="${m}">${m}</option>`).join("");
+  $("fallback").innerHTML = `<option value="">없음</option>` + cfg.models.map(m => `<option value="${m}">${label(m)}</option>`).join("");
   if (cfg.models.length > 1) $("fallback").value = cfg.models[1];
   $("promptVersion").value = cfg.prompt_versions[cfg.prompt_versions.length - 1];
   option($("voice"), cfg.voices);
@@ -180,7 +189,7 @@ function renderSegment(seg) {
   const label = { intro: "도입", middle: "중간", ending: "결말" }[seg.type];
   el.innerHTML = `
     <h2>${seg.index + 1}. ${label}</h2>
-    <div class="meta">${seg.model_used} · ${seg.pages.map(p => p.text.length).join("/")}자 · ${(seg.latency_ms / 1000).toFixed(1)}초 · 시도: ${attempts}</div>
+    <div class="meta">${seg.raced?.length ? `동시 ${seg.raced.length}개 중 1등: ` : ""}${seg.model_used} · ${seg.pages.map(p => p.text.length).join("/")}자 · ${(seg.latency_ms / 1000).toFixed(1)}초 · 시도: ${attempts}</div>
     ${seg.pages.map(p => `
       <div class="page">
         <div class="text">${p.text}</div>
@@ -246,7 +255,8 @@ async function run(path, body) {
 
 $("startBtn").onclick = () => {
   $("story").innerHTML = "";
-  run("/api/stories", { cards: picks.map(p => p.id), model: $("model").value, choice_count: Number($("choiceCount").value), prompt_version: $("promptVersion").value, fallback_model: $("fallback").value || null });
+  run("/api/stories", { cards: picks.map(p => p.id), model: $("model").value, choice_count: Number($("choiceCount").value), prompt_version: $("promptVersion").value, fallback_model: $("fallback").value || null,
+    race: [...document.querySelectorAll(".race:checked")].map(x => x.value) });
 };
 function next(choiceId) { run(`/api/stories/${storyId}/next`, { choice_id: choiceId }); }
 

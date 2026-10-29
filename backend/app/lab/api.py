@@ -4,6 +4,7 @@
 import json
 import os
 import random
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import uuid
 from collections.abc import Callable
 from dataclasses import asdict
@@ -33,6 +34,7 @@ class StartRequest(BaseModel):
     choice_count: int = Field(default=4, ge=2, le=5)
     prompt_version: str = "v2"
     fallback_model: str | None = None
+    race: list[str] = []  # 함께 동시에 돌릴 모델 (가장 먼저 성공한 결과를 씀)
 
 
 class NextRequest(BaseModel):
@@ -61,6 +63,12 @@ def load_model_factories(path: Path | None = None) -> dict[str, Callable[[], LLM
     return factories
 
 
+def load_model_labels(path: Path | None = None) -> dict[str, str]:
+    """화면에 보여줄 실제 모델 ID (예: nvidia/nemotron-3.5-super-vl:free)"""
+    path = path or Path(os.environ.get("LAB_MODELS", BACKEND_DIR / "eval" / "models.json"))
+    return {m["name"]: m["model"] for m in json.loads(path.read_text(encoding="utf-8"))}
+
+
 def prompt_versions() -> list[str]:
     return sorted(p.name for p in (REPO_ROOT / "prompts").iterdir() if (p / "system.md").exists())
 
@@ -74,20 +82,43 @@ def segment_types(choice_count: int) -> list[str]:
 
 
 def create_app(models: dict[str, Callable[[], LLM]] | None = None,
-               tts_fn: TTSFn | None = None) -> FastAPI:
+               tts_fn: TTSFn | None = None, labels: dict[str, str] | None = None) -> FastAPI:
     app = FastAPI(title="my-own-story 실험실")
     catalog, banned = load_catalog(), load_banned_words()
-    models = models if models is not None else load_model_factories()
+    if models is None:
+        models, labels = load_model_factories(), labels or load_model_labels()
+    labels = labels or {}
     tts_fn = tts_fn or default_tts
     stories: dict[str, dict] = {}
+
+    def run_one(story: dict, seg_type: str, llm: LLM, fallback: LLM | None):
+        return generate_segment(story["ctx"], seg_type, primary=llm, secondary=fallback,
+                                catalog=catalog, banned=banned, version=story["version"],
+                                lenient=True)  # 실험 서버: 결과 먼저, 규칙 위반은 경고로
+
+    def race(story: dict, seg_type: str):
+        """여러 모델을 동시에 돌려 가장 먼저 성공한 결과를 쓴다. 늦게 끝난 호출은 버린다(한도는 씀)."""
+        pool = ThreadPoolExecutor(max_workers=len(story["racers"]))
+        futures = [pool.submit(run_one, story, seg_type, llm, None) for llm in story["racers"]]
+        failed: list = []
+        try:
+            for f in as_completed(futures):
+                try:
+                    return f.result()
+                except GenerationFailed as e:
+                    failed += e.attempts
+            raise GenerationFailed(failed)
+        finally:
+            pool.shutdown(wait=False, cancel_futures=True)
 
     def generate(story: dict) -> dict:
         index = len(story["ctx"].history)
         seg_type = story["types"][index]
         try:
-            gen = generate_segment(story["ctx"], seg_type, primary=story["llm"], secondary=story["fallback"],
-                                   catalog=catalog, banned=banned, version=story["version"],
-                                   lenient=True)  # 실험 서버: 결과 먼저, 규칙 위반은 경고로
+            if len(story["racers"]) > 1:
+                gen = race(story, seg_type)
+            else:
+                gen = run_one(story, seg_type, story["racers"][0], story["fallback"])
         except GenerationFailed as e:
             raise HTTPException(502, {"message": "생성 실패",
                                       "attempts": [asdict(a) for a in e.attempts]})
@@ -102,6 +133,7 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
             "attempts": [asdict(a) for a in gen.attempts],
             "latency_ms": gen.latency_ms,
             "done": seg_type == "ending",
+            "raced": story["race_names"],
         }
 
     @app.get("/")
@@ -114,6 +146,7 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
             "cards": [{"id": c, "name": catalog.name_of(c), "kind": catalog.kind_of(c),
                        "emoji": catalog.emoji_of(c)} for c in catalog.card_ids()],
             "models": list(models),
+            "model_ids": {n: labels.get(n, n) for n in models},
             "tts_models": gemini_tts.MODELS,
             "voices": gemini_tts.VOICES,
             "tts_styles": list(gemini_tts.STYLES),
@@ -143,9 +176,13 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
             raise HTTPException(400, "없는 모델")
         if req.fallback_model and req.fallback_model not in models:
             raise HTTPException(400, "없는 예비 모델")
+        if any(m not in models for m in req.race):
+            raise HTTPException(400, "없는 동시 실행 모델")
         if req.prompt_version not in prompt_versions():
             raise HTTPException(400, "없는 프롬프트 버전")
-        story = {"id": uuid.uuid4().hex[:8], "llm": models[req.model](),
+        race_names = list(dict.fromkeys([req.model, *req.race]))
+        story = {"id": uuid.uuid4().hex[:8], "racers": [models[n]() for n in race_names],
+                 "race_names": race_names if len(race_names) > 1 else [],
                  "fallback": models[req.fallback_model]() if req.fallback_model else None,
                  "types": segment_types(req.choice_count), "version": req.prompt_version,
                  "ctx": StoryContext(cards=req.cards, history=[], chosen=[],

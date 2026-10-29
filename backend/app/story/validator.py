@@ -142,6 +142,7 @@ def validate_segment(
     forbidden_phrases: set[str] = frozenset(),
     fill_pool: list[str] | None = None,
     lenient: bool = False,
+    chosen_item: str | None = None,
 ) -> ValidationResult:
     """forbidden_choices: 이미 나온 선택지(새 선택지에서 제거).
     forbidden_scene: 고르지 않은 선택지(장면에 나오면 실패)."""
@@ -212,6 +213,9 @@ def validate_segment(
         o for p in pages for o in p.scene.objects}
     if scene_ids & forbidden_scene:
         errors.append("unchosen_used")
+    # 아이가 방금 고른 물건형 선택지는 이번 구간 장면에 꼭 나와야 한다
+    if chosen_item and pages and chosen_item not in scene_ids:
+        errors.append("chosen_missing")
     # 느낌·행동 카드는 장면 id가 아니라서 도입 장면 검사에서 뺀다
     item_cards = {c for c in (cards or []) if c in catalog.choice_ids()}
     if segment_type == "intro" and item_cards and pages:

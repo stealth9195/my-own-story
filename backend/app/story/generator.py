@@ -3,8 +3,11 @@ from typing import Protocol
 
 from app.catalog import Catalog
 from app.llm.client import LLMError, LLMResponse
-from app.story.prompt import (StoryContext, allowed_choices, build_messages, forbidden_choices,
-                              offered_phrases, unchosen_ids)
+from app.story.prompt import (StoryContext, _version_number, allowed_choices, build_messages,
+                              chosen_item, forbidden_choices, offered_phrases, unchosen_ids)
+
+# 관대한 모드에서도 한 번은 다시 쓰게 하는 경고: 아이의 선택이 이야기에 반영되지 않은 경우
+RETRY_WARNINGS = {"chosen_missing", "unchosen_used"}
 from app.story.schema import Segment, SegmentType
 from app.story.validator import validate_segment
 
@@ -59,7 +62,7 @@ def generate_segment(
     messages = build_messages(ctx, segment_type, catalog, version)
     rules = {"forbidden_choices": forbidden_choices(ctx), "forbidden_scene": unchosen_ids(ctx),
              "cards": ctx.cards, "forbidden_phrases": offered_phrases(ctx),
-             "fill_pool": allowed_choices(ctx, catalog)}
+             "fill_pool": allowed_choices(ctx, catalog), "chosen_item": chosen_item(ctx) if _version_number(version) >= 6 else None}
     attempts: list[Attempt] = []
 
     def try_once(llm: LLM) -> Segment | None:
@@ -79,13 +82,19 @@ def generate_segment(
         total = sum(a.latency_ms for a in attempts)
         return GenerationResult(segment, llm.model, attempts, total)
 
+    kept: Segment | None = None  # 경고 때문에 다시 써 보는 동안 보관하는 첫 결과
     try:
-        for _ in range(2):
+        for i in range(2):
             segment = try_once(primary)
             if segment:
+                if i == 0 and set(attempts[-1].warnings) & RETRY_WARNINGS:
+                    kept = segment
+                    continue
                 return done(segment, primary)
     except LLMError:
         pass
+    if kept is not None:
+        return done(kept, primary)
 
     if secondary is not None:
         try:

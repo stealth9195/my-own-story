@@ -54,6 +54,12 @@ def offered_phrases(ctx: StoryContext) -> set[str]:
     return {c.label for seg in ctx.history for c in seg.choices if c.kind == "phrase"}
 
 
+def chosen_item(ctx: StoryContext) -> str | None:
+    """방금 고른 선택지가 물건형이면 그 id (문장형이면 None)"""
+    last = _last_choice(ctx)
+    return last.id if last and last.kind == "item" else None
+
+
 def _last_choice(ctx: StoryContext):
     if not ctx.chosen or not ctx.history:
         return None
@@ -83,6 +89,10 @@ def build_messages(
         parts.append(f"아이가 방금 고른 선택지: '{last.label}' (앞 구간 마지막 문장을 이 말로 이어서 시작해)")
     elif ctx.chosen:
         parts.append("아이가 방금 고른 선택지: " + catalog.name_of(ctx.chosen[-1]))
+        if _version_number(version) >= 6:
+            name = catalog.name_of(ctx.chosen[-1])
+            parts.append(f"'{name}'를 이번 구간 첫 페이지에 꼭 등장시키고 이야기의 중심으로 써 "
+                         f"(장면 정보에도 {ctx.chosen[-1]} 넣기). 결말이어도 마찬가지야")
     # v1은 비교 기준이라 그대로 두고, v2부터 선택지 이력을 알려준다
     if version != "v1":
         names = lambda ids: ", ".join(sorted(catalog.name_of(i) for i in ids))
