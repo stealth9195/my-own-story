@@ -3,7 +3,6 @@
 
 import json
 import os
-import random
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import uuid
 from collections.abc import Callable
@@ -20,6 +19,8 @@ from app.llm.client import OpenAICompatClient
 from app.story.generator import LLM, GenerationFailed, generate_segment
 from app.story.prompt import StoryContext
 from app.story.safety import load_banned_words
+from app.story.start import segment_types
+from app.story.start import start_options as pick_start_options
 from app.tts import gemini as gemini_tts
 from app.tts import typecast as typecast_tts
 
@@ -85,10 +86,6 @@ def tts_voices() -> dict[str, list[dict]]:
     gemini = [{"id": v, "name": v} for v in gemini_tts.VOICES]
     typecast = [{"id": i, "name": n} for i, n in typecast_tts.VOICES.items()]
     return {**{m: gemini for m in gemini_tts.MODELS}, **{m: typecast for m in typecast_tts.MODELS}}
-
-
-def segment_types(choice_count: int) -> list[str]:
-    return ["intro"] + ["middle"] * (choice_count - 1) + ["ending"]
 
 
 def create_app(models: dict[str, Callable[[], LLM]] | None = None,
@@ -165,16 +162,7 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
 
     @app.get("/api/start-options")
     def start_options():
-        """처음 선택 4단계 후보를 전체 목록에서 무작위로 뽑는다."""
-        def pick(ids, n):
-            return [{"id": i, "name": catalog.name_of(i), "kind": catalog.kind_of(i),
-                     "emoji": catalog.emoji_of(i)} for i in random.sample(sorted(ids), n)]
-        return {
-            "heroes": pick(catalog.ids("characters"), 5),
-            "traits": pick(catalog.ids("traits"), 4),
-            "backgrounds": pick(catalog.ids("backgrounds") | catalog.ids("situations"), 4),
-            "objects": pick(catalog.ids("objects"), 4),
-        }
+        return pick_start_options(catalog)
 
     @app.post("/api/stories")
     def start(req: StartRequest):

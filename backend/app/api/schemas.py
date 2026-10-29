@@ -23,3 +23,24 @@ class StoryKey(BaseModel):
 class SignedSegment(BaseModel):
     segment: Segment
     sig: str
+
+
+class StartRequest(BaseModel):
+    anon_id: str = Field(min_length=1, max_length=64)
+    cards: list[str] = Field(min_length=3, max_length=5)
+    choice_count: int = Field(default=4, ge=2, le=5)
+
+
+class NextRequest(BaseModel):
+    """지난 구간 전체(서명 포함)와 지금까지 고른 선택지. 서버는 이야기를 저장하지 않는다."""
+    anon_id: str = Field(min_length=1, max_length=64)
+    story: StoryKey
+    history: list[SignedSegment] = Field(min_length=1)
+    chosen: list[str]
+
+
+class SegmentResponse(BaseModel):
+    story: StoryKey
+    index: int
+    segment: SignedSegment
+    done: bool
