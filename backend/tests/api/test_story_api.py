@@ -2,6 +2,7 @@ import json
 import logging
 import random
 import threading
+import time
 
 from fastapi.testclient import TestClient
 
@@ -202,3 +203,58 @@ def test_all_fail_includes_backup_attempts(caplog):
     assert r.status_code == 502
     assert any("gemma-a" in rec.getMessage() and "llm_error:429" in rec.getMessage()
                for rec in caplog.records)
+
+
+def wait_for_log(caplog, text: str, seconds: float = 2.0) -> bool:
+    end = time.time() + seconds
+    while time.time() < end:
+        if any(text in rec.getMessage() for rec in caplog.records):
+            return True
+        time.sleep(0.02)
+    return False
+
+
+def test_race_uses_faster_model(caplog):
+    # 기본·예비를 동시에 불러 먼저 통과한 글을 쓴다
+    caplog.set_level(logging.INFO, logger="story")
+    second_done = threading.Event()
+
+    class Fast(FakeLLM):
+        def complete(self, messages, temperature=0.9):
+            try:
+                return super().complete(messages, temperature)
+            finally:
+                second_done.set()
+
+    class Slow(FakeLLM):
+        def complete(self, messages, temperature=0.9):
+            assert second_done.wait(2), "예비 모델이 동시에 출발하지 않음"
+            time.sleep(0.3)
+            return super().complete(messages, temperature)
+
+    client = make_backup(Slow("p", [seg(0)]), Fast("s", [seg(0)]), [])
+    assert start(client).status_code == 200
+    assert any('"model_used": "s"' in rec.getMessage() for rec in caplog.records)
+
+
+def test_race_one_fails_other_used(caplog):
+    caplog.set_level(logging.INFO, logger="story")
+    client = make_backup(FakeLLM("p", [LLMError("x", status=429)]), FakeLLM("s", [seg(0)]), [])
+    assert start(client).status_code == 200
+    assert any('"model_used": "s"' in rec.getMessage() for rec in caplog.records)
+
+
+def test_unused_result_logged(caplog):
+    # 발표용 비교: 쓰지 않은 모델도 걸린 시간을 남긴다
+    caplog.set_level(logging.INFO, logger="story")
+
+    class Slow(FakeLLM):
+        def complete(self, messages, temperature=0.9):
+            time.sleep(0.2)
+            return super().complete(messages, temperature)
+
+    client = make_backup(FakeLLM("p", [seg(0)]), Slow("s", [seg(0)]), [])
+    assert start(client).status_code == 200
+    assert wait_for_log(caplog, '"kind": "segment_unused"')
+    rec = next(r.getMessage() for r in caplog.records if "segment_unused" in r.getMessage())
+    assert '"model": "s"' in rec and '"ok": true' in rec and "latency_ms" in rec

@@ -36,6 +36,19 @@ def _fail(status: int, code: str):
     raise HTTPException(status, {"code": code})
 
 
+def log_unused(story_id: str, index: int, model: str, future) -> None:
+    if future.cancelled():
+        return
+    try:
+        gen = future.result()
+        ok, latency, attempts = True, gen.latency_ms, gen.attempts
+    except GenerationFailed as e:
+        ok, attempts = False, e.attempts
+        latency = sum(a.latency_ms for a in attempts)
+    log_event("segment_unused", story_id=story_id, index=index, model=model, ok=ok,
+              latency_ms=latency, errors=[err for a in attempts for err in a.errors])
+
+
 def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
                backups: list[LLM] = (), tts: TTSFn | None = None, limits: Limits | None = None,
                rng: random.Random | None = None) -> FastAPI:
@@ -58,29 +71,36 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
                                     catalog=catalog, banned=banned, version=settings.prompt_version,
                                     max_page_chars=settings.max_page_chars, lenient=True)
 
-        # 대비 모델은 기본과 동시에 출발시켜, 기본·예비가 다 실패해도 다시 기다리지 않게 한다.
-        # 기본·예비가 성공하면 대비 결과는 버린다 (Gemma 는 하루 한도가 커서 버려도 부담이 적음)
-        pool = ThreadPoolExecutor(max_workers=len(backups)) if backups else None
-        futures = [pool.submit(run, b, None) for b in backups] if pool else []
+        # 기본·예비를 동시에 불러 먼저 검사를 통과한 글을 쓴다 (대기 시간 단축, 하루 30편이면 모델당 한도 안).
+        # 대비 모델(설정했을 때만)도 같이 출발하고, 기본·예비가 모두 실패했을 때만 쓴다
+        racers = [primary] + ([secondary] if secondary else [])
+        pool = ThreadPoolExecutor(max_workers=len(racers) + len(backups))
+        race = {pool.submit(run, m, None): m.model for m in racers}
+        spare = {pool.submit(run, b, None): b.model for b in backups}
+        attempts: list = []
+        winner = None
         try:
-            gen = run(primary, secondary)
-        except GenerationFailed as e:
-            attempts = list(e.attempts)
-            gen = None
-            for f in as_completed(futures):
-                try:
-                    gen = f.result()
-                    gen.attempts = attempts + gen.attempts
+            for group in (race, spare):
+                for f in as_completed(group):
+                    try:
+                        gen = f.result()
+                        winner = f
+                        break
+                    except GenerationFailed as e:
+                        attempts += e.attempts
+                if winner:
                     break
-                except GenerationFailed as be:
-                    attempts += be.attempts
-            if gen is None:
-                log_event("segment_failed", story_id=story.id, index=index, type=seg_type,
-                          attempts=[asdict(a) for a in attempts])
-                _fail(502, "generation_failed")
         finally:
-            if pool:
-                pool.shutdown(wait=False, cancel_futures=True)
+            pool.shutdown(wait=False, cancel_futures=True)
+        if winner is None:
+            log_event("segment_failed", story_id=story.id, index=index, type=seg_type,
+                      attempts=[asdict(a) for a in attempts])
+            _fail(502, "generation_failed")
+        gen.attempts = attempts + gen.attempts
+        # 쓰지 않은 결과도 끝나는 대로 걸린 시간을 남긴다 (모델 속도 비교용)
+        for f, model in {**race, **spare}.items():
+            if f is not winner and not f.cancelled():
+                f.add_done_callback(lambda f, m=model: log_unused(story.id, index, m, f))
         log_event("segment", story_id=story.id, index=index, type=seg_type, model_used=gen.model_used,
                   latency_ms=gen.latency_ms, attempts=[asdict(a) for a in gen.attempts],
                   warnings=sorted({w for a in gen.attempts for w in a.warnings}))

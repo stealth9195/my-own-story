@@ -148,7 +148,7 @@ uv run --env-file .env python -m eval.tts_check
   - DB(Supabase) — 마감에 맞춰 서버는 저장 없이, 책장은 프론트 IndexedDB. 기기를 바꾸면 책장 없음
   - OpenRouter(Nemotron) — 무료 하루 50회, 품질 문제. LLM 은 모두 Google 모델
 - 남은 문제:
-  - 구간 생성 10~25초(목표 10초 이내). 대기 시간(`PRIMARY_TIMEOUT`) 값 미정
+  - 구간 생성 10~25초(목표 10초 이내) → 기본·예비 동시 호출로 바꿈, 효과 측정 중
   - 서비스 API 리뷰에서 미룬 작은 문제: 동시 시작 시 초과 예약, 시작 실패에도 한도 차감, anon_id 바꿔 전체 한도 소진 등 (배포 전 확인)
   - `run_generate` 기본 프롬프트가 v1 — `--version` 으로 지정해야 함
   - 범위 축소(DB 제외, 에셋 수 등)는 프로토타입 후 결정

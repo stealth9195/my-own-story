@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     primary_api_key: str = ""
     primary_model: str
     primary_json_mode: bool = True
-    # 응답 대기 시간(초). 넘으면 LLMError → 바로 예비 모델로 (실제 응답 시간을 재서 조절)
+    # 응답 대기 시간(초). 넘으면 그 모델은 실패 (기본·예비는 동시에 부르고 먼저 통과한 글을 씀)
     primary_timeout: float = 60.0
 
     secondary_base_url: str = GEMINI_OPENAI_URL
@@ -43,7 +43,7 @@ class Settings(BaseSettings):
     secondary_json_mode: bool = True
     secondary_timeout: float = 60.0
 
-    # 기본 모델과 동시에 출발하는 대비 모델 (기본·예비가 모두 실패하면 이 글을 쓴다).
+    # 기본·예비와 같이 출발하는 대비 모델 (기본·예비가 모두 실패했을 때만 씀). 비우면 끔
     # Gemma 는 system 역할을 거부하므로 합쳐 보낸다
     backup_models: list[str] = []
     backup_base_url: str = GEMINI_OPENAI_URL
