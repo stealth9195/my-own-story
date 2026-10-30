@@ -41,8 +41,8 @@ export default function Scene({ scene, placed = false }: Props) {
               animationDelay: `${i * 0.6}s`,
             }}
           >
-            {/* 상태 표시는 뒤집는 그림 바깥에, 바라보는 쪽 머리 위에 (안에 두면 글자도 거울처럼 뒤집힘) */}
-            {mark && <span className={`state-mark ${actor.looks === "left" ? "on-left" : "on-right"}`}>{mark}</span>}
+            {/* 상태 표시는 뒤집는 그림 바깥에, 늘 오른쪽 위에 (안에 두면 글자도 거울처럼 뒤집힘) */}
+            {mark && <span className="state-mark">{mark}</span>}
             <div className={`actor-body${actor.flip ? " flip" : ""}`}><Picture id={actor.id} /></div>
             {worn.filter((w) => w.on === actor.id).map((w) => (
               <div key={w.id} className={`worn ${w.place} ${handSide}`}><Picture id={w.id} /></div>

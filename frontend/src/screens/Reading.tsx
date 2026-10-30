@@ -293,11 +293,11 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
         {seg.pages.slice(0, pageIndex + 1).map((p, i) => (
           <p key={`${view}-${i}`} ref={i === pageIndex ? textEnd : undefined} className={i === pageIndex ? "now" : "past"}>{p.text}</p>
         ))}
+        {/* 목소리 안내는 글 바로 아래에 */}
+        {phase === "loading" && <p className="voice-note">🔊 목소리를 준비하고 있어요</p>}
+        {/* 음성을 못 받았거나(무료 한도·오류) 재생이 막혔을 때: 글만 보여 주고 버튼으로 넘긴다 */}
+        {phase === "manual" && <p className="voice-note">🔇 목소리를 불러오지 못했어요. 버튼을 눌러 넘겨 주세요</p>}
       </div>
-
-      {phase === "loading" && <p className="reading-status">🔊 목소리를 준비하고 있어요</p>}
-      {/* 음성을 못 받았거나(무료 한도·오류) 재생이 막혔을 때: 글만 보여 주고 버튼으로 넘긴다 */}
-      {phase === "manual" && <p className="reading-status">🔇 목소리를 불러오지 못했어요. 버튼을 눌러 넘겨 주세요</p>}
       {canNavigate ? (
         <div className="page-nav">
           <button className="big-button soft" onClick={() => goPage(-1)} aria-label="이전 쪽" disabled={view === 0 && pageIndex === 0}>◀ 이전</button>
