@@ -19,4 +19,6 @@ paths:
     모든 시도를 `attempts`(모델·성공 여부·오류·걸린 시간)에 남기고, 실패하면 `GenerationFailed` 로 전부 드러낸다.
 - 출력은 JSON 모드(`response_format: json_object`) + `validator.py` 검증으로 강제한다. 목록 밖 ID 는 검증에서 걸러진다.
 - 모델별 추가 요청 옵션(추론 끄기 등)과 응답 대기 시간은 `eval/models.json` 에서 모델마다 지정한다(키는 넣지 않음, git 제외).
+- TTS 응답 형식은 모델마다 다르다: 2.5 는 순수 PCM(`audio/L16;rate=24000`), 3.8 은 WAV 통째(`audio/wav`, 끝에 C2PA·IPTC 출처 표시 약 6KB). `mimeType`·`RIFF` 로 구분해 소리 부분만 쓴다(`gemini.py` 의 `_to_wav`).
+  - 겪은 버그: WAV 를 PCM 으로 보고 다시 감싸 시작 잡음·끝 '콱' 소리(2026-10-30). 새 모델을 추가하면 응답 `mimeType` 을 한 번 확인한다.
 - 아직 없음: 호출 기록 파일(시각·모델·상태·걸린 시간·토큰). 배포 전에 만든다.
