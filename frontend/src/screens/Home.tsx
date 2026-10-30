@@ -1,23 +1,13 @@
 import { useState } from "react";
-import { getGuideVoice, setGuideVoice, speak, unlockAudio } from "../audio";
-import type { GuideVoice } from "../audio";
+import { unlockAudio } from "../audio";
+import Settings from "../components/Settings";
 import "./Home.css";
 
 // 컴포넌트: 화면 조각을 돌려주는 함수. props(부모가 넘겨준 값)로 무엇을 할지 받는다
 type Props = { onNew: () => void; onShelf: () => void };
 
-// (실험) 안내·질문·선택지를 읽는 목소리 비교
-const GUIDE_VOICES: [GuideVoice, string][] = [["female", "여성"], ["male", "남성"], ["browser", "브라우저"]];
-
 export default function Home({ onNew, onShelf }: Props) {
-  const [voice, setVoice] = useState(getGuideVoice());
-
-  function pickVoice(v: GuideVoice) {
-    unlockAudio();
-    setGuideVoice(v);
-    setVoice(v);
-    speak("이야기의 주인공은 누구일까요? 카드를 눌러 보세요.");
-  }
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
     <main className="home">
@@ -34,12 +24,8 @@ export default function Home({ onNew, onShelf }: Props) {
         ✨ 새 이야기 만들기
       </button>
       <button className="big-button soft" onClick={onShelf}>📚 내 책장</button>
-      <div className="voice-lab">
-        <span>(실험) 안내 목소리</span>
-        {GUIDE_VOICES.map(([v, label]) => (
-          <button key={v} className={`voice-chip${voice === v ? " on" : ""}`} onClick={() => pickVoice(v)}>{label}</button>
-        ))}
-      </div>
+      <button className="home-settings" onClick={() => { unlockAudio(); setSettingsOpen(true); }}>⚙️ 설정</button>
+      {settingsOpen && <Settings onClose={() => setSettingsOpen(false)} />}
     </main>
   );
 }

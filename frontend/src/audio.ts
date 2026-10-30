@@ -20,6 +20,29 @@ function silentWav(): string {
   return URL.createObjectURL(new Blob([buf], { type: "audio/wav" }));
 }
 
+// 목소리 크기 (이야기 음성·안내 목소리, 0~1). 기기에 저장
+let voiceVolume = (() => {
+  try {
+    const v = localStorage.getItem("voiceVolume");
+    return v === null ? 1 : Math.min(Math.max(Number(v), 0), 1);
+  } catch {
+    return 1;
+  }
+})();
+if (player) player.volume = voiceVolume;
+if (guidePlayer) guidePlayer.volume = voiceVolume;
+
+export function getVoiceVolume(): number {
+  return voiceVolume;
+}
+
+export function setVoiceVolume(v: number): void {
+  voiceVolume = v;
+  try { localStorage.setItem("voiceVolume", String(v)); } catch { /* 이번 실행에만 적용 */ }
+  if (player) player.volume = v;
+  if (guidePlayer) guidePlayer.volume = v;
+}
+
 let unlocked = false;
 
 export function unlockAudio(): void {
@@ -107,6 +130,7 @@ function speakBrowser(text: string, rate: number): Promise<void> {
     const u = new SpeechSynthesisUtterance(text);
     u.lang = "ko-KR";
     u.rate = rate;
+    u.volume = voiceVolume;
     const done = () => { clearTimeout(timer); resolve(); };
     // 일부 브라우저는 끝 이벤트를 안 보내서, 글 길이로 넉넉히 잡은 시간이 지나면 끝난 것으로 본다
     const timer = setTimeout(done, 2000 + text.length * 250);

@@ -39,6 +39,28 @@ export function storyRng(storyId: string): () => number {
   return () => h / 2 ** 32;
 }
 
+// 음악·효과음 크기 (설정 창, 0~1). 기기에 저장
+let musicVolume = readNumber("musicVolume", 1);
+
+function readNumber(key: string, fallback: number): number {
+  try {
+    const v = localStorage.getItem(key);
+    return v === null ? fallback : Math.min(Math.max(Number(v), 0), 1);
+  } catch {
+    return fallback;
+  }
+}
+
+export function getMusicVolume(): number {
+  return musicVolume;
+}
+
+export function setMusicVolume(v: number): void {
+  musicVolume = v;
+  try { localStorage.setItem("musicVolume", String(v)); } catch { /* 이번 실행에만 적용 */ }
+  if (bgmPlayer) bgmPlayer.volume = (ducked ? DUCK_VOLUME : VOLUME) * musicVolume;
+}
+
 let muted = readMuted();
 let currentBgm: string | null = null;
 let ducked = false;
@@ -68,19 +90,19 @@ export function playBgm(id: string | null): void {
   currentBgm = id;
   if (!id) { bgmPlayer.pause(); return; }
   bgmPlayer.src = `/bgm/${id}.mp3`;
-  bgmPlayer.volume = ducked ? DUCK_VOLUME : VOLUME;
+  bgmPlayer.volume = (ducked ? DUCK_VOLUME : VOLUME) * musicVolume;
   if (!muted) safePlay(bgmPlayer);
 }
 
 export function duckBgm(on: boolean): void {
   ducked = on;
-  if (bgmPlayer) bgmPlayer.volume = on ? DUCK_VOLUME : VOLUME;
+  if (bgmPlayer) bgmPlayer.volume = (on ? DUCK_VOLUME : VOLUME) * musicVolume;
 }
 
 export function playSfx(id: string | null): void {
   if (!sfxPlayer || !id || muted) return;
   sfxPlayer.src = `/sound/${id}.mp3`;
-  sfxPlayer.volume = SFX_VOLUME;
+  sfxPlayer.volume = SFX_VOLUME * musicVolume;
   safePlay(sfxPlayer);
 }
 

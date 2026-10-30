@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { ApiError, fetchSegmentAudio, nextSegment, sendEvent } from "../api";
 import type { Choice } from "../api";
-import { getRate, isCurrent, player, playToken, setRate, speak, stepRate, stopAll } from "../audio";
+import { getRate, isCurrent, player, playToken, speak, stopAll } from "../audio";
 import { emojiOf } from "../catalog";
-import { getAnonId, getAudio, saveAudio, saveStory } from "../storage";
+import Settings from "../components/Settings";
+import { deleteAudio, getAnonId, getAudio, saveAudio, saveStory } from "../storage";
 import type { SavedStory } from "../storage";
 import { addSegment, choose, nextArgs, pageAt, pageStartTimes } from "../story";
 import Picture from "../components/Picture";
@@ -11,7 +12,6 @@ import { clearPosition, getPosition, savePosition } from "../position";
 import { BGM, duckBgm, isMuted, pickBgm, playBgm, playSfx, setMuted, stopSound, storyRng } from "../sound";
 import Scene from "../components/Scene";
 import Problem from "./Problem";
-import Waiting from "./Waiting";
 import "./Reading.css";
 
 // resume: 책장에서 연 이야기. 다 들은 이야기는 결말 화면부터, 아니면 마지막 선택지부터 시작
@@ -45,8 +45,10 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
   const [phase, setPhase] = useState<Phase>("loading");
   const [focus, setFocus] = useState<string | null>(null);
   const [problem, setProblem] = useState("unknown");
-  const [rate, setRateState] = useState(getRate());
   const [muted, setMutedState] = useState(isMuted());
+  const [paused, setPaused] = useState(false);       // 부모가 잠깐 멈춤
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const textEnd = useRef<HTMLParagraphElement | null>(null);  // 마지막으로 읽는 쪽 (자동 스크롤)
   // useRef: 화면을 다시 그려도 유지되지만, 바뀌어도 다시 그리지는 않는 값 (마지막 선택 요청 기억)
   const pending = useRef<SavedStory | null>(null);
   const resuming = useRef(resume);  // 이어하기로 연 구간에서만 true
@@ -68,8 +70,9 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
   // 구간이 바뀔 때마다: 글을 먼저 보여 주고, 음성을 받아 오면 자동 재생
   useEffect(() => {
     const t = playToken();
-    setPage(0);
+    setPage(startAt.current ?? 0);  // 이어 듣기·이전/다음이면 그 쪽을 바로 보여 준다 (음성 위치는 길이를 안 뒤 맞춤)
     setFocus(null);
+    setPaused(false);
     setPhase("loading");
 
     const finish = () => { if (isCurrent(t)) afterSegment(); };
@@ -84,8 +87,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
           request(saved);  // 고른 뒤 다음 구간을 받기 전에 멈췄던 이야기
         } else {
           setPage(seg.pages.length - 1);
-          setPhase("choices");
-          speak(seg.choices.map((c) => c.label).join(", "));
+          setPhase("choices");  // 선택지는 아이가 누를 때만 읽는다
         }
         return;
       }
@@ -107,6 +109,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
         try {
           mp3 = await loadAudio(saved, view);
         } catch {
+          startAt.current = null;
           if (isCurrent(t)) setPhase("manual");  // 음성 실패: 글만 보여 주고 버튼으로 넘김
           return;
         }
@@ -145,7 +148,10 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
   }, [view, page]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   // 이야기 음성이 나오는 동안 음악을 작게
-  useEffect(() => { duckBgm(phase === "playing"); }, [phase]);
+  useEffect(() => { duckBgm(phase === "playing" && !paused); }, [phase, paused]);
+
+  // 새 쪽이 나오면 그 글이 보이게 (앞 쪽 글은 위에 남는다)
+  useEffect(() => { textEnd.current?.scrollIntoView?.({ block: "nearest", behavior: "smooth" }); }, [view, page]);
 
   // 읽기 화면을 떠나면 음악·효과음을 끈다 (빈 목록 [] → 화면이 처음 생길 때 한 번, 반환 함수는 떠날 때)
   useEffect(() => () => stopSound(), []);
@@ -160,8 +166,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
       clearPosition(saved.story.id);  // 끝까지 들었으니 이어 들을 곳 없음
       setPhase("end");
     } else {
-      setPhase("choices");
-      speak(seg.choices.map((c) => c.label).join(", "));
+      setPhase("choices");  // 선택지는 아이가 누를 때만 읽는다 (어차피 두 번 눌러야 고름)
     }
   }
 
@@ -212,22 +217,42 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
     else setView(pos.view);
   }
 
+  // 다시 듣기 중 이전·다음 쪽: 그 쪽 위치부터 다시 재생 (구간 끝을 넘으면 앞·뒤 구간으로)
+  function goPage(dir: 1 | -1) {
+    const target = page + dir;
+    if (target >= seg.pages.length) {
+      if (view < last) replayFrom({ view: view + 1, page: 0 });
+      else afterSegment();
+    } else if (target < 0) {
+      if (view > 0) replayFrom({ view: view - 1, page: saved.segments[view - 1].segment.pages.length - 1 });
+    } else {
+      replayFrom({ view, page: target });
+    }
+  }
+
+  // 잠깐 멈추기 / 이어서 듣기 (이야기 목소리와 자동 페이지 넘김이 같이 멈춘다)
+  function togglePause() {
+    if (paused) {
+      player?.play().catch(() => {});
+      if (typeof speechSynthesis !== "undefined") speechSynthesis.resume();
+    } else {
+      player?.pause();
+      if (typeof speechSynthesis !== "undefined") speechSynthesis.pause();
+    }
+    setPaused(!paused);
+  }
+
   function toggleMute() {
     setMuted(!muted);
     setMutedState(!muted);
   }
 
-  // 부모용 배속: 더 느리게(−)·더 빠르게(+)
-  function changeRate(dir: 1 | -1) {
-    const next = stepRate(rate, dir);
-    setRate(next);
-    setRateState(next);
-  }
-
   // 다 들은 이야기를 책장에서 열었을 때만 '이어 듣기' 를 보여 준다
   const resumePos = phase === "end" && resume ? getPosition(saved.story.id) : null;
 
-  if (phase === "waiting") return <Waiting emoji={emojiOf(seg.pages.at(-1)?.scene.characters[0]?.id ?? saved.story.cards[0])} />;
+  const listening = phase === "playing" || phase === "loading" || phase === "manual";
+  const canNavigate = replaying.current && listening;  // 다 만든 이야기를 다시 들을 때만 이전·다음
+  const pageIndex = Math.min(page, seg.pages.length - 1);
   if (phase === "problem") return <Problem code={problem} onRetry={() => request(pending.current!)} onHome={onHome} />;
 
   return (
@@ -237,25 +262,46 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
         <span className="reading-step">{view + 1} / {saved.story.choice_count + 1}</span>
         <div className="reading-tools">
           {/* 음소거: 음악·효과음만 끔. 이야기 목소리는 계속 */}
+          {phase === "playing" && (
+            <button className="icon-button" onClick={togglePause} aria-label={paused ? "이어서 듣기" : "잠깐 멈추기"}>
+              {paused ? "▶️" : "⏸️"}
+            </button>
+          )}
           <button className="icon-button" onClick={toggleMute} aria-label={muted ? "음악 켜기" : "음악 끄기"}>
             {muted ? "🔇" : "🎵"}
           </button>
-          <div className="rate">
-            <button className="icon-button" onClick={() => changeRate(-1)} aria-label="더 느리게">−</button>
-            <span className="rate-value">{rate.toFixed(1)}배</span>
-            <button className="icon-button" onClick={() => changeRate(1)} aria-label="더 빠르게">+</button>
-          </div>
+          <button className="icon-button" onClick={() => setSettingsOpen(true)} aria-label="설정">⚙️</button>
         </div>
       </header>
 
       {/* 세로 화면: 위 버튼 → 장면 → 글·선택지 순서로 한 줄. 가로 화면: 왼쪽 장면, 오른쪽 위 버튼·글·선택지 (Reading.css) */}
-      <div className="reading-stage"><Scene scene={shown.scene} placed /></div>
+      <div className="reading-stage">
+        <Scene scene={shown.scene} placed />
+        {/* 다음 이야기를 만드는 동안: 화면은 그대로 두고 장면 위에 살짝 덮어 알려 준다 */}
+        {phase === "waiting" && (
+          <div className="making" role="status">
+            <span className="making-emoji">{emojiOf(shown.scene.characters[0]?.id ?? saved.story.cards[0])}</span>
+            <span>다음 이야기를 만들고 있어요</span>
+            <span className="making-dots"><i /><i /><i /></span>
+          </div>
+        )}
+      </div>
 
       <div className="reading-body">
-      <p className="reading-text">{shown.text}</p>
+      {/* 읽은 쪽 글은 지우지 않고 아래로 이어 붙인다 (빨리 넘어가도 다시 읽을 수 있게) */}
+      <div className="reading-text">
+        {seg.pages.slice(0, pageIndex + 1).map((p, i) => (
+          <p key={i} ref={i === pageIndex ? textEnd : undefined} className={i === pageIndex ? "now" : "past"}>{p.text}</p>
+        ))}
+      </div>
 
       {phase === "loading" && <p className="reading-status">🔊 목소리를 준비하고 있어요</p>}
-      {phase === "manual" && <button className="big-button" onClick={nextPage}>다음 ▶</button>}
+      {canNavigate ? (
+        <div className="page-nav">
+          <button className="big-button soft" onClick={() => goPage(-1)} aria-label="이전 쪽" disabled={view === 0 && pageIndex === 0}>◀ 이전</button>
+          <button className="big-button soft" onClick={() => goPage(1)} aria-label="다음 쪽">다음 ▶</button>
+        </div>
+      ) : phase === "manual" && <button className="big-button" onClick={nextPage}>다음 ▶</button>}
 
       {phase === "choices" && (
         <div className={`choices ${seg.choices[0]?.kind === "phrase" ? "phrases" : ""}`}>
@@ -278,6 +324,10 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
         </div>
       )}
       </div>
+      {settingsOpen && (
+        <Settings onClose={() => setSettingsOpen(false)}
+                  onRegenerate={() => { deleteAudio(saved.story.id, view).then(() => replayFrom({ view, page: 0 })); }} />
+      )}
     </main>
   );
 }

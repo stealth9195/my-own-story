@@ -41,6 +41,11 @@ export function saveAudio(storyId: string, index: number, mp3: Blob): Promise<vo
   return quiet(() => set(audioKey(storyId, index), mp3), undefined);
 }
 
+// (실험) 음성을 다시 만들 때 저장해 둔 것을 지운다
+export function deleteAudio(storyId: string, index: number): Promise<void> {
+  return quiet(() => del(audioKey(storyId, index)), undefined);
+}
+
 export function getAudio(storyId: string, index: number): Promise<Blob | undefined> {
   return quiet(() => get<Blob>(audioKey(storyId, index)), undefined);
 }

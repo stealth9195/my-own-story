@@ -152,3 +152,71 @@ test("replay remembers the position and forgets it at the end", async () => {
   for (let i = 0; i < 2; i++) { await act(async () => { fake.player.onended?.(); }); await flush(); }
   expect(localStorage.getItem("pos:s1")).toBeNull();
 });
+
+test("choices are read only when tapped", async () => {
+  fake.getAudio.mockResolvedValue(new Blob(["mp3"]));
+  const notDone: SavedStory = { ...done, done: false, chosen: [], segments: done.segments.slice(0, 1) };
+  render(<Reading saved={notDone} onUpdate={vi.fn()} onHome={vi.fn()} onNew={vi.fn()} />);
+  await flush();
+  await act(async () => { fake.player.onended?.(); });  // 구간 끝 → 선택지
+  await flush();
+  expect(screen.getByText("bear")).toBeTruthy();
+  expect(fake.audio.speak).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByText("bear"));
+  expect(fake.audio.speak).toHaveBeenCalledWith("bear");
+});
+
+test("pages read so far stay on screen", async () => {
+  fake.getAudio.mockResolvedValue(new Blob(["mp3"]));
+  const notDone: SavedStory = { ...done, done: false, chosen: [], segments: done.segments.slice(0, 1) };
+  render(<Reading saved={notDone} onUpdate={vi.fn()} onHome={vi.fn()} onNew={vi.fn()} />);
+  await flush();
+  fake.player.currentTime = 8;  // 2쪽째
+  await act(async () => {
+    (fake.player.onloadedmetadata as (() => void) | null)?.();
+    (fake.player.ontimeupdate as (() => void) | null)?.();
+  });
+  expect(screen.getByText("intro 1")).toBeTruthy();
+  expect(screen.getByText("intro 2")).toBeTruthy();
+});
+
+test("replay has previous and next page buttons", async () => {
+  fake.getAudio.mockResolvedValue(new Blob(["mp3"]));
+  await openAndReplay();
+  fireEvent.click(screen.getByLabelText("다음 쪽"));
+  await flush();
+  expect(screen.getByText("intro 2")).toBeTruthy();
+  fireEvent.click(screen.getByLabelText("다음 쪽"));  // 구간 끝 → 다음 구간 1쪽
+  await flush();
+  expect(screen.getByText("middle 1")).toBeTruthy();
+  fireEvent.click(screen.getByLabelText("이전 쪽"));  // 앞 구간 마지막 쪽
+  await flush();
+  expect(screen.getByText("intro 2")).toBeTruthy();
+});
+
+test("scene stays while the next part is being made", async () => {
+  fake.getAudio.mockResolvedValue(new Blob(["mp3"]));
+  const { nextSegment } = await import("../api");
+  (nextSegment as ReturnType<typeof vi.fn>).mockReturnValue(new Promise(() => {}));  // 끝나지 않는 요청
+  const notDone: SavedStory = { ...done, done: false, chosen: [], segments: done.segments.slice(0, 1) };
+  const { container } = render(<Reading saved={notDone} onUpdate={vi.fn()} onHome={vi.fn()} onNew={vi.fn()} />);
+  await flush();
+  await act(async () => { fake.player.onended?.(); });
+  await flush();
+  fireEvent.click(screen.getByText("bear"));
+  fireEvent.click(screen.getByText("bear"));  // 두 번 눌러 고름
+  await flush();
+  expect(container.querySelector(".scene")).toBeTruthy();
+  expect(screen.getByText(/다음 이야기를 만들고 있어요/)).toBeTruthy();
+});
+
+test("pause and resume the story voice", async () => {
+  fake.getAudio.mockResolvedValue(new Blob(["mp3"]));
+  const notDone: SavedStory = { ...done, done: false, chosen: [], segments: done.segments.slice(0, 1) };
+  render(<Reading saved={notDone} onUpdate={vi.fn()} onHome={vi.fn()} onNew={vi.fn()} />);
+  await flush();
+  fireEvent.click(screen.getByLabelText("잠깐 멈추기"));
+  expect(fake.player.pause).toHaveBeenCalled();
+  fireEvent.click(screen.getByLabelText("이어서 듣기"));
+  expect(fake.player.play).toHaveBeenCalledTimes(2);
+});

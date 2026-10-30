@@ -12,6 +12,4 @@
 .home h1 { margin: 0; font-size: 34px; }
 .home-sub { margin: 0 0 16px; color: var(--muted); font-size: 18px; }
 .home .big-button { width: 100%; max-width: 360px; }
-.voice-lab { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; color: var(--muted); }
-.voice-chip { min-height: 44px; padding: 6px 14px; border-radius: 999px; background: var(--card); border: 2px solid transparent; font-size: 16px; }
-.voice-chip.on { border-color: var(--accent); color: var(--ink); font-weight: 700; }
+.home-settings { min-height: 44px; padding: 6px 16px; border-radius: 999px; background: transparent; color: var(--muted); font-size: 17px; }
