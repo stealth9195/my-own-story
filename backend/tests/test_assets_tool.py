@@ -3,7 +3,7 @@ import pytest
 Image = pytest.importorskip("PIL.Image")  # assets 그룹 없이 돌리면 건너뜀
 
 from app.catalog import load_catalog  # noqa: E402
-from tools.assets import convert, convert_all  # noqa: E402
+from tools.assets import CAREFUL_IDS, convert, convert_all, merge_masks  # noqa: E402
 
 
 class FakeRemoveBg:
@@ -50,6 +50,20 @@ def test_transparent_margin_is_trimmed(tmp_path):
         assert img.size == (256, 512)
 
 
+def test_faint_alpha_noise_is_not_kept_in_trim(tmp_path):
+    """모델이 남긴 거의 투명한 잡티(알파 1~16)는 여백으로 본다"""
+    src = make_png(tmp_path / "unicorn.png", (1024, 1024))
+
+    def noisy(img):
+        out = Image.new("RGBA", img.size, (0, 0, 0, 8))
+        out.paste((255, 0, 0, 255), (412, 312, 612, 712))
+        return out
+
+    out = convert(src, tmp_path / "out", "character", noisy)
+    with Image.open(out) as img:
+        assert img.size == (256, 512)
+
+
 def test_background_keeps_ratio_without_removal(tmp_path):
     src = make_png(tmp_path / "forest.png", (1344, 768))
     remove_bg = FakeRemoveBg()
@@ -80,3 +94,41 @@ def test_up_to_date_file_is_not_converted_again(tmp_path):
     remove_bg = FakeRemoveBg()
     convert_all(raw, out_dir, load_catalog(), remove_bg)
     assert remove_bg.calls == 0
+
+
+def ring_mask(size, box):
+    """box 테두리만 불투명한 마스크(흰 물체 안쪽이 지워진 모양)"""
+    mask = Image.new("L", size, 0)
+    mask.paste(255, box)
+    x0, y0, x1, y1 = box
+    mask.paste(0, (x0 + 2, y0 + 2, x1 - 2, y1 - 2))
+    return mask
+
+
+def test_merge_masks_fills_inside_outline():
+    merged = merge_masks([ring_mask((20, 20), (4, 4, 16, 16))])
+    assert merged.getpixel((10, 10)) == 255
+    assert merged.getpixel((1, 1)) == 0
+
+
+def test_merge_masks_unions_two_models():
+    a = Image.new("L", (20, 20), 0)
+    a.paste(255, (0, 0, 5, 5))
+    b = Image.new("L", (20, 20), 0)
+    b.paste(255, (15, 15, 20, 20))
+    merged = merge_masks([a, b])
+    assert merged.getpixel((2, 2)) == 255
+    assert merged.getpixel((17, 17)) == 255
+    assert merged.getpixel((10, 10)) == 0
+
+
+def test_careful_ids_use_careful_remover(tmp_path):
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    make_png(raw / "letter.png", (64, 64))
+    make_png(raw / "bear.png", (64, 64))
+    normal, careful = FakeRemoveBg(), FakeRemoveBg()
+    convert_all(raw, tmp_path / "out", load_catalog(), normal, careful)
+    assert "letter" in CAREFUL_IDS
+    assert careful.calls == 1
+    assert normal.calls == 1
