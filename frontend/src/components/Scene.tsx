@@ -1,27 +1,26 @@
 import { useState } from "react";
 import type { Page } from "../api";
-import { emojiOf } from "../catalog";
-import { actorSlots, stateMark, timeFilter } from "../scene";
+import { emojiOf, facingOf } from "../catalog";
+import { actorSlots, arrangeActors, stateMark, timeFilter } from "../scene";
 import Picture from "./Picture";
 import "./Scene.css";
 
 type Props = { scene: Page["scene"] };
 
-// 한 페이지의 장면: 배경 그림 + 시간대 필터 + 캐릭터·사물 배치 + 상태 표시
+// 한 페이지의 장면: 배경 그림 + 시간대 색 + 캐릭터·사물 배치(서로 마주 보게) + 상태 표시
 export default function Scene({ scene }: Props) {
-  // 캐릭터 먼저, 남는 자리에 사물 (최대 4개)
-  const actors = [
-    ...scene.characters.map((c) => ({ id: c.id, mark: stateMark(c.state), object: false })),
-    ...scene.objects.map((id) => ({ id, mark: null, object: true })),
-  ];
+  const actors = arrangeActors(scene.characters.map((c) => ({ ...c, facing: facingOf(c.id) })), scene.objects);
   const slots = actorSlots(actors.length);
 
   return (
-    <section className={`scene bg-${scene.background}`} aria-hidden="true">
+    <section className={`scene bg-${scene.background} time-${scene.time}`} aria-hidden="true">
       {/* key: 배경이 바뀌면 새 요소로 만들어 '불러오기 실패' 기억을 지운다 */}
       <Backdrop key={scene.background} id={scene.background} filter={timeFilter(scene.time)} />
+      {/* 밤·노을: 배경에 색을 덮는다 (캐릭터는 아이가 알아보기 쉽게 그대로, 낮은 투명) */}
+      <div className="scene-tint" />
       {slots.map((slot, i) => {
         const actor = actors[i];
+        const mark = actor.state ? stateMark(actor.state) : null;
         return (
           <div
             key={`${i}-${actor.id}`}
@@ -33,8 +32,9 @@ export default function Scene({ scene }: Props) {
               animationDelay: `${i * 0.6}s`,
             }}
           >
-            {actor.mark && <span className="state-mark">{actor.mark}</span>}
-            <Picture id={actor.id} />
+            {/* 상태 표시는 뒤집는 그림 바깥에, 바라보는 쪽 머리 위에 (안에 두면 글자도 거울처럼 뒤집힘) */}
+            {mark && <span className={`state-mark ${actor.looks === "left" ? "on-left" : "on-right"}`}>{mark}</span>}
+            <div className={actor.flip ? "flip" : undefined}><Picture id={actor.id} /></div>
           </div>
         );
       })}

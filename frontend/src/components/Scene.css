@@ -32,11 +32,21 @@
 .state-mark {
   position: absolute;
   top: -6%;
-  right: 4%;
-  z-index: 1;
+  z-index: 2;
   font-size: clamp(18px, 6vw, 30px);
   animation: bounce 1s ease-in-out infinite;
 }
+
+.state-mark.on-right { right: 4%; }
+.state-mark.on-left { left: 4%; }
+/* 그릴 때만 좌우 반전 (파일은 그대로) */
+.actor > div { width: 100%; height: 100%; }
+.flip { transform: scaleX(-1); }
+
+/* 시간대: 배경을 따로 그리지 않고 배경 위에 색을 덮는다. 밤은 남색, 노을은 주황 (둘 다 곱하기: 밝은 곳까지 물든다) */
+.scene-tint { position: absolute; inset: 0; pointer-events: none; background: transparent; }  /* 캐릭터보다 아래(배경에만) */
+.scene.time-night .scene-tint { background: #22318f; mix-blend-mode: multiply; opacity: 0.6; }
+.scene.time-sunset .scene-tint { background: #ff9a52; mix-blend-mode: multiply; opacity: 0.55; }
 
 @keyframes breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4%); } }
 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30%); } }
