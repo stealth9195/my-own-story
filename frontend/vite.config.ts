@@ -1,9 +1,10 @@
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
-export default defineConfig({
+// mode: 실험 서버는 --mode experiment 로 띄워 .env.experiment 의 백엔드 포트를 쓴다
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     // PWA: 휴대폰 홈 화면에 설치되고, 한 번 받은 앱 파일·그림·소리는 기기에 저장(캐시)해 두고 쓴다
@@ -48,6 +49,6 @@ export default defineConfig({
     // shared/catalog.json(백엔드와 같이 쓰는 목록)이 frontend 폴더 밖에 있다
     fs: { allow: ['..'] },
     // 개발 중에는 /api 요청을 백엔드로 넘긴다 → 같은 주소처럼 보여서 CORS 설정이 필요 없음
-    proxy: { '/api': 'http://localhost:8001' },
+    proxy: { '/api': `http://localhost:${loadEnv(mode, process.cwd(), '').API_PORT || 8001}` },
   },
-})
+}))

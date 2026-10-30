@@ -4,6 +4,8 @@ import { bgmPlayer, sfxPlayer } from "./sound";
 // 그래서 첫 터치("새 이야기 만들기")에서 오디오 요소 하나를 '잠금 해제'해 두고, 이후 이야기 음성은 모두 그 요소로 재생한다.
 
 export const player: HTMLAudioElement | null = typeof Audio === "undefined" ? null : new Audio();
+// 안내·질문·선택지를 읽는 요소 (이야기 음성과 따로)
+const guidePlayer: HTMLAudioElement | null = typeof Audio === "undefined" ? null : new Audio();
 
 // 0.1초짜리 무음 WAV (잠금 해제용으로 한 번 재생)
 function silentWav(): string {
@@ -29,7 +31,7 @@ export function unlockAudio(): void {
     player.play().catch(() => {});
   }
   // 배경 음악·효과음 요소도 같은 터치에서 잠금 해제 (음악은 반복 재생이라 바로 멈춘다)
-  for (const el of [bgmPlayer, sfxPlayer]) {
+  for (const el of [bgmPlayer, sfxPlayer, guidePlayer]) {
     if (!el) continue;
     el.src = silent;
     el.play().then(() => el.pause()).catch(() => {});
@@ -38,9 +40,68 @@ export function unlockAudio(): void {
   if (typeof speechSynthesis !== "undefined") speechSynthesis.speak(new SpeechSynthesisUtterance(""));
 }
 
-// 질문·선택지 읽기용 브라우저 음성 (무료). 끝나면 resolve. 지원하지 않으면 바로 resolve
+// 안내 목소리: Azure 여성·남성(서버 /api/speak) 또는 브라우저 음성. 기기에 저장
+export type GuideVoice = "browser" | "female" | "male";
+let guideVoice: GuideVoice = readGuideVoice();
+
+function readGuideVoice(): GuideVoice {
+  try {
+    const v = localStorage.getItem("guideVoice");
+    return v === "browser" || v === "male" ? v : "female";
+  } catch {
+    return "female";
+  }
+}
+
+export function getGuideVoice(): GuideVoice {
+  return guideVoice;
+}
+
+export function setGuideVoice(v: GuideVoice): void {
+  guideVoice = v;
+  try { localStorage.setItem("guideVoice", v); } catch { /* 이번 실행에만 적용 */ }
+}
+
+// 같은 글·목소리는 한 번만 받아 둔다 (질문 문장은 매번 같아서 서버 글자 한도를 아낀다)
+const spoken = new Map<string, Promise<string>>();
+let speakToken = 0;
+
+function fetchSpeech(text: string, voice: "female" | "male"): Promise<string> {
+  const key = `${voice}:${text}`;
+  let req = spoken.get(key);
+  if (!req) {
+    req = fetch(`${import.meta.env.VITE_API_BASE ?? ""}/api/speak`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text, voice }),
+    }).then(async (res) => {
+      if (!res.ok) throw new Error(`speak ${res.status}`);
+      return URL.createObjectURL(await res.blob());
+    });
+    req.catch(() => spoken.delete(key));  // 실패는 기억하지 않음 (다음에 다시 시도)
+    spoken.set(key, req);
+  }
+  return req;
+}
+
+// 질문·선택지·안내 읽기. 끝나면 resolve. Azure 가 안 되면(키 없음·한도·오류) 브라우저 음성으로
 export function speak(text: string, rate = 0.95): Promise<void> {
-  if (typeof speechSynthesis === "undefined" || !text) return Promise.resolve();
+  if (!text) return Promise.resolve();
+  const t = ++speakToken;
+  if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
+  guidePlayer?.pause();
+  const voice = guideVoice;
+  if (voice === "browser" || !guidePlayer) return speakBrowser(text, rate);
+  return fetchSpeech(text, voice).then((url) => new Promise<void>((resolve) => {
+    if (t !== speakToken) return resolve();  // 받는 동안 다른 말을 시작했으면 읽지 않음
+    guidePlayer.src = url;
+    guidePlayer.onended = () => resolve();
+    guidePlayer.onerror = () => resolve();
+    guidePlayer.play().catch(() => resolve());
+  })).catch(() => (t === speakToken ? speakBrowser(text, rate) : undefined));
+}
+
+// 브라우저 음성 (무료, 기계음). 지원하지 않으면 바로 resolve
+function speakBrowser(text: string, rate: number): Promise<void> {
+  if (typeof speechSynthesis === "undefined") return Promise.resolve();
   speechSynthesis.cancel();
   return new Promise((resolve) => {
     const u = new SpeechSynthesisUtterance(text);
@@ -70,23 +131,30 @@ export function isCurrent(t: number): boolean {
 
 export function stopAll(): void {
   playToken();
+  speakToken++;
   if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
   player?.pause();
+  guidePlayer?.pause();
 }
 
-// 읽기 속도 (TTS 지시문 대신 재생 속도로 조절, 기기에 저장)
-export const SPEEDS = { slow: 0.85, normal: 1.0 } as const;
-export type Speed = keyof typeof SPEEDS;
+// 재생 배속 (부모용 '더 느리게·더 빠르게'). 기본 속도는 TTS 연출 지시로 맞추고, 이건 미세 조정용. 기기에 저장
+export const RATES = [0.8, 0.9, 1, 1.1, 1.2, 1.3];
 
-export function getSpeed(): Speed {
+export function getRate(): number {
   try {
-    return localStorage.getItem("speed") === "normal" ? "normal" : "slow";
+    const r = Number(localStorage.getItem("rate"));
+    return RATES.includes(r) ? r : 1;
   } catch {
-    return "slow";
+    return 1;
   }
 }
 
-export function setSpeed(s: Speed): void {
-  try { localStorage.setItem("speed", s); } catch { /* 저장 못 해도 이번 재생에는 적용 */ }
-  if (player) player.playbackRate = SPEEDS[s];
+export function stepRate(rate: number, dir: 1 | -1): number {
+  const i = RATES.indexOf(rate);
+  return RATES[Math.min(Math.max((i < 0 ? RATES.indexOf(1) : i) + dir, 0), RATES.length - 1)];
+}
+
+export function setRate(r: number): void {
+  try { localStorage.setItem("rate", String(r)); } catch { /* 저장 못 해도 이번 재생에는 적용 */ }
+  if (player) player.playbackRate = r;
 }

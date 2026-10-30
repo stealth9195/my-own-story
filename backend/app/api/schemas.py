@@ -39,6 +39,12 @@ class NextRequest(BaseModel):
     chosen: list[str]
 
 
+class SpeakRequest(BaseModel):
+    """안내·질문·선택지처럼 짧은 글 (이야기 본문은 /api/tts)"""
+    text: str = Field(min_length=1, max_length=200)
+    voice: Literal["female", "male"] = "female"
+
+
 class TTSRequest(BaseModel):
     """서버가 만든 구간만 읽는다 (서명 확인)."""
     story: StoryKey

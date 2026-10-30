@@ -11,6 +11,9 @@
 .reading-top { width: 100%; max-width: 780px; display: flex; align-items: center; justify-content: space-between; }
 .icon-button { min-height: 48px; padding: 8px 14px; border-radius: 16px; background: var(--card); font-size: 18px; }
 .reading-tools { display: flex; gap: 8px; }
+.rate { display: flex; align-items: center; gap: 4px; }
+.rate .icon-button { min-width: 44px; padding: 8px 10px; font-weight: 700; }
+.rate-value { min-width: 42px; text-align: center; font-size: 16px; color: var(--muted); }
 .reading-step { color: var(--muted); font-size: 16px; }
 
 .reading-text {

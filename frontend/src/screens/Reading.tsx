@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ApiError, fetchSegmentAudio, nextSegment, sendEvent } from "../api";
 import type { Choice } from "../api";
-import { getSpeed, isCurrent, player, playToken, setSpeed, speak, SPEEDS, stopAll } from "../audio";
-import type { Speed } from "../audio";
+import { getRate, isCurrent, player, playToken, setRate, speak, stepRate, stopAll } from "../audio";
 import { emojiOf } from "../catalog";
 import { getAnonId, getAudio, saveAudio, saveStory } from "../storage";
 import type { SavedStory } from "../storage";
@@ -46,7 +45,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
   const [phase, setPhase] = useState<Phase>("loading");
   const [focus, setFocus] = useState<string | null>(null);
   const [problem, setProblem] = useState("unknown");
-  const [speed, setSpeedState] = useState<Speed>(getSpeed());
+  const [rate, setRateState] = useState(getRate());
   const [muted, setMutedState] = useState(isMuted());
   // useRef: 화면을 다시 그려도 유지되지만, 바뀌어도 다시 그리지는 않는 값 (마지막 선택 요청 기억)
   const pending = useRef<SavedStory | null>(null);
@@ -98,7 +97,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
         for (let i = from; i < seg.pages.length; i++) {
           if (!isCurrent(t)) return;
           setPage(i);
-          await speak(seg.pages[i].text, SPEEDS[getSpeed()]);
+          await speak(seg.pages[i].text, 0.95 * getRate());
         }
         finish();
         return;
@@ -116,7 +115,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
       if (!isCurrent(t) || !audio) return;  // 기다리는 동안 화면을 떠났으면 재생하지 않음
       const url = URL.createObjectURL(mp3);
       audio.src = url;
-      audio.playbackRate = SPEEDS[getSpeed()];
+      audio.playbackRate = getRate();
       let starts = [0];
       audio.onloadedmetadata = () => {
         starts = pageStartTimes(seg.pages.map((p) => p.text), audio.duration);
@@ -218,10 +217,11 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
     setMutedState(!muted);
   }
 
-  function toggleSpeed() {
-    const next: Speed = speed === "slow" ? "normal" : "slow";
-    setSpeed(next);
-    setSpeedState(next);
+  // 부모용 배속: 더 느리게(−)·더 빠르게(+)
+  function changeRate(dir: 1 | -1) {
+    const next = stepRate(rate, dir);
+    setRate(next);
+    setRateState(next);
   }
 
   // 다 들은 이야기를 책장에서 열었을 때만 '이어 듣기' 를 보여 준다
@@ -240,7 +240,11 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
           <button className="icon-button" onClick={toggleMute} aria-label={muted ? "음악 켜기" : "음악 끄기"}>
             {muted ? "🔇" : "🎵"}
           </button>
-          <button className="icon-button" onClick={toggleSpeed}>{speed === "slow" ? "🐢 천천히" : "🐇 보통"}</button>
+          <div className="rate">
+            <button className="icon-button" onClick={() => changeRate(-1)} aria-label="더 느리게">−</button>
+            <span className="rate-value">{rate.toFixed(1)}배</span>
+            <button className="icon-button" onClick={() => changeRate(1)} aria-label="더 빠르게">+</button>
+          </div>
         </div>
       </header>
 

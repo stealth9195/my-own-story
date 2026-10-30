@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     story_secret: str = Field(min_length=32)  # 비면 누구나 서명을 만들 수 있다
     gemini_api_key: str = ""
     typecast_api_key: str = ""
+    # 안내·선택지 읽기(Azure 무료 F0). 비우면 /api/speak 를 끄고 프론트는 브라우저 음성으로 읽는다
+    azure_speech_key: str = ""
+    azure_speech_region: str = ""
     daily_stories_per_user: int = 3
     daily_stories_total: int = 30
     cors_origins: list[str] = ["http://localhost:5173"]

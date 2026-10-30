@@ -12,6 +12,7 @@ KST = timezone(timedelta(hours=9))
 PACIFIC = ZoneInfo("America/Los_Angeles")  # Gemini 무료 한도는 태평양 시간 자정(KST 16~17시)에 초기화
 GEMINI_DAILY_CALLS = 10      # TTS 모델마다 하루 10회
 TYPECAST_MONTHLY_CHARS = 15000
+AZURE_DAILY_CHARS = 15000    # Azure 무료 월 50만 자를 하루로 나눈 것보다 조금 적게
 TTS_TRIES_PER_SEGMENT = 2    # 첫 시도 + 다시 시도
 GENERATIONS_PER_SEGMENT = 2  # 같은 구간을 다시 요청해 LLM 한도를 다 쓰지 못하게
 
@@ -57,6 +58,13 @@ class Limits:
     def reserve_typecast(self, chars: int) -> None:
         with self._lock:
             self._counts[(self._month(), "typecast")] += chars
+
+    def azure_left(self) -> int:
+        return AZURE_DAILY_CHARS - self._counts[(self._day(), "azure")]
+
+    def reserve_azure(self, chars: int) -> None:
+        with self._lock:
+            self._counts[(self._day(), "azure")] += chars
 
     def _allow(self, key: tuple, cap: int) -> bool:
         with self._lock:

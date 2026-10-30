@@ -6,6 +6,7 @@ import random
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from collections.abc import Callable
 from dataclasses import asdict
 
 from fastapi import FastAPI, HTTPException
@@ -14,8 +15,8 @@ from fastapi.responses import Response
 
 from app.api.limits import Limits
 from app.api.log import log_event
-from app.api.schemas import (EventRequest, NextRequest, SegmentResponse, SignedSegment, StartRequest,
-                             StoryKey, TTSRequest)
+from app.api.schemas import (EventRequest, NextRequest, SegmentResponse, SignedSegment, SpeakRequest,
+                             StartRequest, StoryKey, TTSRequest)
 from app.api.signing import BadSignature, sign_segment, verify_history, verify_segment
 from app.api.tts_service import TTSFn, default_tts, synthesize_segment
 from app.api.voice import pick_voice
@@ -27,9 +28,11 @@ from app.story.prompt import StoryContext
 from app.story.safety import load_banned_words
 from app.story.schema import Segment
 from app.story.start import segment_types, start_options, valid_cards
+from app.tts import azure
 from app.tts.gemini import TTSError
 
 MAX_EVENT_PAYLOAD = 2000  # 사용 기록 payload 글자 수 (JSON)
+SpeakFn = Callable[[str, str], bytes]  # (글, female·male) → MP3
 
 
 def _fail(status: int, code: str):
@@ -51,7 +54,7 @@ def log_unused(story_id: str, index: int, model: str, future) -> None:
 
 def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
                backups: list[LLM] = (), tts: TTSFn | None = None, limits: Limits | None = None,
-               rng: random.Random | None = None) -> FastAPI:
+               rng: random.Random | None = None, speak: SpeakFn | None = None) -> FastAPI:
     app = FastAPI(title="my-own-story")
     app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins,
                        allow_methods=["GET", "POST"], allow_headers=["Content-Type"])
@@ -59,6 +62,9 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
     tts = tts or default_tts(settings.gemini_api_key, settings.typecast_api_key)
     limits = limits or Limits(settings.daily_stories_per_user, settings.daily_stories_total)
     rng = rng or random.Random()
+    if speak is None and settings.azure_speech_key and settings.azure_speech_region:
+        def speak(text: str, voice: str) -> bytes:
+            return azure.synthesize(text, voice, settings.azure_speech_key, settings.azure_speech_region)
 
     def generate(story: StoryKey, history: list[Segment], chosen: list[str]) -> SegmentResponse:
         index = len(history)
@@ -182,6 +188,22 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
         charge_extra(voice, calls - reserved, len(text))
         log_event("tts", story_id=req.story.id, index=req.index, voice=req.story.voice.model_dump(),
                   chars=len(text), bytes=len(audio), latency_ms=int((time.perf_counter() - started) * 1000))
+        return Response(audio, media_type="audio/mpeg")
+
+    @app.post("/api/speak")
+    def speak_text(req: SpeakRequest):
+        """안내·질문·선택지 읽기 (Azure). 키가 없거나 오늘 글자 수를 다 쓰면 프론트가 브라우저 음성으로 읽는다"""
+        if speak is None:
+            _fail(503, "speak_unavailable")
+        if limits.azure_left() < len(req.text):
+            _fail(429, "speak_limit")
+        limits.reserve_azure(len(req.text))
+        try:
+            audio = speak(req.text, req.voice)
+        except TTSError as e:
+            log_event("speak_failed", voice=req.voice, status=e.status)
+            _fail(502, "speak_failed")
+        log_event("speak", voice=req.voice, chars=len(req.text))
         return Response(audio, media_type="audio/mpeg")
 
     @app.post("/api/events", status_code=204)
