@@ -9,3 +9,6 @@
 __pycache__/
 backend/eval/tts_out/
 backend/eval/models.json
+
+# 그림 원본 (용량 큼, 변환본만 커밋)
+assets/raw/

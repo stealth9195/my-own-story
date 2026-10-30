@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>에셋 이미지 프롬프트</title>
+<style>
+  :root {
+    --bg: #faf8f4; --card: #ffffff; --text: #2b2b2b; --muted: #777;
+    --line: #e4e0d8; --accent: #3b6fd8; --done: #e8f3e8; --code: #f4f2ee;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.5 system-ui, "Malgun Gothic", sans-serif; }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 18px; margin: 32px 0 8px; }
+  .muted { color: var(--muted); }
+  .box { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .box ul { margin: 4px 0; padding-left: 20px; }
+  table { border-collapse: collapse; }
+  td { padding: 2px 12px 2px 0; }
+  .progress { position: sticky; top: 0; background: var(--bg); padding: 8px 0; border-bottom: 1px solid var(--line); z-index: 1; }
+  .item { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 8px 0; }
+  .item.done { background: var(--done); }
+  .head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .name { font-weight: 600; }
+  .meta { color: var(--muted); font-size: 13px; }
+  .spacer { flex: 1; }
+  button { border: 1px solid var(--accent); background: var(--accent); color: #fff; border-radius: 6px; padding: 4px 12px; cursor: pointer; font: inherit; }
+  button.copied { background: #2e8b57; border-color: #2e8b57; }
+  label { font-size: 13px; cursor: pointer; user-select: none; }
+  pre { margin: 8px 0 0; padding: 8px; background: var(--code); border-radius: 6px; white-space: pre-wrap; word-break: break-word; font: 13px/1.45 Consolas, monospace; }
+</style>
+</head>
+<body>
+<main>
+  <h1>에셋 이미지 프롬프트</h1>
+  <p class="muted">'복사'를 누르면 대상 문구와 스타일 문구가 합쳐진 전체 프롬프트가 복사됩니다. '완료' 체크는 이 브라우저에만 저장됩니다.</p>
+
+  <div class="box">
+    <b>생성 설정</b>
+    <table>
+      <tr><td>steps / cfg</td><td>4 / 1.0</td></tr>
+      <tr><td>sampler / scheduler</td><td>euler / simple</td></tr>
+      <tr><td>크기</td><td>캐릭터·사물 1024 × 1024, 배경 1344 × 768</td></tr>
+      <tr><td>저장 파일 이름</td><td>각 항목의 <code>id</code> 그대로 (예: <code>bear.png</code>)</td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <b>생성 팁</b>
+    <ul>
+      <li>같은 프롬프트인데 결과가 매번 다른 건 seed 가 매번 바뀌어서입니다(KSampler 의 <code>control after generate</code> 가 randomize). 마음에 드는 그림이 나오면 그때 seed 를 적어 두면 같은 그림을 다시 만들 수 있습니다.</li>
+      <li><code>Empty Latent Image</code> 의 <code>batch_size</code> 를 3~4로 두면 한 번에 여러 장이 나와서 고르기 편합니다.</li>
+      <li>잘 틀리는 곳: 눈 개수, 귀 개수, 꼬리 개수, 다리 개수, 그림 속 글자. 저장 전에 이것만 확인하세요.</li>
+      <li>이미 저장한 그림: 토끼(rabbit), 아기 용(dragon), 풀밭(meadow). 아래 목록에서 '완료'로 표시해 두었습니다.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <b>공통 스타일 문구 (얇은 테두리)</b>
+    <pre id="style"></pre>
+  </div>
+
+  <div class="progress" id="progress"></div>
+  <div id="list"></div>
+</main>
+
+<script>
+const STYLE = "children's picture book illustration, hand-drawn with fine thin black outlines, colored crayon and colored pencil texture, warm soft pastel colors, simple rounded shapes, gentle flat shading, cute and friendly";
+
+const CHAR_TAIL = "single character, full body, centered, three-quarter view facing right, isolated on a plain pure white background,";
+const OBJ_TAIL = "single object, centered, isolated on a plain pure white background,";
+const BG_TAIL = "the main details placed in the center, the left and right edges kept simple, calm and empty landscape, wide horizontal composition,";
+
+const GROUPS = [
+  { key: "characters", title: "캐릭터", size: "1024 × 1024", items: [
+    ["rabbit", "토끼", `A cute small white rabbit with two long upright ears and a pink nose, round fluffy body, simple black dot eyes, gentle smile, standing on two feet, ${CHAR_TAIL}`],
+    ["bear", "곰", `A cute small brown bear cub with two round ears, a round tummy with a light beige belly, simple black dot eyes, gentle smile, standing on two feet, ${CHAR_TAIL}`],
+    ["fox", "여우", `A cute small orange fox with two pointed ears, a white chest and one big fluffy tail with a white tip, simple black dot eyes, gentle smile, sitting upright, ${CHAR_TAIL}`],
+    ["cat", "고양이", `A cute small orange tabby kitten with two pointed ears, soft stripes and one long curled tail, simple black dot eyes, gentle smile, sitting upright, ${CHAR_TAIL}`],
+    ["puppy", "강아지", `A cute small cream-colored puppy with two floppy brown ears, a little red collar and one short tail, simple black dot eyes, happy smile, sitting upright, ${CHAR_TAIL}`],
+    ["dragon", "아기 용", `A cute small green baby dragon with tiny wings, round belly, one short tail and small rounded horns, simple black dot eyes, cheerful smile, standing on two feet, ${CHAR_TAIL}`],
+    ["princess", "공주", `A cute little girl princess with a small golden tiara, a puffy pastel pink dress and short brown hair, rosy cheeks, simple black dot eyes, gentle smile, standing, ${CHAR_TAIL}`],
+    ["robot", "로봇", `A cute small friendly robot with a round head, one short antenna with a little ball on top, a rounded light blue metal body, short arms and legs, simple round black eyes, small smile, standing, ${CHAR_TAIL}`],
+    ["owl", "부엉이", `A cute small round brown owl with two big round eyes, two small ear tufts, a light cream belly, folded wings and a tiny orange beak, gentle expression, standing on two small feet, ${CHAR_TAIL}`],
+    ["dinosaur", "공룡", `A cute small light blue baby long-neck dinosaur with a long tail, a round body and four short legs, no wings and no horns, simple black dot eyes, gentle smile, standing on four legs, ${CHAR_TAIL}`],
+    ["penguin", "펭귄", `A cute small penguin with a black back, a white round belly, a tiny orange beak, two orange feet and two short flippers, simple black dot eyes, gentle smile, standing, ${CHAR_TAIL}`],
+    ["elephant", "코끼리", `A cute small light gray baby elephant with two big round ears, a short curled trunk and four short legs, simple black dot eyes, gentle smile, standing on four legs, ${CHAR_TAIL}`],
+    ["lion", "사자", `A cute small lion cub with a round fluffy golden mane, a light tan body and one thin tail with a tuft at the end, simple black dot eyes, gentle smile, sitting upright, ${CHAR_TAIL}`],
+    ["monkey", "원숭이", `A cute small brown monkey with a light beige face and belly, two round ears and one long curled tail, simple black dot eyes, playful smile, standing on two feet, ${CHAR_TAIL}`],
+    ["giraffe", "기린", `A cute small baby giraffe with a long neck, a yellow body with soft brown patches, two small horns with round tips and four legs, simple black dot eyes, gentle smile, standing, ${CHAR_TAIL}`],
+    ["turtle", "거북이", `A cute small green turtle with a round light brown dome shell with simple hexagon patterns, four short legs, simple black dot eyes, gentle smile, walking, ${CHAR_TAIL}`],
+    ["squirrel", "다람쥐", `A cute small brown squirrel with one big bushy curled tail and two small round ears, holding a tiny acorn, simple black dot eyes, gentle smile, sitting upright, ${CHAR_TAIL}`],
+    ["hedgehog", "고슴도치", `A cute small hedgehog with a soft brown spiky back, a light cream face and belly, two tiny round ears and a small black nose, simple black dot eyes, gentle smile, standing on two small feet, ${CHAR_TAIL}`],
+    ["duck", "오리", `A cute small yellow duckling with a round fluffy body, two small wings, an orange flat beak and two orange webbed feet, simple black dot eyes, gentle smile, standing, ${CHAR_TAIL}`],
+    ["frog", "개구리", `A cute small green frog with two big round eyes on top of its head, a pale yellow belly and a wide gentle smile, sitting, ${CHAR_TAIL}`],
+    ["butterfly", "나비", `A cute small butterfly with four large rounded wings in pastel pink and yellow with simple round spots, a small round body and two curled antennae, simple black dot eyes, gentle smile, flying with wings open, single character, full body, centered, front view, isolated on a plain pure white background,`],
+    ["whale", "고래", `A cute small blue whale with a round chubby body, a pale belly with soft stripes, one small tail fin and a little water spout on top, simple black dot eyes, gentle smile, floating, single character, full body, centered, side view facing right, isolated on a plain pure white background,`],
+    ["unicorn", "유니콘", `A cute small white unicorn with a pastel rainbow mane and tail and one short golden spiral horn, four legs, simple black dot eyes, gentle smile, standing, ${CHAR_TAIL}`],
+    ["fairy", "요정", `A cute little girl fairy with two pairs of small translucent pastel wings, a light green leaf dress and short blonde hair, rosy cheeks, simple black dot eyes, gentle smile, floating in the air, ${CHAR_TAIL}`],
+    ["snowman", "눈사람", `A cute small snowman made of two round snowballs, a carrot nose, two coal dot eyes, a red knitted scarf and two small twig arms, gentle smile, standing, ${CHAR_TAIL}`],
+  ]},
+  { key: "objects", title: "사물", size: "1024 × 1024", items: [
+    ["rose", "장미", `A single red rose with a short green stem and two leaves, ${OBJ_TAIL}`],
+    ["star", "별", `A cute yellow five-pointed star with soft rounded points and a gentle glow, front view, ${OBJ_TAIL}`],
+    ["cake", "케이크", `A small round strawberry cake with white cream, pink frosting and red strawberries on top, on a small plate, three-quarter view, ${OBJ_TAIL}`],
+    ["balloon", "풍선", `A shiny red round balloon with a small knot and a long curly string, ${OBJ_TAIL}`],
+    ["treasure_box", "보물 상자", `A classic pirate treasure chest made of wood with a rounded domed lid, sturdy golden metal bands and corners and a large golden keyhole lock on the front, the lid tightly closed, three-quarter view, ${OBJ_TAIL}`],
+    ["magic_wand", "요술봉", `A magic wand with a slim white stick and a golden star on the tip, small sparkles around the star, ${OBJ_TAIL}`],
+    ["rainbow", "무지개", `A cute arched rainbow with soft pastel color stripes, each end resting on a small fluffy white cloud, front view, ${OBJ_TAIL}`],
+    ["moon", "달", `A pale yellow crescent moon with soft rounded tips and a gentle glow, front view, ${OBJ_TAIL}`],
+    ["ship", "배", `A small wooden sailing ship with one white sail and a little red flag, three-quarter view, ${OBJ_TAIL}`],
+    ["apple", "사과", `A shiny red apple with a short brown stem and one green leaf, ${OBJ_TAIL}`],
+    ["umbrella", "우산", `An open yellow umbrella with a curved handle, three-quarter view, ${OBJ_TAIL}`],
+    ["kite", "연", `A diamond-shaped kite in red and blue with a long tail of small bows, ${OBJ_TAIL}`],
+    ["map", "지도", `An old treasure map on a slightly curled paper sheet with a dotted path, small hills, a palm tree and a red X mark, simple drawings only, top view, ${OBJ_TAIL}`],
+    ["lantern", "등불", `A small old-fashioned metal lantern with a handle on top and a warm glowing candle light inside, ${OBJ_TAIL}`],
+    ["flower_crown", "꽃 왕관", `A round flower crown made of small pink, yellow and white flowers and green leaves, seen slightly from above, ${OBJ_TAIL}`],
+    ["cookie", "쿠키", `A round golden brown chocolate chip cookie, three-quarter view, ${OBJ_TAIL}`],
+    ["honey", "꿀단지", `A round clay honey pot with golden honey dripping over the rim and a wooden honey dipper, ${OBJ_TAIL}`],
+    ["music_box", "오르골", `A small pastel pink music box with the lid open and a tiny ballerina figure standing inside, three-quarter view, ${OBJ_TAIL}`],
+    ["crown", "왕관", `A small golden royal crown with five rounded points and colorful round jewels, three-quarter view, ${OBJ_TAIL}`],
+    ["ball", "공", `A round bouncy ball with red, yellow and blue stripes, ${OBJ_TAIL}`],
+    ["bicycle", "자전거", `A small light blue children's bicycle with two wheels, a basket in front and a little bell, side view, ${OBJ_TAIL}`],
+    ["key", "열쇠", `An old-fashioned golden key with a round decorative loop handle, ${OBJ_TAIL}`],
+    ["letter", "편지", `A closed white envelope sealed with a red heart-shaped wax seal, front view, ${OBJ_TAIL}`],
+    ["snowflake", "눈송이", `A single light blue snowflake with six symmetrical branches, front view, ${OBJ_TAIL}`],
+    ["seashell", "조개껍데기", `A pink scallop seashell with soft ridges, front view, ${OBJ_TAIL}`],
+  ]},
+  { key: "backgrounds", title: "배경", size: "1344 × 768", items: [
+    ["meadow", "풀밭", `A wide peaceful green meadow scene for a children's storybook, gentle rolling hills with small colorful wildflowers, a few round soft trees in the far distance, a large open flat grassy area across the lower part of the picture, soft blue sky with a few fluffy white clouds, ${BG_TAIL}`],
+    ["forest", "숲", `A peaceful bright forest scene for a children's storybook, tall round soft trees in the distance and at both sides, small mushrooms and ferns, a large open flat grassy clearing across the lower part of the picture, soft light between the leaves, ${BG_TAIL}`],
+    ["sea", "바다", `A calm beach scene for a children's storybook, gentle blue sea with small soft waves in the middle, a wide flat sandy beach across the lower part of the picture with a few small seashells, soft blue sky with a few fluffy white clouds, ${BG_TAIL}`],
+    ["castle", "성", `A fairytale scene for a children's storybook, a pastel castle with round towers and pointed roofs standing on a gentle hill in the center distance, a large open flat grassy area across the lower part of the picture, soft blue sky with a few fluffy white clouds, ${BG_TAIL}`],
+    ["village", "마을", `A cozy small village scene for a children's storybook, a few small cottages with rounded roofs and chimneys in the middle distance, a winding dirt path, a large open flat grassy area across the lower part of the picture, soft blue sky with a few fluffy white clouds, ${BG_TAIL}`],
+  ]},
+];
+
+const PRE_DONE = ["rabbit", "dragon", "meadow"];
+const STORE_KEY = "image-prompts-done";
+
+function loadDone() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORE_KEY));
+    if (Array.isArray(saved)) return new Set(saved);
+  } catch (e) {}
+  return new Set(PRE_DONE);
+}
+function saveDone() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify([...done])); } catch (e) {}
+}
+
+const done = loadDone();
+const total = GROUPS.reduce((n, g) => n + g.items.length, 0);
+
+function fullPrompt(subject) { return `${subject} ${STYLE}`; }
+
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return; } catch (e) {}
+  const ta = document.createElement("textarea");
+  ta.value = text; document.body.appendChild(ta); ta.select();
+  document.execCommand("copy"); ta.remove();
+}
+
+function updateProgress() {
+  document.getElementById("progress").textContent = `완료 ${done.size} / ${total}`;
+}
+
+function render() {
+  document.getElementById("style").textContent = STYLE;
+  const list = document.getElementById("list");
+  for (const g of GROUPS) {
+    const h = document.createElement("h2");
+    h.textContent = `${g.title} (${g.items.length}개, ${g.size})`;
+    list.appendChild(h);
+    for (const [id, ko, subject] of g.items) {
+      const prompt = fullPrompt(subject);
+      const item = document.createElement("div");
+      item.className = "item" + (done.has(id) ? " done" : "");
+      item.innerHTML = `
+        <div class="head">
+          <span class="name">${ko}</span>
+          <span class="meta">${id}.png · ${g.size}</span>
+          <span class="spacer"></span>
+          <label><input type="checkbox" ${done.has(id) ? "checked" : ""}> 완료</label>
+          <button type="button">복사</button>
+        </div>
+        <pre></pre>`;
+      item.querySelector("pre").textContent = prompt;
+      const btn = item.querySelector("button");
+      btn.addEventListener("click", async () => {
+        await copyText(prompt);
+        btn.textContent = "복사됨"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "복사"; btn.classList.remove("copied"); }, 1200);
+      });
+      item.querySelector("input").addEventListener("change", (e) => {
+        if (e.target.checked) done.add(id); else done.delete(id);
+        item.classList.toggle("done", e.target.checked);
+        saveDone(); updateProgress();
+      });
+      list.appendChild(item);
+    }
+  }
+  updateProgress();
+}
+
+render();
+</script>
+</body>
+</html>
