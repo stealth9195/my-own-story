@@ -258,3 +258,12 @@ def test_unused_result_logged(caplog):
     assert wait_for_log(caplog, '"kind": "segment_unused"')
     rec = next(r.getMessage() for r in caplog.records if "segment_unused" in r.getMessage())
     assert '"model": "s"' in rec and '"ok": true' in rec and "latency_ms" in rec
+
+
+def test_stutter_is_fixed_before_signing():
+    # '꼬 꼭' 같은 더듬기는 서버가 고친 뒤 서명한다 → 화면·음성 모두 고친 글
+    data = json.loads(seg(0))
+    data["pages"][0]["text"] = "토끼를 꼬 꼭 안았어요. " + data["pages"][0]["text"]
+    client, _ = make([json.dumps(data, ensure_ascii=False)])
+    page = start(client).json()["segment"]["segment"]["pages"][0]["text"]
+    assert page.startswith("토끼를 꼭 안았어요.")

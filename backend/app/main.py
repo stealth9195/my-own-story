@@ -28,6 +28,7 @@ from app.story.prompt import StoryContext
 from app.story.safety import load_banned_words
 from app.story.schema import Segment
 from app.story.start import segment_types, start_options, valid_cards
+from app.story.tidy import tidy_segment
 from app.tts import azure
 from app.tts.gemini import TTSError
 
@@ -110,13 +111,14 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
                       attempts=[asdict(a) for a in attempts])
             _fail(502, "generation_failed")
         gen.attempts = attempts + gen.attempts
+        gen.segment, tidied = tidy_segment(gen.segment)  # '꼬 꼭' 같은 더듬기 오타 (서명 전에 고친다)
         # 쓰지 않은 결과도 끝나는 대로 걸린 시간을 남긴다 (모델 속도 비교용)
         for f, model in {**race, **spare}.items():
             if f is not winner and not f.cancelled():
                 f.add_done_callback(lambda f, m=model: log_unused(story.id, index, m, f))
         log_event("segment", story_id=story.id, index=index, type=seg_type, model_used=gen.model_used,
                   latency_ms=gen.latency_ms, attempts=[asdict(a) for a in gen.attempts],
-                  warnings=sorted({w for a in gen.attempts for w in a.warnings}))
+                  warnings=sorted({w for a in gen.attempts for w in a.warnings}), tidied=tidied)
         signed = SignedSegment(segment=gen.segment,
                                sig=sign_segment(settings.story_secret, story, index, gen.segment))
         return SegmentResponse(story=story, index=index, segment=signed, done=seg_type == "ending")
