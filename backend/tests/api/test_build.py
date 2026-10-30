@@ -1,3 +1,5 @@
+import pytest
+
 from app.config import Settings
 from app.main import build_clients
 
@@ -49,3 +51,20 @@ def test_empty_base_url_uses_default():
                                                          backup_models=["g1"]))
     for client in (primary, secondary, *backups):
         assert client._url == GEMINI_URL + "/chat/completions"
+
+
+# 배포 실패(2026-10-30): Render 화면의 CORS_ORIGINS 가 JSON 목록이 아니어서 서버가 시작하지 않았다.
+# 환경 변수로 들어오는 여러 모양을 모두 받아들인다
+
+
+@pytest.mark.parametrize("raw,expected", [
+    ('["https://a.pages.dev"]', ["https://a.pages.dev"]),
+    ("'[\"https://a.pages.dev\"]'", ["https://a.pages.dev"]),         # 작은따옴표째
+    ("https://a.pages.dev", ["https://a.pages.dev"]),                  # 주소만
+    ("https://a.pages.dev, http://localhost:5173", ["https://a.pages.dev", "http://localhost:5173"]),
+    ("https://a.pages.dev/", ["https://a.pages.dev"]),                  # 끝의 / 는 브라우저 Origin 과 안 맞음
+    ("", ["http://localhost:5173"]),                                    # 빈 칸 → 기본값
+])
+def test_cors_origins_from_env(monkeypatch, raw, expected):
+    monkeypatch.setenv("CORS_ORIGINS", raw)
+    assert settings().cors_origins == expected

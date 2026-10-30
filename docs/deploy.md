@@ -9,15 +9,15 @@ Cloud Run 은 카드 등록·과금 위험 때문에 쓰지 않는다(2026-10-29
    - 올리기 전에 비밀 값 검사(아래 '비밀 값')를 한다.
 2. **Render (백엔드)**
    1. Render → New → **Blueprint** → 저장소 선택. 저장소 맨 위의 `render.yaml` 을 읽어 서비스 `my-own-story-api` 를 만든다.
-   2. `sync: false` 로 적힌 환경 변수를 Render 화면에서 넣는다(아래 표). `CORS_ORIGINS` 는 Pages 주소를 아직 모르면 일단 `["http://localhost:5173"]`.
+   2. `sync: false` 로 적힌 환경 변수를 Render 화면에서 넣는다(아래 표). `CORS_ORIGINS` 는 Pages 주소를 아직 모르면 비워 둔다(기본값 `http://localhost:5173`).
    3. 배포가 끝나면 `https://<서비스 이름>.onrender.com/api/start-options` 를 열어 JSON 이 나오는지 본다.
 3. **Cloudflare Pages (프론트)**
    1. Workers & Pages → Create → Pages → 저장소 연결.
    2. Root directory `frontend`, Build command `npm ci && npm run build`, Output `dist`.
    3. 환경 변수 `VITE_API_BASE` = Render 주소(끝에 `/` 없이). 예시는 `frontend/.env.production.example`.
 4. **CORS 맞추기**: Render 의 `CORS_ORIGINS` 에 Pages 주소를 넣고 다시 배포한다.
-   - 예: `["https://my-own-story.pages.dev"]` (JSON 목록). **Render 화면에는 작은따옴표 없이** 넣는다.
-     로컬 `.env` 는 `uv --env-file` 이 큰따옴표를 지워서 작은따옴표로 감싸지만, Render 는 값을 그대로 넘겨 따옴표째 들어가면 서버가 시작하지 않는다.
+   - 예: `https://my-own-story.pages.dev` (주소만. 여러 개면 쉼표로 나눈다. JSON 목록·따옴표로 감싼 값도 받는다)
+   - 겪은 실패(2026-10-30): 예전 코드는 JSON 목록만 받아, 다른 모양이 들어가자 서버가 시작하지 않았다(`error parsing value for field "cors_origins"`).
    - 미리보기 주소(`<해시>.my-own-story.pages.dev`)는 다른 주소라 막힌다 → 확인은 실제 주소로.
 5. **확인**: 배포 주소로 PC 에서 1편 끝까지, 휴대폰에서 홈 화면에 추가·소리·이어하기.
 
@@ -33,7 +33,7 @@ Cloud Run 은 카드 등록·과금 위험 때문에 쓰지 않는다(2026-10-29
 | `AZURE_SPEECH_KEY` / `AZURE_SPEECH_REGION` | 안내·선택지 목소리(무료 F0). 비우면 브라우저 음성 |
 | `TYPECAST_API_KEY` | 예비 TTS. 비워도 된다 |
 | `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`·`_NAME`, `ELEVENLABS_VOICE_ID_2`·`_NAME_2` | **시연용** 이야기 음성(유료 구독 크레딧). 설정 창 '이야기 목소리'에 이름으로 나오고 고른 사람만 쓴다. 시연이 끝나면 `ELEVENLABS_API_KEY` 를 비운다. 하루 10,000자 상한(`ELEVENLABS_DAILY_CHARS`) |
-| `CORS_ORIGINS` | 허용할 프론트 주소 JSON 목록 |
+| `CORS_ORIGINS` | 허용할 프론트 주소. 쉼표로 나눈 주소 또는 JSON 목록, 끝에 `/` 없이 |
 
 그 밖의 값(하루 한도 등)은 코드 기본값을 쓴다(`backend/app/config.py`).
 
