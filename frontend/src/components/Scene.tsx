@@ -5,7 +5,7 @@ import { actorSlots, arrangeActors, placeObjects, stateMark, timeFilter } from "
 import Picture from "./Picture";
 import "./Scene.css";
 
-// placed: (실험) catalog 의 place 로 사물을 머리·손·하늘에 둘지. 끄면 사물도 캐릭터처럼 바닥에 선다
+// placed: catalog 의 place 로 사물을 머리·손·하늘에 둘지. 끄면 사물도 캐릭터처럼 바닥에 선다
 type Props = { scene: Page["scene"]; placed?: boolean };
 
 // 한 페이지의 장면: 배경 그림 + 시간대 색 + 캐릭터·사물 배치(서로 마주 보게) + 상태 표시

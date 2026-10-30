@@ -67,7 +67,7 @@ export function timeFilter(time: string): string {
   return TIME_FILTERS[time] ?? "none";
 }
 
-// ── 실험: 사물 위치 ──
+// ── 사물 위치 ──
 // catalog 의 place 로 사물을 둔다. head(왕관)·hand(요술봉)는 캐릭터에게 붙이고(캐릭터마다 하나씩),
 // sky(달·별)는 장면 위쪽, 나머지와 붙일 캐릭터가 없는 것은 바닥(캐릭터 옆)에 세운다
 export type Worn = { id: string; on: string; place: "head" | "hand" };

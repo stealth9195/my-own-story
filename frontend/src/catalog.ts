@@ -22,7 +22,7 @@ export function facingOf(id: string): string {
   return byId.get(id)?.facing ?? "";
 }
 
-// (실험) 사물이 놓이는 곳: head·hand(캐릭터에게), sky(위쪽), 없으면 바닥
+// 사물이 놓이는 곳: head·hand(캐릭터에게), sky(위쪽), 없으면 바닥
 export function placeOf(id: string): string | undefined {
   return byId.get(id)?.place;
 }

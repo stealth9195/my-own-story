@@ -54,7 +54,7 @@
 .scene.time-night .scene-tint { background: #22318f; mix-blend-mode: multiply; opacity: 0.6; }
 .scene.time-sunset .scene-tint { background: #ff9a52; mix-blend-mode: multiply; opacity: 0.55; }
 
-/* (실험) 사물 위치: 머리 위·바라보는 쪽 손·하늘 */
+/* 사물 위치(catalog 의 place): 머리 위·바라보는 쪽 손·하늘 */
 .worn { position: absolute; z-index: 1; aspect-ratio: 1; }
 /* 머리 사물: 얼굴을 가리지 않게 작게, 그림 맨 위(=머리 꼭대기)에 아랫부분만 살짝 걸치게 */
 .worn.head { width: 30%; bottom: 93%; left: 50%; translate: -50% 0; }

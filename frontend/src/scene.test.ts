@@ -61,7 +61,7 @@ test("arrangeActors puts objects after characters, max 4", () => {
   expect(out[1]).toMatchObject({ object: true, flip: false });
 });
 
-// 사물 위치 (실험): head·hand 는 캐릭터에게 붙이고, sky 는 하늘, 나머지는 바닥
+// 사물 위치: head·hand 는 캐릭터에게 붙이고, sky 는 하늘, 나머지는 바닥
 const PLACES: Record<string, string> = { crown: "head", flower_crown: "head", magic_wand: "hand", lantern: "hand", moon: "sky" };
 const placeOf = (id: string) => PLACES[id];
 
