@@ -54,8 +54,9 @@
 
 /* (실험) 사물 위치: 머리 위·바라보는 쪽 손·하늘 */
 .worn { position: absolute; z-index: 1; aspect-ratio: 1; }
-.worn.head { width: 42%; top: -10%; left: 50%; translate: -50% 0; }
-.worn.hand { width: 40%; bottom: 18%; }
+/* 머리 사물: 얼굴을 가리지 않게 작게, 그림 맨 위(=머리 꼭대기)에 아랫부분만 살짝 걸치게 */
+.worn.head { width: 30%; bottom: 93%; left: 50%; translate: -50% 0; }
+.worn.hand { width: 34%; bottom: 18%; }
 .worn.hand.on-right { right: -10%; }
 .worn.hand.on-left { left: -10%; }
 .sky-item { position: absolute; top: 6%; width: 13%; aspect-ratio: 1; translate: -50% 0; }
