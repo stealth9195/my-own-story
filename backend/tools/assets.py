@@ -27,7 +27,12 @@ def convert(src: Path, out_dir: Path, kind: str, remove_bg: RemoveBg) -> Path:
             img = img.resize((1024, round(img.height * 1024 / img.width)), Image.LANCZOS)
         else:
             img = remove_bg(img).convert("RGBA")
-            img.thumbnail((512, 512), Image.LANCZOS)
+            # 투명 여백을 잘라야 작게 그려진 인물도 칸을 채운다
+            bbox = img.getchannel("A").getbbox()
+            if bbox:
+                img = img.crop(bbox)
+            scale = 512 / max(img.size)
+            img = img.resize((round(img.width * scale), round(img.height * scale)), Image.LANCZOS)
         out = out_dir / f"{src.stem}.webp"
         img.save(out, "WEBP", quality=80)
     return out

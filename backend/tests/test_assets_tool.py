@@ -36,6 +36,20 @@ def test_character_becomes_512_webp_with_alpha(tmp_path):
     assert remove_bg.calls == 1
 
 
+def test_transparent_margin_is_trimmed(tmp_path):
+    """원본에서 인물이 작게 그려져도 투명 여백을 잘라 512 칸을 채운다"""
+    src = make_png(tmp_path / "boy.png", (1024, 1024))
+
+    def keep_center(img):
+        out = Image.new("RGBA", img.size, (0, 0, 0, 0))
+        out.paste((255, 0, 0, 255), (412, 312, 612, 712))  # 200×400 인물
+        return out
+
+    out = convert(src, tmp_path / "out", "character", keep_center)
+    with Image.open(out) as img:
+        assert img.size == (256, 512)
+
+
 def test_background_keeps_ratio_without_removal(tmp_path):
     src = make_png(tmp_path / "forest.png", (1344, 768))
     remove_bg = FakeRemoveBg()
