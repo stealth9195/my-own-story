@@ -18,7 +18,7 @@ from app.api.log import log_event
 from app.api.schemas import (EventRequest, NextRequest, SegmentResponse, SignedSegment, SpeakRequest,
                              StartRequest, StoryKey, TTSRequest)
 from app.api.signing import BadSignature, sign_segment, verify_history, verify_segment
-from app.api.tts_service import TTSFn, default_tts, synthesize_segment
+from app.api.tts_service import TTSFn, default_tts, is_daily_quota, synthesize_segment, voices_to_try
 from app.api.voice import pick_voice
 from app.catalog import load_catalog
 from app.config import Settings
@@ -123,6 +123,13 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
         elif voice.provider == "typecast":
             limits.reserve_typecast(chars * extra_calls)
 
+    def charge(used, story_voice, calls: int, reserved: bool, chars: int) -> None:
+        """정해진 목소리는 예약분을 넘은 만큼만, 대신 쓴 모델은 부른 만큼 사용량에 더한다"""
+        if used.model == story_voice.model:
+            charge_extra(used, calls - reserved, chars)
+        elif calls:
+            limits.reserve_gemini(used.model, calls)
+
     @app.get("/api/start-options")
     def get_start_options():
         return start_options(catalog, rng)
@@ -170,26 +177,31 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
             _fail(429, "tts_limit")
         text = "\n".join(p.text for p in segment.pages)
         voice = req.story.voice
-        calls = 0
-
-        def counted(text: str, voice):
-            nonlocal calls
-            calls += 1
-            return tts(text, voice)
-
         started = time.perf_counter()
-        try:
-            audio = synthesize_segment(text, voice, counted)
-        except TTSError as e:
-            charge_extra(voice, calls - reserved, len(text))
-            log_event("tts_failed", story_id=req.story.id, index=req.index,
-                      voice=req.story.voice.model_dump(), status=e.status,
-                      error=str(e)[:400])
-            _fail(502, "tts_failed")
-        charge_extra(voice, calls - reserved, len(text))
-        log_event("tts", story_id=req.story.id, index=req.index, voice=req.story.voice.model_dump(),
-                  chars=len(text), bytes=len(audio), latency_ms=int((time.perf_counter() - started) * 1000))
-        return Response(audio, media_type="audio/mpeg")
+        # 정해진 모델이 막히면(한도 등) 같은 목소리 이름으로 다른 Gemini 모델을 차례로 (Azure 등 다른 목소리로는 넘어가지 않음)
+        for v in voices_to_try(voice, limits.gemini_left, limits.gemini_used_up):
+            calls = 0
+
+            def counted(text: str, voice):
+                nonlocal calls
+                calls += 1
+                return tts(text, voice)
+
+            try:
+                audio = synthesize_segment(text, v, counted, retry=v.model == voice.model)
+            except TTSError as e:
+                charge(v, voice, calls, reserved, len(text))
+                if v.provider == "gemini" and is_daily_quota(e):
+                    limits.mark_gemini_used_up(v.model)
+                log_event("tts_failed", story_id=req.story.id, index=req.index, voice=v.model_dump(),
+                          status=e.status, error=str(e)[:400])  # Google 오류 내용(어떤 한도인지). 키는 없음
+                continue
+            charge(v, voice, calls, reserved, len(text))
+            log_event("tts", story_id=req.story.id, index=req.index, voice=v.model_dump(),
+                      fallback=v.model != voice.model, chars=len(text), bytes=len(audio),
+                      latency_ms=int((time.perf_counter() - started) * 1000))
+            return Response(audio, media_type="audio/mpeg")
+        _fail(502, "tts_failed")
 
     @app.post("/api/speak")
     def speak_text(req: SpeakRequest):

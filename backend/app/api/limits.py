@@ -46,7 +46,18 @@ class Limits:
         return (self._clock().astimezone(PACIFIC).strftime("%Y-%m-%d"), "gemini", model)
 
     def gemini_left(self, model: str) -> int:
+        if self._counts[self._gemini_key(model) + ("used_up",)]:
+            return 0
         return GEMINI_DAILY_CALLS - self._counts[self._gemini_key(model)]
+
+    def mark_gemini_used_up(self, model: str) -> None:
+        """Google 이 '오늘 한도를 다 썼다'(429 하루 한도)고 하면 그 모델은 오늘 더 쓰지 않는다.
+        서버를 다시 켜면 메모리 계산이 0부터라 실제 사용량과 어긋날 수 있어서 (2026-10-30)"""
+        with self._lock:
+            self._counts[self._gemini_key(model) + ("used_up",)] = 1
+
+    def gemini_used_up(self, model: str) -> bool:
+        return bool(self._counts[self._gemini_key(model) + ("used_up",)])
 
     def reserve_gemini(self, model: str, calls: int) -> None:
         with self._lock:

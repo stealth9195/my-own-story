@@ -76,7 +76,7 @@ def test_tts_failed():
     r0 = start(client).json()
     r = client.post("/api/tts", json=tts_req(r0))
     assert r.status_code == 502 and r.json()["detail"]["code"] == "tts_failed"
-    assert tts.calls == 2
+    assert tts.calls == 2 + len(gemini.MODELS) - 1  # 정해진 모델 2번(다시 시도) + 다른 모델 1번씩
 
 
 def test_event_logged(caplog):
@@ -126,7 +126,7 @@ def test_tts_rate_limited_not_retried():
     client, tts = make([seg(0)], tts=RateLimited())
     r0 = start(client).json()
     assert client.post("/api/tts", json=tts_req(r0)).status_code == 502
-    assert tts.calls == 1
+    assert tts.calls == len(gemini.MODELS)  # 429 는 같은 모델로 다시 부르지 않고, 모델마다 1번씩
 
 
 def test_tts_failure_log_keeps_reason(caplog):
@@ -141,3 +141,52 @@ def test_tts_failure_log_keeps_reason(caplog):
     assert client.post("/api/tts", json=tts_req(r0)).status_code == 502
     text = "\n".join(rec.getMessage() for rec in caplog.records)
     assert "per_model_per_day" in text
+
+
+class ModelTTS:
+    """모델마다 정해 둔 오류를 내는 가짜 TTS. 부른 모델 순서를 기록"""
+
+    def __init__(self, errors: dict[str, TTSError]):
+        self.errors = errors
+        self.models: list[str] = []
+
+    def __call__(self, text, voice):
+        self.models.append(voice.model)
+        if voice.model in self.errors:
+            raise self.errors[voice.model]
+        return sine_wav(24000, 0.2)
+
+
+PER_MINUTE = TTSError("HTTP 429: Quota exceeded for metric generate_requests_per_model_per_minute", status=429)
+PER_DAY = TTSError("HTTP 429: Quota exceeded for metric generate_requests_per_model_per_day", status=429)
+
+
+def test_falls_back_to_next_model_with_same_voice():
+    tts = ModelTTS({gemini.MODELS[0]: PER_MINUTE})
+    client, _ = make([seg(0)], tts=tts)
+    r0 = start(client).json()
+    assert r0["story"]["voice"]["model"] == gemini.MODELS[0]
+    r = client.post("/api/tts", json=tts_req(r0))
+    assert r.status_code == 200
+    assert tts.models == [gemini.MODELS[0], gemini.MODELS[1]]  # 429 는 같은 모델로 다시 부르지 않고 다음 모델로
+
+
+def test_daily_quota_marks_model_used_up():
+    limits = Limits(3, 30)
+    tts = ModelTTS({gemini.MODELS[0]: PER_DAY})
+    client, _ = make([seg(0), seg(0)], tts=tts, limits=limits)
+    r0 = start(client).json()
+    assert client.post("/api/tts", json=tts_req(r0)).status_code == 200
+    assert limits.gemini_left(gemini.MODELS[0]) == 0           # 오늘은 다 쓴 것으로 기억
+    tts.models.clear()
+    assert client.post("/api/tts", json=tts_req(r0)).status_code == 200
+    assert tts.models == [gemini.MODELS[1]]                     # 다 쓴 모델은 건너뜀
+    assert start(client).json()["story"]["voice"]["model"] != gemini.MODELS[0]  # 새 이야기도
+
+
+def test_all_models_fail_is_502():
+    tts = ModelTTS({m: PER_MINUTE for m in gemini.MODELS})
+    client, _ = make([seg(0)], tts=tts)
+    r0 = start(client).json()
+    assert client.post("/api/tts", json=tts_req(r0)).status_code == 502
+    assert tts.models == gemini.MODELS
