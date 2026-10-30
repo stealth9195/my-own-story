@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
 from app.api.limits import Limits
-from app.api.log import log_event
+from app.api.log import log_event, register_secrets
 from app.api.schemas import (EventRequest, NextRequest, SegmentResponse, SignedSegment, SpeakRequest,
                              StartRequest, StoryKey, TTSRequest, Voice)
 from app.api.signing import BadSignature, sign_segment, verify_history, verify_segment
@@ -57,6 +57,7 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
                backups: list[LLM] = (), tts: TTSFn | None = None, limits: Limits | None = None,
                rng: random.Random | None = None, speak: SpeakFn | None = None) -> FastAPI:
     app = FastAPI(title="my-own-story")
+    register_secrets(*settings.secrets())  # 오류 글에 키가 섞여도 로그에는 끝 4자리만
     app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins,
                        allow_methods=["GET", "POST"], allow_headers=["Content-Type"])
     catalog, banned = load_catalog(), load_banned_words()
@@ -163,7 +164,11 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
                                           elevenlabs_daily_chars=settings.elevenlabs_daily_chars))
         log_event("story_start", story_id=story.id, anon_id=req.anon_id, cards=story.cards,
                   voice=story.voice.model_dump())
-        return generate(story, [], [])
+        try:
+            return generate(story, [], [])
+        except HTTPException:
+            limits.cancel_start(req.anon_id)  # 첫 구간을 못 만들었으면 하루 횟수를 쓰지 않은 것으로
+            raise
 
     @app.post("/api/stories/next")
     def next_segment(req: NextRequest) -> SegmentResponse:

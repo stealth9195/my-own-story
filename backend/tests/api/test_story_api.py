@@ -267,3 +267,10 @@ def test_stutter_is_fixed_before_signing():
     client, _ = make([json.dumps(data, ensure_ascii=False)])
     page = start(client).json()["segment"]["segment"]["pages"][0]["text"]
     assert page.startswith("토끼를 꼭 안았어요.")
+
+
+def test_failed_start_does_not_use_daily_count():
+    # 배포 사고(2026-10-31): 글 만들기가 매번 실패했는데 다시하기 세 번에 하루 3편을 다 써 '내일 또 만나요'가 떴다
+    client, _ = make([LLMError("x", status=500)] * 3 + [seg(0)])
+    assert [start(client).status_code for _ in range(3)] == [502, 502, 502]
+    assert start(client).status_code == 200

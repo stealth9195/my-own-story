@@ -75,6 +75,19 @@ class Settings(BaseSettings):
                  "eleven2": (self.elevenlabs_voice_name_2, self.elevenlabs_voice_id_2)}
         return {k: v for k, v in slots.items() if v[1]}
 
+    @field_validator("story_secret", "gemini_api_key", "typecast_api_key", "azure_speech_key",
+                     "elevenlabs_api_key", "primary_api_key", "secondary_api_key", "backup_api_key", mode="before")
+    @classmethod
+    def _strip_secret(cls, v):
+        """앞뒤 빈칸·줄바꿈을 뗀다. 배포 사고(2026-10-31): Render 에 붙여 넣은 키 끝에 줄바꿈이 붙어
+        요청 머리가 거절됐다(Illegal header value)"""
+        return v.strip() if isinstance(v, str) else v
+
+    def secrets(self) -> list[str]:
+        """로그에서 가릴 값 (log.register_secrets)"""
+        return [self.story_secret, self.gemini_api_key, self.typecast_api_key, self.azure_speech_key,
+                self.elevenlabs_api_key, self.primary_api_key, self.secondary_api_key, self.backup_api_key]
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _origins(cls, v):

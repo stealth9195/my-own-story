@@ -35,6 +35,12 @@ paths:
   - 왜: 기본만 쓸 때 구간당 10~25초(목표 10초). 하루 30편 상한이면 모델당 하루 150회 정도라 무료 한도(500회) 안.
   - 쓰지 않은 모델도 끝나는 대로 `segment_unused` 로그(모델·성공·걸린 시간)를 남긴다 → 모델 속도 비교.
   - 대비 모델(`BACKUP_MODELS`, Gemma)은 기본 꺼 둠. 응답이 60초를 자주 넘고 들쭉날쭉했다.
+- **배포 사고(2026-10-31)**: Render 에 붙여 넣은 `GEMINI_API_KEY` 끝에 줄바꿈이 있어 httpx 가 `Illegal header value b'Bearer <키>
+'` 오류를 냈고, 이 글이 `segment_failed` 로그에 그대로 남아 키가 노출됐다(키 폐기·재발급).
+  - 키·비밀값은 설정에서 앞뒤 빈칸·줄바꿈을 뗀다(`config.py` 의 `_strip_secret`).
+  - 요청 오류는 예외 글 대신 종류만 남긴다(`요청 실패: LocalProtocolError`). 예외 글에 요청 머리가 들어갈 수 있다.
+  - `log_event` 는 등록한 비밀값을 끝 4자리로 가린다(`register_secrets`, 마지막 방어선).
+  - 첫 구간을 못 만들면 하루 이야기 수를 되돌린다(`cancel_start`). 실패만 반복하다 '내일 또 만나요'가 떴다.
 - 기록은 DB 대신 `log_event` 로 JSON 한 줄(Cloud Run 로그). API 키·서명 비밀값은 넣지 않는다(`test_log_has_no_secret`).
 - `.env` 의 JSON 목록(`BACKUP_MODELS`, `CORS_ORIGINS`)은 작은따옴표로 감싼다.
   - 겪은 버그: `uv run --env-file` 이 큰따옴표를 지워 `["a"]` → `[a]` 가 되어 서버가 시작하지 않았다.

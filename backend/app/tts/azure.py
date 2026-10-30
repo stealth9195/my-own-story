@@ -23,7 +23,7 @@ def synthesize(text: str, voice: str, key: str, region: str) -> bytes:
             content=ssml.encode("utf-8"), timeout=20,
         )
     except httpx.HTTPError as e:
-        raise TTSError(f"요청 실패: {e}") from e
+        raise TTSError(f"요청 실패: {type(e).__name__}") from e  # 예외 글에 요청 머리(키)가 들어갈 수 있다
     if resp.status_code != 200:
         raise TTSError(f"HTTP {resp.status_code}: {resp.text[:200]}", status=resp.status_code)
     return resp.content

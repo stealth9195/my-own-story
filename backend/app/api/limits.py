@@ -42,6 +42,14 @@ class Limits:
             self._counts[(day, "total")] += 1
             return "ok"
 
+    def cancel_start(self, anon_id: str) -> None:
+        """첫 구간을 못 만들었으면 센 것을 되돌린다. 배포 사고(2026-10-31): 글 만들기가 매번 실패했는데
+        다시하기 세 번에 하루 3편을 다 써 '내일 또 만나요'가 떴다"""
+        day = self._day()
+        with self._lock:
+            for key in ((day, "user", anon_id), (day, "total")):
+                self._counts[key] = max(0, self._counts[key] - 1)
+
     def _gemini_key(self, model: str) -> tuple:
         return (self._clock().astimezone(PACIFIC).strftime("%Y-%m-%d"), "gemini", model)
 

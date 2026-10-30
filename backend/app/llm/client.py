@@ -64,7 +64,7 @@ class OpenAICompatClient:
         try:
             resp = self._http.post(self._url, json=body)
         except httpx.HTTPError as e:
-            raise LLMError(f"요청 실패: {e}") from e
+            raise LLMError(f"요청 실패: {type(e).__name__}") from e  # 예외 글에 요청 머리(키)가 들어갈 수 있다
         latency_ms = int((time.perf_counter() - start) * 1000)
 
         if resp.status_code != 200:
