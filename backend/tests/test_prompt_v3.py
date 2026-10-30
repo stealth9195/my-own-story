@@ -71,20 +71,14 @@ def capture_tts(monkeypatch):
     return sent
 
 
-def test_tts_slow_style_prefixes_director_note(monkeypatch):
-    # TTS 모델은 systemInstruction을 거부함(400) → 본문 앞 지시문 방식
+def test_tts_always_prefixes_one_director_note(monkeypatch):
+    # TTS 모델은 systemInstruction을 거부함(400) → 본문 앞 지시문 방식. 속도별 지시는 없애고 하나로 통일
     sent = capture_tts(monkeypatch)
-    gemini.synthesize("안녕", "Kore", "k", style="slow")
+    gemini.synthesize("안녕", "Kore", "k")
     text = sent["body"]["contents"][0]["parts"][0]["text"]
-    assert text.endswith("안녕") and text != "안녕"
+    assert text == gemini.DIRECTION + "안녕"
     assert "systemInstruction" not in sent["body"]
-
-
-def test_tts_normal_style_has_no_instruction(monkeypatch):
-    sent = capture_tts(monkeypatch)
-    gemini.synthesize("안녕", "Kore", "k", style="normal")
-    assert sent["body"]["contents"][0]["parts"][0]["text"] == "안녕"
-    assert "systemInstruction" not in sent["body"]
+    assert not hasattr(gemini, "STYLES")
 
 
 def test_choice_already_in_same_segment_scene_is_dropped():

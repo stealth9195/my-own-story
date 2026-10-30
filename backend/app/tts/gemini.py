@@ -13,12 +13,12 @@ MODELS = [
 ]
 VOICES = ["Kore", "Aoede", "Leda"]
 # TTS 모델은 systemInstruction을 거부(400)하므로 본문 앞에 연출 지시를 붙인다.
-# 한국어 지시문은 3.x 모델이 소리 내어 읽은 사례가 있어 영어로 구분해 둔다.
-STYLES: dict[str, str | None] = {
-    "slow": "Read the following Korean text aloud slowly and gently, like a bedtime story "
-            "for a young child. Do not read this instruction.\n\n",
-    "normal": None,
-}
+# 한국어 지시문은 3.x 모델이 소리 내어 읽은 사례가 있어 영어로, 짧게, 콜론(:)으로 본문과 나눈다.
+# 속도: 너무 빠르면 아이가 못 따라오고, 너무 느리면 졸리다 → '보통 대화보다 조금 느리게, 또렷하고 생기 있게'.
+# 재생 속도(playbackRate)를 낮추면 음질이 나빠져서, 속도는 되도록 이 지시로 맞춘다 (2026-10-30)
+DIRECTION = ("Read the following Korean story aloud like a warm, friendly picture-book storyteller "
+             "for young children: a little slower than normal conversation, clear and gently lively "
+             "(not sleepy), with a short pause between sentences:\n\n")
 
 
 class TTSError(Exception):
@@ -37,21 +37,21 @@ def pcm_to_wav(pcm: bytes, rate: int = 24000) -> bytes:
     return buf.getvalue()
 
 
-def _body(text: str, voice: str, instruction: str | None) -> dict:
-    return {"contents": [{"parts": [{"text": (instruction or "") + text}]}],
+def _body(text: str, voice: str) -> dict:
+    return {"contents": [{"parts": [{"text": DIRECTION + text}]}],
             "generationConfig": {
                 "responseModalities": ["AUDIO"],
                 "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}},
             }}
 
 
-def synthesize(text: str, voice: str, key: str, model: str = MODELS[0], style: str = "slow") -> bytes:
+def synthesize(text: str, voice: str, key: str, model: str = MODELS[0]) -> bytes:
     """Gemini TTS는 16비트 PCM(24kHz)을 돌려주므로 WAV로 감싼다."""
     try:
         resp = httpx.post(
             f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
             headers={"x-goog-api-key": key},
-            json=_body(text, voice, STYLES.get(style)),
+            json=_body(text, voice),
             timeout=120,
         )
     except httpx.HTTPError as e:

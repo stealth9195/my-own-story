@@ -78,7 +78,7 @@ def prompt_versions() -> list[str]:
 def default_tts(text: str, voice: str, model: str, style: str) -> bytes:
     if model in typecast_tts.MODELS:
         return typecast_tts.synthesize(text, voice, os.environ.get("TYPECAST_API_KEY", ""), model, style)
-    return gemini_tts.synthesize(text, voice, os.environ.get("GEMINI_API_KEY", ""), model, style)
+    return gemini_tts.synthesize(text, voice, os.environ.get("GEMINI_API_KEY", ""), model)
 
 
 def tts_voices() -> dict[str, list[dict]]:
@@ -156,7 +156,7 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
             "model_ids": {n: labels.get(n, n) for n in models},
             "tts_models": gemini_tts.MODELS + typecast_tts.MODELS,
             "voices": tts_voices(),
-            "tts_styles": list(gemini_tts.STYLES),
+            "tts_styles": list(typecast_tts.TEMPOS),  # 빠르기 선택은 Typecast 에만 쓰인다
             "prompt_versions": prompt_versions(),
         }
 
