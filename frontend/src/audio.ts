@@ -1,3 +1,5 @@
+import { bgmPlayer, sfxPlayer } from "./sound";
+
 // 소리 재생. 아이폰(Safari)은 사용자가 화면을 터치하기 전에는 소리를 막는다.
 // 그래서 첫 터치("새 이야기 만들기")에서 오디오 요소 하나를 '잠금 해제'해 두고, 이후 이야기 음성은 모두 그 요소로 재생한다.
 
@@ -21,9 +23,16 @@ let unlocked = false;
 export function unlockAudio(): void {
   if (unlocked) return;
   unlocked = true;
+  const silent = silentWav();
   if (player) {
-    player.src = silentWav();
+    player.src = silent;
     player.play().catch(() => {});
+  }
+  // 배경 음악·효과음 요소도 같은 터치에서 잠금 해제 (음악은 반복 재생이라 바로 멈춘다)
+  for (const el of [bgmPlayer, sfxPlayer]) {
+    if (!el) continue;
+    el.src = silent;
+    el.play().then(() => el.pause()).catch(() => {});
   }
   // 브라우저 음성(speechSynthesis)도 첫 터치에서 한 번 불러 둔다
   if (typeof speechSynthesis !== "undefined") speechSynthesis.speak(new SpeechSynthesisUtterance(""));

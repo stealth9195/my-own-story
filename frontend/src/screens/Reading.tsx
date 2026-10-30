@@ -8,6 +8,7 @@ import { getAnonId, getAudio, saveAudio, saveStory } from "../storage";
 import type { SavedStory } from "../storage";
 import { addSegment, choose, nextArgs, pageAt, pageStartTimes } from "../story";
 import Picture from "../components/Picture";
+import { BGM, duckBgm, isMuted, pickBgm, playBgm, playSfx, setMuted, stopSound, storyRng } from "../sound";
 import Scene from "../components/Scene";
 import Problem from "./Problem";
 import Waiting from "./Waiting";
@@ -45,6 +46,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
   const [focus, setFocus] = useState<string | null>(null);
   const [problem, setProblem] = useState("unknown");
   const [speed, setSpeedState] = useState<Speed>(getSpeed());
+  const [muted, setMutedState] = useState(isMuted());
   // useRef: 화면을 다시 그려도 유지되지만, 바뀌어도 다시 그리지는 않는 값 (마지막 선택 요청 기억)
   const pending = useRef<SavedStory | null>(null);
   const resuming = useRef(resume);  // 이어하기로 연 구간에서만 true
@@ -117,6 +119,19 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
     return () => { if (isCurrent(t)) stopAll(); };
   }, [view]);  // eslint-disable-line react-hooks/exhaustive-deps
 
+  // 페이지가 바뀔 때: 분위기에 맞는 음악(같은 곡이면 끊지 않고 이어서) + 그 페이지 효과음 1번
+  useEffect(() => {
+    const p = seg.pages[page];
+    playBgm(pickBgm(BGM, p.mood, isEnding, storyRng(saved.story.id)));
+    playSfx(p.sfx);
+  }, [view, page]);  // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 이야기 음성이 나오는 동안 음악을 작게
+  useEffect(() => { duckBgm(phase === "playing"); }, [phase]);
+
+  // 읽기 화면을 떠나면 음악·효과음을 끈다 (빈 목록 [] → 화면이 처음 생길 때 한 번, 반환 함수는 떠날 때)
+  useEffect(() => () => stopSound(), []);
+
   // 구간 하나를 다 읽은 뒤 (음성이 끝났거나, 음성 없이 마지막 쪽에서 "다음"을 눌렀을 때)
   function afterSegment() {
     if (replaying.current && view < last) {
@@ -169,6 +184,11 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
     request(s);
   }
 
+  function toggleMute() {
+    setMuted(!muted);
+    setMutedState(!muted);
+  }
+
   function toggleSpeed() {
     const next: Speed = speed === "slow" ? "normal" : "slow";
     setSpeed(next);
@@ -183,7 +203,13 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
       <header className="reading-top">
         <button className="icon-button" onClick={onHome} aria-label="처음으로">🏠</button>
         <span className="reading-step">{view + 1} / {saved.story.choice_count + 1}</span>
-        <button className="icon-button" onClick={toggleSpeed}>{speed === "slow" ? "🐢 천천히" : "🐇 보통"}</button>
+        <div className="reading-tools">
+          {/* 음소거: 음악·효과음만 끔. 이야기 목소리는 계속 */}
+          <button className="icon-button" onClick={toggleMute} aria-label={muted ? "음악 켜기" : "음악 끄기"}>
+            {muted ? "🔇" : "🎵"}
+          </button>
+          <button className="icon-button" onClick={toggleSpeed}>{speed === "slow" ? "🐢 천천히" : "🐇 보통"}</button>
+        </div>
       </header>
 
       <Scene scene={seg.pages[page].scene} />

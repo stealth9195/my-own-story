@@ -8,6 +8,7 @@
 }
 .reading-top { width: 100%; max-width: 520px; display: flex; align-items: center; justify-content: space-between; }
 .icon-button { min-height: 48px; padding: 8px 14px; border-radius: 16px; background: var(--card); font-size: 18px; }
+.reading-tools { display: flex; gap: 8px; }
 .reading-step { color: var(--muted); font-size: 16px; }
 
 .reading-text {
