@@ -162,4 +162,4 @@ uv run --env-file .env python -m eval.tts_check
   - 서비스 API 리뷰에서 미룬 작은 문제: 동시 시작 시 초과 예약, 시작 실패에도 한도 차감, anon_id 바꿔 전체 한도 소진 등 (배포 전 확인)
   - `run_generate` 기본 프롬프트가 v1 — `--version` 으로 지정해야 함
   - 범위 축소(DB 제외, 에셋 수 등)는 프로토타입 후 결정
-  - 그림 원본(`assets/raw`) 55장 중 사람 캐릭터 8개(wizard·boy·girl·grandma·grandpa·prince·chef·firefighter)는 그림·프롬프트 없음, puppy 오른쪽 아래에 서명 글자("Jasy") 있음
+  - 사람 캐릭터 8개(wizard·boy·girl·grandma·grandpa·prince·chef·firefighter)는 그림·`facing` 없음(프롬프트는 있음)
