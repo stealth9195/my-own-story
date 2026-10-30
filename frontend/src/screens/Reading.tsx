@@ -212,8 +212,10 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
         </div>
       </header>
 
-      <Scene scene={seg.pages[page].scene} />
+      {/* 세로 화면: 위 버튼 → 장면 → 글·선택지 순서로 한 줄. 가로 화면: 왼쪽 장면, 오른쪽 위 버튼·글·선택지 (Reading.css) */}
+      <div className="reading-stage"><Scene scene={seg.pages[page].scene} /></div>
 
+      <div className="reading-body">
       <p className="reading-text">{seg.pages[page].text}</p>
 
       {phase === "loading" && <p className="reading-status">🔊 목소리를 준비하고 있어요</p>}
@@ -238,6 +240,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
           <button className="big-button soft" onClick={onNew}>✨ 새 이야기</button>
         </div>
       )}
+      </div>
     </main>
   );
 }

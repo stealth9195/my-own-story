@@ -6,6 +6,8 @@
   gap: 16px;
   padding: 12px 16px 28px;
 }
+.reading-stage { width: 100%; display: flex; justify-content: center; }
+.reading-body { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .reading-top { width: 100%; max-width: 780px; display: flex; align-items: center; justify-content: space-between; }
 .icon-button { min-height: 48px; padding: 8px 14px; border-radius: 16px; background: var(--card); font-size: 18px; }
 .reading-tools { display: flex; gap: 8px; }
@@ -45,3 +47,25 @@
 
 .ending { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 360px; }
 .ending-title { margin: 0; text-align: center; font-size: 30px; font-weight: 700; }
+
+/* 가로 화면(태블릿·가로 휴대폰): 왼쪽에 장면을 크게, 오른쪽 칸에 위 버튼·글·선택지 */
+@media (orientation: landscape) {
+  .reading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(280px, 34vw, 440px);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: "stage top" "stage body";
+    gap: 12px 20px;
+    align-items: stretch;  /* 세로용 가운데 정렬을 끄고 칸 높이를 채운다 (안 그러면 오른쪽 칸이 넘쳐 위 버튼과 겹침) */
+    height: 100dvh;
+    min-height: 0;
+    padding: 16px;
+  }
+  /* container-type: size → 안쪽에서 이 칸의 너비(cqw)·높이(cqh)를 쓸 수 있다 */
+  .reading-stage { grid-area: stage; height: 100%; min-height: 0; align-items: center; container-type: size; }
+  /* 왼쪽 칸을 꽉 채운다. 배경은 가운데를 남기고 좌우가 잘린다(object-fit: cover) */
+  .reading-stage .scene { max-width: none; width: 100%; height: 100%; aspect-ratio: auto; }
+  .reading-top { grid-area: top; }
+  .reading-body { grid-area: body; min-height: 0; overflow-y: auto; justify-content: flex-start; }
+  .reading-text { font-size: 21px; }
+}

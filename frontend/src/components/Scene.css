@@ -14,10 +14,6 @@
 @media (orientation: portrait) {
   .scene { aspect-ratio: 16 / 9; }
 }
-/* 가로 화면(태블릿 등): 위 버튼·글·선택지 높이(약 380px)를 남기고, 남는 높이만큼만 커진다 */
-@media (orientation: landscape) {
-  .scene { max-width: min(780px, calc((100dvh - 380px) * 4 / 3)); }
-}
 /* 배경 그림이 없을 때의 색 */
 .scene.bg-forest { background: #b8dcb0; }
 .scene.bg-sea { background: #bfe3f5; }
