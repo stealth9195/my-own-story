@@ -65,7 +65,8 @@ export function watchEnd(audio: HTMLAudioElement, onEnd: () => void): () => void
     done = true;
     clearInterval(timer);
     audio.pause();
-    audio.volume = voiceVolume;
+    // 음량은 0 그대로 둔다. 멈춘 직후 되돌리면 브라우저에 남은 짧은 소리가 원래 크기로 튀어 '콱' 소리가 났다.
+    // 다음 음성을 재생하기 직전에 되돌린다 (Reading.tsx)
     onEnd();
   };
   const timer = setInterval(() => {
@@ -75,7 +76,7 @@ export function watchEnd(audio: HTMLAudioElement, onEnd: () => void): () => void
     if (left <= END_STOP) finish();
   }, 40);
   audio.onended = finish;  // 짧은 음성 등으로 지켜보기 전에 끝나도 한 번만
-  return () => { done = true; clearInterval(timer); audio.volume = voiceVolume; };
+  return () => { done = true; clearInterval(timer); };
 }
 
 let unlocked = false;

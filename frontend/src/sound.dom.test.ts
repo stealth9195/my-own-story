@@ -25,3 +25,16 @@ test("next page cancels the waiting sound effect", () => {
   vi.advanceTimersByTime(3000);
   expect(play).not.toHaveBeenCalled();
 });
+
+test("music volume changes smoothly when the story voice starts", async () => {
+  vi.useFakeTimers();
+  const { bgmPlayer, duckBgm } = await import("./sound");
+  bgmPlayer!.volume = 0.4;
+  duckBgm(true);
+  expect(bgmPlayer!.volume).toBeGreaterThan(0.3);   // 바로 뚝 떨어지지 않고
+  vi.advanceTimersByTime(500);
+  expect(bgmPlayer!.volume).toBeCloseTo(0.15, 2);   // 0.4초쯤 뒤 목표 크기
+  duckBgm(false);
+  vi.advanceTimersByTime(500);
+  expect(bgmPlayer!.volume).toBeCloseTo(0.4, 2);
+});

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ApiError, fetchSegmentAudio, nextSegment, sendEvent } from "../api";
 import type { Choice } from "../api";
-import { getRate, isCurrent, player, playToken, speak, stopAll, watchEnd } from "../audio";
+import { getRate, getVoiceVolume, isCurrent, player, playToken, speak, stopAll, watchEnd } from "../audio";
 import { emojiOf } from "../catalog";
 import Settings from "../components/Settings";
 import { getAnonId, getAudio, saveAudio, saveStory } from "../storage";
@@ -123,6 +123,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
       const url = URL.createObjectURL(mp3);
       audio.src = url;
       audio.playbackRate = getRate();
+      audio.volume = getVoiceVolume();  // 앞 구간 끝에서 0으로 줄여 둔 음량을 재생 직전에 되돌린다
       let starts = [0];
       audio.onloadedmetadata = () => {
         starts = pageStartTimes(seg.pages.map((p) => p.text), audio.duration);

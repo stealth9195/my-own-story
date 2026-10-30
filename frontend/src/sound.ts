@@ -94,9 +94,24 @@ export function playBgm(id: string | null): void {
   if (!muted) safePlay(bgmPlayer);
 }
 
+// 음성이 시작·끝날 때 음악 크기를 0.4초에 걸쳐 바꾼다. 한 번에 바꾸면 소리가 툭 튀어 들린다
+const DUCK_MS = 400;
+let duckTimer: ReturnType<typeof setInterval> | null = null;
+
 export function duckBgm(on: boolean): void {
   ducked = on;
-  if (bgmPlayer) bgmPlayer.volume = (on ? DUCK_VOLUME : VOLUME) * musicVolume;
+  if (!bgmPlayer) return;
+  const el = bgmPlayer;
+  const from = el.volume;
+  const to = (on ? DUCK_VOLUME : VOLUME) * musicVolume;
+  if (duckTimer) clearInterval(duckTimer);
+  const steps = 10;
+  let i = 0;
+  duckTimer = setInterval(() => {
+    i += 1;
+    el.volume = from + (to - from) * (i / steps);
+    if (i >= steps && duckTimer) { clearInterval(duckTimer); duckTimer = null; }
+  }, DUCK_MS / steps);
 }
 
 // 효과음은 페이지가 바뀌고 조금 뒤에 (바로 나오면 이야기 첫마디와 겹친다). 그 사이 페이지가 또 바뀌면 취소

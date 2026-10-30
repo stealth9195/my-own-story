@@ -21,6 +21,7 @@ const fake = vi.hoisted(() => {
       stopAll: () => { token++; },
       speak: vi.fn(() => Promise.resolve()),
       getRate: () => 1,
+      getVoiceVolume: () => 1,
       setRate: vi.fn(),
       stepRate: (r: number) => r,
       watchEnd: (a: { onended: null | (() => void) }, onEnd: () => void) => { a.onended = onEnd; return () => {}; },

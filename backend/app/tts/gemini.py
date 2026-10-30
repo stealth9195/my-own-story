@@ -41,6 +41,20 @@ def pcm_to_wav(pcm: bytes, rate: int = 24000) -> bytes:
     return buf.getvalue()
 
 
+def _error_summary(resp) -> str:
+    """오류 본문에서 한도 이름(quotaId: 하루 PerDay·분당 PerMinute)과 다시 되는 시간만 뽑는다.
+    본문을 앞에서부터 잘라 남겼더니 긴 안내문에 밀려 한도 이름이 빠졌다(2026-10-30)"""
+    try:
+        details = resp.json()["error"].get("details", [])
+    except (ValueError, KeyError, TypeError, AttributeError):
+        return resp.text[:300]
+    quotas = [v.get("quotaId", "") for d in details for v in d.get("violations", [])]
+    retry = next((d["retryDelay"] for d in details if "retryDelay" in d), "")
+    if not quotas and not retry:
+        return resp.text[:300]
+    return f"quota={','.join(q for q in quotas if q)} retry={retry}"
+
+
 def _body(text: str, voice: str) -> dict:
     return {"contents": [{"parts": [{"text": DIRECTION + text}]}],
             "generationConfig": {
@@ -61,7 +75,7 @@ def synthesize(text: str, voice: str, key: str, model: str = MODELS[0]) -> bytes
     except httpx.HTTPError as e:
         raise TTSError(f"요청 실패: {e}") from e
     if resp.status_code != 200:
-        raise TTSError(f"HTTP {resp.status_code}: {resp.text[:400]}", status=resp.status_code)  # 429 는 어떤 한도인지 본문에 있음
+        raise TTSError(f"HTTP {resp.status_code}: {_error_summary(resp)}", status=resp.status_code)
     try:
         data = resp.json()["candidates"][0]["content"]["parts"][0]["inlineData"]["data"]
     except (ValueError, KeyError, IndexError) as e:
