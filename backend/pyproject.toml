@@ -13,6 +13,10 @@ dependencies = [
 ]
 
 [dependency-groups]
+assets = [
+    "pillow>=13.0.0",
+    "rembg>=2.0.86",
+]
 dev = [
     "pytest>=9.2.0",
 ]
