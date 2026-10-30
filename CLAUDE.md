@@ -2,14 +2,15 @@
 
 4~7세 아이가 취향 카드와 선택지로 이야기를 이어 가는 AI 구연동화 웹앱(PWA).
 백엔드 FastAPI(저장 없음), 프론트 React 19(Vite, TypeScript, 일반 CSS), 책장은 브라우저 IndexedDB.
-외부 API: Gemini(이야기 생성·TTS), Typecast(예비 TTS). OpenRouter·Azure 는 실험(eval)에서만.
+외부 API: Gemini(이야기 생성·TTS), Typecast(예비 TTS), Azure(안내·선택지 읽기, 무료 F0). OpenRouter 는 실험(eval)에서만.
 **운영비 0원 — 무료 티어만 쓴다.** 유료 서비스·과금 위험이 있는 선택은 그 위험을 함께 알린다.
 세부 규칙은 `.claude/rules/` 에 있고 해당 파일을 다룰 때 자동으로 읽힌다.
 
 ## 문서 위치
 
 - 기획안(PRD): `docs/superpowers/specs/2026-10-28-my-own-story-design.md`
-- 1차 구현 계획: `docs/superpowers/plans/2026-10-28-01-story-core-and-experiments.md`
+- 구현 계획: `docs/superpowers/plans/` (1~4차, 지금은 `2026-10-29-04-assets-sound-pwa-deploy.md`)
+- 세션 인계: `HANDOFF.md`
 - 원본 메모: `구연동화앱.txt` (개인 메모, git 제외)
 - 기본 브랜치: `master`
 
@@ -89,7 +90,8 @@
 
 ### 8. 배포
 
-- 배포 순서·환경 변수 목록은 `docs/deploy.md` 에 따로 적는다(아직 없음). 프론트 Cloudflare Pages 또는 Vercel, 백엔드 Google Cloud Run 예정.
+- 배포 순서·환경 변수 목록은 `docs/deploy.md` 에 따로 적는다(아직 없음). 프론트 **Cloudflare Pages**, 백엔드 **Render 무료**(카드 등록 없음, 15분 쉬면 잠듦 → 홈에서 미리 깨우기).
+  - Cloud Run 은 카드 등록·과금 위험 때문에 쓰지 않기로 함(2026-10-29).
 - 배포 환경에서만 다른 점(https, CORS 주소 등)은 설정값으로 고를 수 있게 만든다.
 - 로컬 전용 편의 기능(실험 서버 등)은 배포 환경에서 자동으로 꺼지게 한다.
 
@@ -129,12 +131,23 @@ npm run build
 uv run pytest
 
 :: 모델 평가: 생성 → 익명 내보내기 → (챗봇 수동 심사, scores/*.csv) → 요약
-uv run --env-file .env python -m eval.run_generate --out eval/results/<run> --version v4
+uv run --env-file .env python -m eval.run_generate --out eval/results/<run> --version v9
 uv run python -m eval.export eval/results/<run>
 uv run python -m eval.summarize eval/results/<run>
 
 :: TTS 비교
 uv run --env-file .env python -m eval.tts_check
+
+:: 그림 원본(assets/raw/{id}.png) → frontend/public/img/*.webp, 앱 아이콘
+uv run --group assets python -m tools.assets
+uv run --group assets python -m tools.icons
+```
+
+```bat
+:: 개발 중 확인 화면 (npm run dev 에서만, 서버·저장소 없이)
+:: http://localhost:5173/?demo            장면·사물 위치 비교
+:: http://localhost:5173/?demo=reading    읽기 화면 (?demo=reading-phrase 문장 선택지)
+:: 빌드 결과(PWA) 미리보기: npm run build 후 npm run preview -- --port 4173
 ```
 
 사용 한도 확인 (주소는 바뀔 수 있음):
@@ -147,19 +160,35 @@ uv run --env-file .env python -m eval.tts_check
   - 이야기 구간 데이터 모델·출력 검증기, 프롬프트 조립, OpenAI 호환 LLM 클라이언트
   - 구간 생성기(검증 실패 재시도 + 예비 모델 전환)
   - 모델 평가 도구(생성·익명 내보내기·수동 심사·요약), TTS 비교(Azure, Gemini)
-  - 실험 서버·화면(lab), 프롬프트 v1~v8, Typecast TTS
+  - 실험 서버·화면(lab), 프롬프트 v1~v9, Typecast TTS
   - 저장 없는 서비스 API(2차): 처음 선택 후보·이야기 시작·다음 구간·구간 음성(MP3)·사용 기록, 서명·메모리 한도 (`rules/api.md`)
-  - 프론트 MVP(3차): 처음 선택 4단계 → 읽기(음성 자동 재생·자동 페이지 넘김) → 선택지 → 결말 → 책장·이어하기, 그림은 이모지 (`rules/frontend.md`)
-- 다음 후보: 4차 — 그림 에셋 넣기(ComfyUI 제작 중), 효과음·음악, PWA, 배포(Cloudflare Pages + Cloud Run), 아이폰 실제 확인
+  - 프론트 MVP(3차): 처음 선택 4단계 → 읽기(음성 자동 재생·자동 페이지 넘김) → 선택지 → 결말 → 책장·이어하기 (`rules/frontend.md`)
+  - 4차 Task 1~4 (브랜치 `feature/assets-sound-pwa`, master 미합침):
+    - 그림 63장 WebP(배경 제거, 흰 물체는 두 모델 합치기) · 장면 조립(마주 보게 배치·반전, 밤·노을 색, 사물 머리·손·하늘) (`rules/assets.md`)
+    - 배경 음악 6곡(ElevenLabs)·효과음 10개(Pixabay, 2초 뒤)·음소거, PWA(설치·캐시·자동 업데이트)
+  - 4차 사용자 확인 반영(2026-10-30):
+    - 읽기 화면: 가로 두 칸(장면 왼쪽), 읽은 글 쌓기·점점 진해짐, 버튼·선택지 아래 고정, 만드는 중 덮개, 일시정지, 다시 들을 때 이전/다음, 이어 듣기/처음부터
+    - 설정 창: 음악·목소리 크기, 배속, 이야기 목소리 선택·미리 듣기, 안내 목소리(Azure 여성·남성)
+    - TTS: 연출 지시 하나로(조금 느리게, DIRECTOR'S NOTES 형식), 막히면 같은 목소리로 다른 Gemini 모델, 하루 한도 다 쓴 모델 기억, 끝 소리 처리
+    - 프롬프트 v9 + 검사기: 중간 페이지가 '...'로 끊기지 않게
+    - 화면이 하얗게 멈추던 버그 수정(짧은 구간으로 넘어갈 때)
+- 다음 후보: 4차 Task 5 배포 준비(Render 설정·`docs/deploy.md`·서버 미리 깨우기) → Task 6 실제 배포(사용자와 함께) → 아이폰 실제 확인 → 브랜치 리뷰 후 master 합치기
 - 하지 않기로 함:
   - 임베딩으로 그림·소리 매칭 — 프롬프트에 목록을 넣고 ID 만 고르게 하는 것으로 충분
   - MVP 로그인 — 기기별 익명 ID 로 시작, 구글 로그인은 이후
   - LLM 오류 종류별로 예비 모델 전환 막기 — 아이 사용 중 끊김을 줄이는 쪽을 택함(시도 기록으로 원인 확인)
   - DB(Supabase) — 마감에 맞춰 서버는 저장 없이, 책장은 프론트 IndexedDB. 기기를 바꾸면 책장 없음
   - OpenRouter(Nemotron) — 무료 하루 50회, 품질 문제. LLM 은 모두 Google 모델
+  - Cloud Run — 카드 등록·과금 위험. 백엔드는 Render 무료
+  - 이야기 음성이 막히면 Azure 로 대신 읽기 — 구간 중간에 목소리가 확 달라짐. 같은 목소리 이름의 다른 Gemini 모델까지만
+  - 문장 사이 쉼을 초로 지정 — 잘 지켜지지 않았고, 바뀐 연출 지시로 충분
+  - 태블릿 화면 따로 맞추기 — 지금 상태로 충분, 문제가 되면 다시
 - 남은 문제:
-  - 구간 생성 10~25초(목표 10초 이내) → 기본·예비 동시 호출로 바꿈, 효과 측정 중
+  - 이야기 음성 끝 '콱' 소리: 원인 미확정. 화면에서 끝 0.8초 전부터 줄이고 0.3초 전에 멈추게 함 → 사용자 확인 필요
+  - Gemini 하루 한도 429 구분 문구(`per_day`)를 실제 오류로 아직 확인 못 함 (`tts_failed` 로그의 `error` 로 확인)
+  - 서버 한도 계산은 메모리라 다시 켜면 0부터 → 실제 Google 사용량과 어긋남(하루 한도 거절을 받으면 기억하는 것으로 보완)
+  - 구간 마지막 페이지가 "나타난 것은 바로..." 로 자주 반복됨 (프롬프트 쪽)
   - 서비스 API 리뷰에서 미룬 작은 문제: 동시 시작 시 초과 예약, 시작 실패에도 한도 차감, anon_id 바꿔 전체 한도 소진 등 (배포 전 확인)
   - `run_generate` 기본 프롬프트가 v1 — `--version` 으로 지정해야 함
-  - 범위 축소(DB 제외, 에셋 수 등)는 프로토타입 후 결정
-  - 사람 캐릭터 8개(wizard·boy·girl·grandma·grandpa·prince·chef·firefighter)는 그림·`facing` 없음(프롬프트는 있음)
+  - 아이폰 실제 소리 재생·PWA 설치 미확인 (배포 후)
+  - 기획안(PRD)은 3차 기준 — 4차 결정(Azure 안내 목소리, 설정 창, v9 등)이 반영 안 됨
