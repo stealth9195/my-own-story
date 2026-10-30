@@ -123,15 +123,20 @@ export function setGuideVoice(v: GuideVoice): void {
 
 // 같은 글·목소리는 한 번만 받아 둔다 (질문 문장은 매번 같아서 서버 글자 한도를 아낀다)
 const spoken = new Map<string, Promise<string>>();
+export const SPEAK_TIMEOUT_MS = 8000;
 let speakToken = 0;
 
 function fetchSpeech(text: string, voice: "female" | "male"): Promise<string> {
   const key = `${voice}:${text}`;
   let req = spoken.get(key);
   if (!req) {
+    // 서버가 잠들어 있거나 느리면 기다리지 않고 브라우저 음성으로 (질문·선택지를 못 듣고 멈추지 않게)
+    const abort = new AbortController();
+    const timer = setTimeout(() => abort.abort(), SPEAK_TIMEOUT_MS);
     req = fetch(`${import.meta.env.VITE_API_BASE ?? ""}/api/speak`, {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text, voice }),
-    }).then(async (res) => {
+      signal: abort.signal,
+    }).finally(() => clearTimeout(timer)).then(async (res) => {
       if (!res.ok) throw new Error(`speak ${res.status}`);
       return URL.createObjectURL(await res.blob());
     });
