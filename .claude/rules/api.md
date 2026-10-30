@@ -25,7 +25,7 @@ paths:
   - 안전장치: 음성이 `2초 + 글자당 0.27초`보다 길면 `too_long` 실패로 보고 다음 모델로 넘긴다(`tts_service.py`). 보통은 글자당 약 0.19초. 300자 넘는 구간은 놓칠 수 있다.
   - 다음 할 일: 3.8 용 지시 형식을 따로 시험(한도가 차는 KST 16~17시 이후).
 - 음성 끝: 서버가 끝 0.15초를 줄이고 0.3초 무음을 붙인다(`audio.py` 의 `soften_end`). 화면도 끝 0.8초 전부터 줄이고 0.3초 전에 멈춘다(끝의 '콱' 소리).
-- 시연용 ElevenLabs(`tts/elevenlabs.py`): `ELEVENLABS_API_KEY`·`ELEVENLABS_VOICE_ID` 가 둘 다 있으면 새 이야기는 모두 이 목소리. PCM 24kHz 로 받아 Gemini 와 같은 길이 검사·끝 처리.
+- 시연용 ElevenLabs(`tts/elevenlabs.py`): 키와 `ELEVENLABS_VOICE_ID`(·`_2`)가 있으면 `/api/voices` 가 번호(eleven1·2)와 이름을 돌려주고, 설정 창에서 고른 사람만 그 목소리. 목소리 ID 는 화면에 보내지 않는다. 미리 듣기 파일은 `tools/voice_preview.py` 로 한 번 만든다. PCM 24kHz 로 받아 Gemini 와 같은 길이 검사·끝 처리.
   - 유료 크레딧이라 하루 글자 수 상한(기본 10,000자)을 메모리에서 센다. 넘으면 그 이야기부터 Gemini.
   - 실패해도 Gemini 로 넘어가지 않는다(중간에 목소리가 확 달라짐) → 그 구간은 글만. 401(크레딧 소진)은 다시 시도하지 않는다.
   - 2026-10-30 사용자 키는 TTS 권한만 있어 요금제·목소리 목록 조회(401 missing_permissions)는 안 된다.
