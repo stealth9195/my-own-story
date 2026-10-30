@@ -183,7 +183,8 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
         except TTSError as e:
             charge_extra(voice, calls - reserved, len(text))
             log_event("tts_failed", story_id=req.story.id, index=req.index,
-                      voice=req.story.voice.model_dump(), status=e.status)
+                      voice=req.story.voice.model_dump(), status=e.status,
+                      error=str(e)[:400])
             _fail(502, "tts_failed")
         charge_extra(voice, calls - reserved, len(text))
         log_event("tts", story_id=req.story.id, index=req.index, voice=req.story.voice.model_dump(),

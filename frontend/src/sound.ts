@@ -99,14 +99,27 @@ export function duckBgm(on: boolean): void {
   if (bgmPlayer) bgmPlayer.volume = (on ? DUCK_VOLUME : VOLUME) * musicVolume;
 }
 
-export function playSfx(id: string | null): void {
+// 효과음은 페이지가 바뀌고 조금 뒤에 (바로 나오면 이야기 첫마디와 겹친다). 그 사이 페이지가 또 바뀌면 취소
+export const SFX_DELAY_MS = 2000;
+let sfxTimer: ReturnType<typeof setTimeout> | null = null;
+
+export function playSfx(id: string | null, delayMs = SFX_DELAY_MS): void {
+  if (sfxTimer) clearTimeout(sfxTimer);
+  sfxTimer = null;
   if (!sfxPlayer || !id || muted) return;
-  sfxPlayer.src = `/sound/${id}.mp3`;
-  sfxPlayer.volume = SFX_VOLUME * musicVolume;
-  safePlay(sfxPlayer);
+  const el = sfxPlayer;
+  sfxTimer = setTimeout(() => {
+    sfxTimer = null;
+    if (muted) return;
+    el.src = `/sound/${id}.mp3`;
+    el.volume = SFX_VOLUME * musicVolume;
+    safePlay(el);
+  }, delayMs);
 }
 
 export function stopSound(): void {
+  if (sfxTimer) clearTimeout(sfxTimer);
+  sfxTimer = null;
   currentBgm = null;
   bgmPlayer?.pause();
   sfxPlayer?.pause();

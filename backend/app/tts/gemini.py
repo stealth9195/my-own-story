@@ -61,7 +61,7 @@ def synthesize(text: str, voice: str, key: str, model: str = MODELS[0]) -> bytes
     except httpx.HTTPError as e:
         raise TTSError(f"요청 실패: {e}") from e
     if resp.status_code != 200:
-        raise TTSError(f"HTTP {resp.status_code}: {resp.text[:200]}", status=resp.status_code)
+        raise TTSError(f"HTTP {resp.status_code}: {resp.text[:400]}", status=resp.status_code)  # 429 는 어떤 한도인지 본문에 있음
     try:
         data = resp.json()["candidates"][0]["content"]["parts"][0]["inlineData"]["data"]
     except (ValueError, KeyError, IndexError) as e:

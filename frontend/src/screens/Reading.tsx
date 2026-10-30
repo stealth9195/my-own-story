@@ -108,8 +108,11 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
       if (!mp3) {
         try {
           mp3 = await loadAudio(saved, view);
-        } catch {
+        } catch (e) {
           startAt.current = null;
+          // 왜 못 받았는지 서버 기록에 남긴다 (Gemini 한도 429 → 서버 502 tts_failed, 서버 구간당 한도 429 tts_limit 등)
+          sendEvent(getAnonId(), "voice_failed", saved.story.id,
+                    { index: view, reason: e instanceof ApiError ? `server:${e.status}:${e.code}` : "network" });
           if (isCurrent(t)) setPhase("manual");  // 음성 실패: 글만 보여 주고 버튼으로 넘김
           return;
         }
@@ -132,7 +135,12 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
       audio.ontimeupdate = () => { if (isCurrent(t)) setPage(pageAt(audio.currentTime, starts)); };
       audio.onended = () => { URL.revokeObjectURL(url); finish(); };
       audio.play().then(() => { if (isCurrent(t)) setPhase("playing"); })
-        .catch(() => { if (isCurrent(t)) setPhase("manual"); });
+        .catch((e: unknown) => {
+          // 받았는데 재생이 막힘 (아이폰 자동 재생 제한 NotAllowedError, 파일 손상 NotSupportedError 등)
+          sendEvent(getAnonId(), "voice_failed", saved.story.id,
+                    { index: view, reason: `play:${e instanceof Error ? e.name : "unknown"}` });
+          if (isCurrent(t)) setPhase("manual");
+        });
     }
     run();
     // 화면을 떠나면(또는 구간이 바뀌면) 재생을 멈춘다

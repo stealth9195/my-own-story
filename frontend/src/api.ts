@@ -44,7 +44,8 @@ export type StartOptions = {
   objects: StartOption[];
 };
 
-export type EventType = "card_select" | "choice_time" | "drop_off" | "complete" | "replay" | "mute" | "error";
+export type EventType = "card_select" | "choice_time" | "drop_off" | "complete" | "replay" | "mute" | "error"
+  | "voice_failed";  // 이야기 음성을 못 받았거나 재생이 막힘 (payload: index, reason)
 
 export class ApiError extends Error {
   status: number;

@@ -20,3 +20,7 @@ bell, birds, door_open, footsteps, laugh, magic_sparkle, pop, snore, splash, win
 | ending | 결말 (ending) |
 
 곡을 더 넣으려면: 파일을 `bgm/{id}.mp3` 로 두고 `shared/catalog.json` 의 `bgm` 에 `{id, name, mood}` 를 추가한다. 같은 분위기 곡이 여럿이면 이야기마다 하나를 고른다.
+
+## 이야기 목소리 미리 듣기 (`voice/`)
+
+Gemini TTS 로 직접 만든 샘플(실험 중 만든 음성 재사용). Kore(2.5 모델), Leda·Aoede(3.1 모델).

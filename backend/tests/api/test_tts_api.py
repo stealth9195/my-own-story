@@ -127,3 +127,17 @@ def test_tts_rate_limited_not_retried():
     r0 = start(client).json()
     assert client.post("/api/tts", json=tts_req(r0)).status_code == 502
     assert tts.calls == 1
+
+
+def test_tts_failure_log_keeps_reason(caplog):
+    # 429 가 분당 한도인지 하루 한도인지 알 수 있게 Google 오류 내용을 남긴다
+    caplog.set_level(logging.INFO, logger="story")
+
+    def quota(text, voice):
+        raise TTSError("HTTP 429: Quota exceeded for metric generate_requests_per_model_per_day", status=429)
+
+    client, _ = make([seg(0)], tts=quota)
+    r0 = start(client).json()
+    assert client.post("/api/tts", json=tts_req(r0)).status_code == 502
+    text = "\n".join(rec.getMessage() for rec in caplog.records)
+    assert "per_model_per_day" in text

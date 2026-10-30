@@ -53,7 +53,7 @@ class TTSRequest(BaseModel):
     segment: SignedSegment
 
 
-EventType = Literal["card_select", "choice_time", "drop_off", "complete", "replay", "mute", "error"]
+EventType = Literal["card_select", "choice_time", "drop_off", "complete", "replay", "mute", "error", "voice_failed"]
 
 
 class EventRequest(BaseModel):

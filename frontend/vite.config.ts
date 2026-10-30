@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => ({
         navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
           {
-            urlPattern: ({ url }) => /^\/(img|sound|bgm)\//.test(url.pathname),
+            urlPattern: ({ url }) => /^\/(img|sound|bgm|voice)\//.test(url.pathname),
             handler: 'CacheFirst',
             options: {
               cacheName: 'assets',

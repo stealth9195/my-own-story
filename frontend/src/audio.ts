@@ -122,6 +122,19 @@ export function speak(text: string, rate = 0.95): Promise<void> {
   })).catch(() => (t === speakToken ? speakBrowser(text, rate) : undefined));
 }
 
+// 이야기 목소리 미리 듣기 (public/voice/{이름}.mp3, 실험 중 만든 샘플). 서버 음성 한도를 쓰지 않는다
+export function playVoicePreview(name: string): void {
+  speakToken++;
+  if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
+  if (!guidePlayer) return;
+  guidePlayer.src = `/voice/${name}.mp3`;
+  guidePlayer.play().catch(() => {});
+}
+
+export function stopVoicePreview(): void {
+  guidePlayer?.pause();
+}
+
 // 브라우저 음성 (무료, 기계음). 지원하지 않으면 바로 resolve
 function speakBrowser(text: string, rate: number): Promise<void> {
   if (typeof speechSynthesis === "undefined") return Promise.resolve();
