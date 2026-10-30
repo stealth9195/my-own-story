@@ -23,6 +23,7 @@ const fake = vi.hoisted(() => {
       getRate: () => 1,
       setRate: vi.fn(),
       stepRate: (r: number) => r,
+      watchEnd: (a: { onended: null | (() => void) }, onEnd: () => void) => { a.onended = onEnd; return () => {}; },
     },
     getAudio: vi.fn(),
     fetchSegmentAudio: vi.fn(),

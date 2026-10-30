@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ApiError, fetchSegmentAudio, nextSegment, sendEvent } from "../api";
 import type { Choice } from "../api";
-import { getRate, isCurrent, player, playToken, speak, stopAll } from "../audio";
+import { getRate, isCurrent, player, playToken, speak, stopAll, watchEnd } from "../audio";
 import { emojiOf } from "../catalog";
 import Settings from "../components/Settings";
 import { getAnonId, getAudio, saveAudio, saveStory } from "../storage";
@@ -76,6 +76,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
     setPhase("loading");
 
     const finish = () => { if (isCurrent(t)) afterSegment(); };
+    let stopWatch = () => {};
 
     async function run() {
       // resuming 은 다른 구간으로 넘어갈 때 끈다 (개발 모드는 이 준비를 두 번 실행하므로 여기서 끄면 안 됨)
@@ -133,7 +134,8 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
         }
       };
       audio.ontimeupdate = () => { if (isCurrent(t)) setPage(pageAt(audio.currentTime, starts)); };
-      audio.onended = () => { URL.revokeObjectURL(url); finish(); };
+      // 끝나기 조금 전부터 소리를 줄이고 일찍 멈춘다 (끝의 '콱' 소리 방지, audio.ts)
+      stopWatch = watchEnd(audio, () => { URL.revokeObjectURL(url); finish(); });
       audio.play().then(() => { if (isCurrent(t)) setPhase("playing"); })
         .catch((e: unknown) => {
           // 받았는데 재생이 막힘 (아이폰 자동 재생 제한 NotAllowedError, 파일 손상 NotSupportedError 등)
@@ -144,7 +146,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
     }
     run();
     // 화면을 떠나면(또는 구간이 바뀌면) 재생을 멈춘다
-    return () => { if (isCurrent(t)) stopAll(); };
+    return () => { stopWatch(); if (isCurrent(t)) stopAll(); };
   }, [view, restart]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   // 페이지가 바뀔 때: 분위기에 맞는 음악(같은 곡이면 끊지 않고 이어서) + 그 페이지 효과음 1번

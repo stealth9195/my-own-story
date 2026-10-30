@@ -43,6 +43,41 @@ export function setVoiceVolume(v: number): void {
   if (guidePlayer) guidePlayer.volume = v;
 }
 
+// ── 이야기 음성 끝 처리 ──
+// 음성 맨 끝에 '콱' 하는 짧고 큰 소리가 날 때가 있어(2026-10-30), 끝나기 조금 전부터 소리를 줄이고 일찍 멈춘다.
+// 서버가 새 음성 뒤에 0.3초 무음을 붙이므로, 새 음성은 말소리의 마지막 0.5초만 서서히 작아진다
+export const END_FADE_START = 0.8;  // 끝나기 몇 초 전부터 줄일지 (음성 파일 기준 초)
+export const END_STOP = 0.3;        // 끝나기 몇 초 전에 멈출지
+
+// 남은 시간(left)에 따른 목소리 크기. base = 설정한 목소리 크기
+export function endVolume(left: number, base: number): number {
+  if (left >= END_FADE_START) return base;
+  if (left <= END_STOP) return 0;
+  return base * (left - END_STOP) / (END_FADE_START - END_STOP);
+}
+
+// 재생 중 끝부분을 지켜보다가 소리를 줄이고, END_STOP 에서 멈춘 뒤 onEnd 를 부른다 (onended 대신).
+// 돌려주는 함수를 부르면 지켜보기를 그만둔다 (다른 구간으로 넘어갈 때)
+export function watchEnd(audio: HTMLAudioElement, onEnd: () => void): () => void {
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    clearInterval(timer);
+    audio.pause();
+    audio.volume = voiceVolume;
+    onEnd();
+  };
+  const timer = setInterval(() => {
+    if (!audio.duration || Number.isNaN(audio.duration)) return;
+    const left = audio.duration - audio.currentTime;
+    audio.volume = endVolume(left, voiceVolume);
+    if (left <= END_STOP) finish();
+  }, 40);
+  audio.onended = finish;  // 짧은 음성 등으로 지켜보기 전에 끝나도 한 번만
+  return () => { done = true; clearInterval(timer); audio.volume = voiceVolume; };
+}
+
 let unlocked = false;
 
 export function unlockAudio(): void {
