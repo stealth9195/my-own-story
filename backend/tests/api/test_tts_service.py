@@ -47,3 +47,24 @@ def test_rate_limit_not_retried():
     with pytest.raises(TTSError):
         synthesize_segment("안녕", VOICE, tts)
     assert tts.calls == 1
+
+
+# 겪은 문제(2026-10-30): 3.8 이 한 문장(20자)을 읽으라는데 영어 연출 지시까지 읽어 25초가 나왔다.
+# 보통은 글자당 약 0.19초(샘플 190자 → 35~37초). 지나치게 길면 실패로 보고 다음 모델로 넘긴다
+def test_too_long_audio_is_rejected():
+    tts = FakeTTS([sine_wav(24000, 25.0), sine_wav(24000, 25.0)])
+    with pytest.raises(TTSError) as info:
+        synthesize_segment("토끼가 숲속으로 깡충깡충 뛰어갔어요.", VOICE, tts)
+    assert "too_long" in str(info.value)
+    assert tts.calls == 2          # 정해진 모델은 한 번 더 시도
+
+
+def test_normal_length_passes():
+    text = "가" * 190
+    tts = FakeTTS([sine_wav(24000, 40.0)])
+    assert is_mp3(synthesize_segment(text, VOICE, tts))
+
+
+def test_too_long_then_ok_on_retry():
+    tts = FakeTTS([sine_wav(24000, 25.0), sine_wav(24000, 4.0)])
+    assert is_mp3(synthesize_segment("토끼가 숲속으로 깡충깡충 뛰어갔어요.", VOICE, tts))

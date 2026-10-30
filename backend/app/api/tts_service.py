@@ -1,3 +1,5 @@
+import io
+import wave
 from collections.abc import Callable
 
 from app.api.audio import wav_to_mp3
@@ -37,15 +39,38 @@ def voices_to_try(voice: Voice, gemini_left: Callable[[str], int], used_up: Call
     return first + others
 
 
+# 음성이 이보다 길면 연출 지시까지 읽은 것으로 본다. 보통은 글자당 약 0.19초(eval 샘플 190자 → 35~37초)
+# 지시문을 읽으면 약 20초가 늘어난다(3.8, 2026-10-30). 짧은 글일수록 잘 걸리고, 300자 넘는 구간은 놓칠 수 있다
+SECONDS_PER_CHAR = 0.27
+EXTRA_SECONDS = 2.0
+
+
+def max_seconds(text: str) -> float:
+    return EXTRA_SECONDS + SECONDS_PER_CHAR * len(text)
+
+
+def wav_seconds(wav: bytes) -> float:
+    with wave.open(io.BytesIO(wav), "rb") as w:
+        return w.getnframes() / w.getframerate()
+
+
+def _checked(text: str, voice: Voice, tts: TTSFn) -> bytes:
+    wav = tts(text, voice)
+    seconds = wav_seconds(wav)
+    if seconds > max_seconds(text):
+        raise TTSError(f"too_long: {seconds:.1f}s > {max_seconds(text):.1f}s ({len(text)}자)")
+    return wav
+
+
 def synthesize_segment(text: str, voice: Voice, tts: TTSFn, retry: bool = True) -> bytes:
     """구간 본문 전체를 한 번에 읽어 MP3 로 돌려준다. 실패하면 같은 목소리로 1번 더 (retry).
     다른 모델로 대신 읽을 때는 다시 시도하지 않는다 (화면이 음성을 90초까지 기다리고, 한 번에 약 15초)"""
     if voice.provider == "browser":
         raise ValueError("브라우저 TTS 이야기는 서버에서 음성을 만들지 않음")
     try:
-        wav = tts(text, voice)
+        wav = _checked(text, voice, tts)
     except TTSError as e:
         if e.status in NO_RETRY or not retry:
             raise
-        wav = tts(text, voice)
+        wav = _checked(text, voice, tts)
     return wav_to_mp3(wav)
