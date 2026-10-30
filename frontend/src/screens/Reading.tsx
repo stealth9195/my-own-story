@@ -57,6 +57,9 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
   const signed = saved.segments[view];
   const seg = signed.segment;
   const isEnding = seg.type === "ending";
+  // 구간이 바뀐 직후 한 번은 이전 구간의 페이지 번호로 그려진다(번호는 다음 준비 단계에서 0으로 바뀜).
+  // 새 구간이 더 짧으면 없는 페이지를 읽어 화면이 멈췄으므로, 그 구간의 마지막 쪽을 넘지 않게 한다
+  const shown = seg.pages[Math.min(page, seg.pages.length - 1)];
 
   // 구간이 바뀔 때마다: 글을 먼저 보여 주고, 음성을 받아 오면 자동 재생
   useEffect(() => {
@@ -121,7 +124,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
 
   // 페이지가 바뀔 때: 분위기에 맞는 음악(같은 곡이면 끊지 않고 이어서) + 그 페이지 효과음 1번
   useEffect(() => {
-    const p = seg.pages[page];
+    const p = shown;
     playBgm(pickBgm(BGM, p.mood, isEnding, storyRng(saved.story.id)));
     playSfx(p.sfx);
   }, [view, page]);  // eslint-disable-line react-hooks/exhaustive-deps
@@ -213,10 +216,10 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
       </header>
 
       {/* 세로 화면: 위 버튼 → 장면 → 글·선택지 순서로 한 줄. 가로 화면: 왼쪽 장면, 오른쪽 위 버튼·글·선택지 (Reading.css) */}
-      <div className="reading-stage"><Scene scene={seg.pages[page].scene} placed /></div>
+      <div className="reading-stage"><Scene scene={shown.scene} placed /></div>
 
       <div className="reading-body">
-      <p className="reading-text">{seg.pages[page].text}</p>
+      <p className="reading-text">{shown.text}</p>
 
       {phase === "loading" && <p className="reading-status">🔊 목소리를 준비하고 있어요</p>}
       {phase === "manual" && <button className="big-button" onClick={nextPage}>다음 ▶</button>}

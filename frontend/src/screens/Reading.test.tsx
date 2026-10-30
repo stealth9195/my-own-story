@@ -94,3 +94,26 @@ test("replay without audio moves to next segment instead of old choices", async 
   expect(screen.getByText("2 / 3")).toBeTruthy();
   expect(screen.queryByText("bear")).toBeNull();  // 지난 구간 선택지가 나오면 안 됨
 });
+
+test("moving to a shorter segment does not crash on the old page number", async () => {
+  // 실제로 겪은 버그: 3쪽 구간을 다 듣고 2쪽 구간으로 넘어가면, 이전 페이지 번호(3쪽째)로 한 번 그리다가
+  // 없는 페이지를 읽어 화면이 하얗게 멈췄다
+  fake.getAudio.mockResolvedValue(new Blob(["mp3"]));
+  const three: Segment = { ...seg("intro", ["bear", "owl", "moon"]),
+    pages: [1, 2, 3].map((n) => ({ text: `intro ${n}`, scene, mood: "calm", sfx: null })) };
+  const saved: SavedStory = { ...done, segments: [three, seg("middle", ["cake"]), seg("ending", [])]
+    .map((segment, i) => ({ segment, sig: `sig${i}` })) };
+  render(<Reading saved={saved} resume onUpdate={vi.fn()} onHome={vi.fn()} onNew={vi.fn()} />);
+  await flush();
+  fireEvent.click(screen.getByText(/다시 듣기/));
+  await flush();
+  fake.player.currentTime = 9;  // 0번 구간 3쪽째까지 들음 (음성 10초)
+  await act(async () => {
+    (fake.player.onloadedmetadata as (() => void) | null)?.();
+    (fake.player.ontimeupdate as (() => void) | null)?.();
+  });
+  expect(screen.getByText("intro 3")).toBeTruthy();
+  await act(async () => { fake.player.onended?.(); });  // 다음 구간(2쪽짜리)으로
+  await flush();
+  expect(screen.getByText("middle 1")).toBeTruthy();
+});
