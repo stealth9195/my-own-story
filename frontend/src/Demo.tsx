@@ -1,4 +1,5 @@
-// (실험) 사물 위치 비교 화면. 주소 끝에 ?demo 를 붙이면 열린다. 서버 없이 예시 장면만 그린다
+// 개발용 확인 화면. npm run dev 에서 주소 끝에 ?demo 를 붙이면 열린다(배포판에서는 꺼짐).
+// 서버·저장소 없이 예시 장면(사물 위치 켜기/끄기)과 읽기 화면(?demo=reading, ?demo=reading-phrase)을 보여 준다
 import { useState } from "react";
 import type { Choice, Page } from "./api";
 import Scene from "./components/Scene";

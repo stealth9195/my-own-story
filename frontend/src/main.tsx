@@ -6,7 +6,7 @@ import Demo from './Demo.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    {/* (실험) ?demo 이면 사물 위치 비교 화면 */}
-    {location.search.includes('demo') ? <Demo /> : <App />}
+    {/* 개발 중에만: ?demo 이면 장면·읽기 화면 확인 페이지 (배포판에서는 꺼짐) */}
+    {import.meta.env.DEV && location.search.includes('demo') ? <Demo /> : <App />}
   </StrictMode>,
 )
