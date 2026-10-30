@@ -294,7 +294,7 @@
     {
       "id": "wizard",
       "name": "마법사",
-      "facing": "",
+      "facing": "left",
       "emoji": "🧙",
       "tags": [
         "사람"
@@ -303,7 +303,7 @@
     {
       "id": "boy",
       "name": "남자아이",
-      "facing": "",
+      "facing": "right",
       "emoji": "👦",
       "tags": [
         "사람"
@@ -312,7 +312,7 @@
     {
       "id": "girl",
       "name": "여자아이",
-      "facing": "",
+      "facing": "left",
       "emoji": "👧",
       "tags": [
         "사람"
@@ -321,7 +321,7 @@
     {
       "id": "grandma",
       "name": "할머니",
-      "facing": "",
+      "facing": "right",
       "emoji": "👵",
       "tags": [
         "사람"
@@ -330,7 +330,7 @@
     {
       "id": "grandpa",
       "name": "할아버지",
-      "facing": "",
+      "facing": "right",
       "emoji": "👴",
       "tags": [
         "사람"
@@ -339,7 +339,7 @@
     {
       "id": "prince",
       "name": "왕자",
-      "facing": "",
+      "facing": "right",
       "emoji": "🤴",
       "tags": [
         "사람"
@@ -348,7 +348,7 @@
     {
       "id": "chef",
       "name": "요리사",
-      "facing": "",
+      "facing": "right",
       "emoji": "🧑‍🍳",
       "tags": [
         "사람"
@@ -357,7 +357,7 @@
     {
       "id": "firefighter",
       "name": "소방관",
-      "facing": "",
+      "facing": "right",
       "emoji": "🧑‍🚒",
       "tags": [
         "사람"
