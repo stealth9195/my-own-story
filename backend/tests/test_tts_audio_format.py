@@ -7,6 +7,8 @@ import json
 import struct
 import wave
 
+import pytest
+
 from app.tts import gemini
 
 SPEECH = struct.pack("<4h", 100, -100, 200, -200)
@@ -47,3 +49,15 @@ def test_wav_response_keeps_only_sound(monkeypatch):
 def test_pcm_rate_is_read_from_mime(monkeypatch):
     monkeypatch.setattr(gemini.httpx, "post", lambda *a, **k: Resp("audio/L16;codec=pcm;rate=16000", SPEECH))
     assert frames_of(gemini.synthesize("안녕", "Kore", "k"))[0] == 16000
+
+
+def test_stereo_wav_is_rejected(monkeypatch):
+    buf = io.BytesIO()
+    with wave.open(buf, "wb") as w:
+        w.setnchannels(2)
+        w.setsampwidth(2)
+        w.setframerate(24000)
+        w.writeframes(SPEECH)
+    monkeypatch.setattr(gemini.httpx, "post", lambda *a, **k: Resp("audio/wav", buf.getvalue()))
+    with pytest.raises(gemini.TTSError):
+        gemini.synthesize("안녕", "Kore", "k")

@@ -69,6 +69,8 @@ def _to_wav(mime: str, raw: bytes) -> bytes:
     소리로 재생돼 시작 잡음·끝 '콱' 소리가 났다(2026-10-30). 소리 부분(data)만 꺼낸다"""
     if raw[:4] == b"RIFF":
         with wave.open(io.BytesIO(raw), "rb") as w:
+            if w.getsampwidth() != 2 or w.getnchannels() != 1:  # 다른 형식을 그대로 감싸면 잡음이 된다
+                raise ValueError(f"16비트 모노가 아님: {w.getsampwidth() * 8}비트 {w.getnchannels()}채널")
             return pcm_to_wav(w.readframes(w.getnframes()), w.getframerate())
     rate = next((int(p.split("=")[1]) for p in mime.split(";") if p.strip().startswith("rate=")), 24000)
     return pcm_to_wav(raw, rate)

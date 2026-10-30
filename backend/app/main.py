@@ -195,6 +195,9 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
             _fail(429, "tts_limit")
         text = "\n".join(p.text for p in segment.pages)
         voice = req.story.voice
+        # 유료 ElevenLabs 는 음성을 만들 때마다 하루 상한을 다시 본다 (시작 때만 보면 예전 이야기로 계속 부를 수 있다)
+        if voice.provider == "elevenlabs" and limits.elevenlabs_left(settings.elevenlabs_daily_chars) < len(text):
+            _fail(429, "tts_limit")
         started = time.perf_counter()
         # 정해진 모델이 막히면(한도 등) 같은 목소리 이름으로 다른 Gemini 모델을 차례로 (Azure 등 다른 목소리로는 넘어가지 않음)
         for v in voices_to_try(voice, limits.gemini_left, limits.gemini_used_up):

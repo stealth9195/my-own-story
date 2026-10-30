@@ -251,3 +251,13 @@ def test_elevenlabs_failure_does_not_switch_voice():
     r0 = start_with(client, "eleven1").json()
     assert client.post("/api/tts", json=tts_req(r0)).status_code == 502
     assert tts.calls == 2          # 같은 목소리로 1번 더, Gemini 로는 넘어가지 않음
+
+
+def test_elevenlabs_daily_cap_checked_on_each_audio():
+    # 시작 때만 보면, 예전에 시작한 ElevenLabs 이야기로 상한을 넘겨 계속 부를 수 있다
+    tts = VoiceTTS()
+    client = eleven_client(tts, elevenlabs_daily_chars=1000)
+    r0 = start_with(client, "eleven1").json()      # 시작 때 1,000자 예약 → 남은 것 0
+    r = client.post("/api/tts", json=tts_req(r0))
+    assert r.status_code == 429 and r.json()["detail"]["code"] == "tts_limit"
+    assert not getattr(tts, "voices", [])

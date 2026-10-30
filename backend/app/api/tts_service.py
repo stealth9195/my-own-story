@@ -58,6 +58,8 @@ def wav_seconds(wav: bytes) -> float:
 
 def _checked(text: str, voice: Voice, tts: TTSFn) -> bytes:
     wav = tts(text, voice)
+    if voice.provider == "elevenlabs":
+        return wav          # 연출 지시를 보내지 않으므로 읽을 일이 없다. 다시 부르면 유료 크레딧만 두 번 든다
     seconds = wav_seconds(wav)
     if seconds > max_seconds(text):
         raise TTSError(f"too_long: {seconds:.1f}s > {max_seconds(text):.1f}s ({len(text)}자)")
@@ -73,6 +75,9 @@ def synthesize_segment(text: str, voice: Voice, tts: TTSFn, retry: bool = True) 
         wav = _checked(text, voice, tts)
     except TTSError as e:
         if e.status in NO_RETRY or not retry:
+            raise
+        # ElevenLabs(유료)는 서버 쪽 일시 오류(5xx)일 때만 다시 부른다
+        if voice.provider == "elevenlabs" and not (e.status and e.status >= 500):
             raise
         wav = _checked(text, voice, tts)
     return wav_to_mp3(wav)

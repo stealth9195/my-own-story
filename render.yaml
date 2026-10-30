@@ -6,6 +6,9 @@ services:
     runtime: python
     plan: free
     rootDir: backend
+    # rootDir 밖이라도 서버가 읽는 파일(이야기 프롬프트·카탈로그)이 바뀌면 다시 배포
+    buildFilter:
+      paths: ["backend/**", "prompts/**", "shared/**"]
     buildCommand: pip install uv && uv sync --frozen --no-dev
     # --no-dev: 테스트 도구(pytest)·그림 변환 도구(rembg)는 서버에 설치하지 않는다
     startCommand: uv run --frozen --no-dev uvicorn --factory app.main:build_app --host 0.0.0.0 --port $PORT

@@ -68,3 +68,26 @@ def test_normal_length_passes():
 def test_too_long_then_ok_on_retry():
     tts = FakeTTS([sine_wav(24000, 25.0), sine_wav(24000, 4.0)])
     assert is_mp3(synthesize_segment("토끼가 숲속으로 깡충깡충 뛰어갔어요.", VOICE, tts))
+
+
+# ElevenLabs(유료): 연출 지시가 없으니 길이 검사를 하지 않고, 서버 일시 오류(5xx)일 때만 다시 부른다
+ELEVEN_VOICE = Voice(provider="elevenlabs", model="eleven_multilingual_v2", voice="v")
+
+
+def test_elevenlabs_skips_length_check():
+    tts = FakeTTS([sine_wav(24000, 25.0)])
+    assert is_mp3(synthesize_segment("토끼가 숲속으로 깡충깡충 뛰어갔어요.", ELEVEN_VOICE, tts))
+    assert tts.calls == 1
+
+
+def test_elevenlabs_no_retry_on_network_error():
+    tts = FakeTTS([TTSError("요청 실패"), sine_wav(24000, 0.2)])
+    with pytest.raises(TTSError):
+        synthesize_segment("안녕", ELEVEN_VOICE, tts)
+    assert tts.calls == 1
+
+
+def test_elevenlabs_retry_on_server_error():
+    tts = FakeTTS([TTSError("busy", status=503), sine_wav(24000, 0.2)])
+    assert is_mp3(synthesize_segment("안녕", ELEVEN_VOICE, tts))
+    assert tts.calls == 2
