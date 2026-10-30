@@ -21,13 +21,6 @@ DIRECTION = ("Read the following Korean story aloud like a warm, friendly pictur
              "(not sleepy), with a short pause between sentences:\n\n")
 
 
-def direction(pause: float | None) -> str:
-    """(실험) pause 초를 주면 'short pause' 대신 '약 N초 쉼'으로 지시한다"""
-    if pause is None:
-        return DIRECTION
-    return DIRECTION.replace("a short pause", f"a pause of about {pause:g} seconds")
-
-
 class TTSError(Exception):
     def __init__(self, message: str, status: int | None = None):
         super().__init__(message)
@@ -44,21 +37,21 @@ def pcm_to_wav(pcm: bytes, rate: int = 24000) -> bytes:
     return buf.getvalue()
 
 
-def _body(text: str, voice: str, pause: float | None = None) -> dict:
-    return {"contents": [{"parts": [{"text": direction(pause) + text}]}],
+def _body(text: str, voice: str) -> dict:
+    return {"contents": [{"parts": [{"text": DIRECTION + text}]}],
             "generationConfig": {
                 "responseModalities": ["AUDIO"],
                 "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}},
             }}
 
 
-def synthesize(text: str, voice: str, key: str, model: str = MODELS[0], pause: float | None = None) -> bytes:
+def synthesize(text: str, voice: str, key: str, model: str = MODELS[0]) -> bytes:
     """Gemini TTS는 16비트 PCM(24kHz)을 돌려주므로 WAV로 감싼다."""
     try:
         resp = httpx.post(
             f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
             headers={"x-goog-api-key": key},
-            json=_body(text, voice, pause),
+            json=_body(text, voice),
             timeout=120,
         )
     except httpx.HTTPError as e:

@@ -105,25 +105,8 @@ export async function nextSegment(anonId: string, story: StoryKey, history: Sign
   return (await request("/api/stories/next", { anon_id: anonId, story, history, chosen }, STORY_TIMEOUT_MS)).json();
 }
 
-// (실험) 문장 사이 쉼(초). 설정 창에서 정하면 TTS 연출 지시의 'short pause' 대신 그 초로 보낸다
-export function getTtsPause(): number | null {
-  try {
-    const v = localStorage.getItem("ttsPause");
-    return v ? Number(v) : null;
-  } catch {
-    return null;
-  }
-}
-
-export function setTtsPause(v: number | null): void {
-  try {
-    if (v === null) localStorage.removeItem("ttsPause");
-    else localStorage.setItem("ttsPause", String(v));
-  } catch { /* 무시 */ }
-}
-
 export async function fetchSegmentAudio(story: StoryKey, index: number, segment: SignedSegment): Promise<Blob> {
-  return (await request("/api/tts", { story, index, segment, pause: getTtsPause() }, AUDIO_TIMEOUT_MS)).blob();
+  return (await request("/api/tts", { story, index, segment }, AUDIO_TIMEOUT_MS)).blob();
 }
 
 // 사용 기록. 실패해도 무시한다 (기록 때문에 이야기가 멈추면 안 됨)

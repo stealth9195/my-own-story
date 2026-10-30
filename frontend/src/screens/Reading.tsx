@@ -4,7 +4,7 @@ import type { Choice } from "../api";
 import { getRate, isCurrent, player, playToken, speak, stopAll } from "../audio";
 import { emojiOf } from "../catalog";
 import Settings from "../components/Settings";
-import { deleteAudio, getAnonId, getAudio, saveAudio, saveStory } from "../storage";
+import { getAnonId, getAudio, saveAudio, saveStory } from "../storage";
 import type { SavedStory } from "../storage";
 import { addSegment, choose, nextArgs, pageAt, pageStartTimes } from "../story";
 import Picture from "../components/Picture";
@@ -291,11 +291,13 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
       {/* 읽은 쪽 글은 지우지 않고 아래로 이어 붙인다 (빨리 넘어가도 다시 읽을 수 있게) */}
       <div className="reading-text">
         {seg.pages.slice(0, pageIndex + 1).map((p, i) => (
-          <p key={i} ref={i === pageIndex ? textEnd : undefined} className={i === pageIndex ? "now" : "past"}>{p.text}</p>
+          <p key={`${view}-${i}`} ref={i === pageIndex ? textEnd : undefined} className={i === pageIndex ? "now" : "past"}>{p.text}</p>
         ))}
       </div>
 
       {phase === "loading" && <p className="reading-status">🔊 목소리를 준비하고 있어요</p>}
+      {/* 음성을 못 받았거나(무료 한도·오류) 재생이 막혔을 때: 글만 보여 주고 버튼으로 넘긴다 */}
+      {phase === "manual" && <p className="reading-status">🔇 목소리를 불러오지 못했어요. 버튼을 눌러 넘겨 주세요</p>}
       {canNavigate ? (
         <div className="page-nav">
           <button className="big-button soft" onClick={() => goPage(-1)} aria-label="이전 쪽" disabled={view === 0 && pageIndex === 0}>◀ 이전</button>
@@ -324,10 +326,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
         </div>
       )}
       </div>
-      {settingsOpen && (
-        <Settings onClose={() => setSettingsOpen(false)}
-                  onRegenerate={() => { deleteAudio(saved.story.id, view).then(() => replayFrom({ view, page: 0 })); }} />
-      )}
+      {settingsOpen && <Settings onClose={() => setSettingsOpen(false)} />}
     </main>
   );
 }

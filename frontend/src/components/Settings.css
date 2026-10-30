@@ -6,9 +6,4 @@
 .settings-row input[type="range"] { flex: 1; min-width: 120px; accent-color: var(--accent); }
 .settings-value { min-width: 32px; text-align: right; color: var(--muted); }
 .settings-rate, .settings-chips { display: flex; align-items: center; gap: 8px; }
-.settings-rate button, .settings-chips button, .settings-lab button { min-height: 44px; min-width: 44px; padding: 6px 14px; border-radius: 14px; background: var(--card); font-size: 17px; border: 2px solid transparent; }
 .settings-chips button.on { border-color: var(--accent); font-weight: 700; }
-.settings-lab { padding: 10px 12px; border-radius: 14px; border: 2px dashed #e0cfbf; }
-.settings-lab p { margin: 0 0 6px; color: var(--muted); }
-.settings-lab input[type="number"] { width: 110px; min-height: 40px; font-size: 17px; padding: 4px 8px; }
-.settings-note { font-size: 14px; }

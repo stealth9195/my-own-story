@@ -13,10 +13,10 @@ NO_RETRY = {429, 402}
 
 def default_tts(gemini_key: str, typecast_key: str) -> TTSFn:
     # Gemini 는 gemini.DIRECTION(이야기꾼 말투·조금 느리게)을 붙여 읽는다. Typecast 는 보통 빠르기
-    def tts(text: str, voice: Voice, pause: float | None = None) -> bytes:
+    def tts(text: str, voice: Voice) -> bytes:
         if voice.provider == "typecast":
             return typecast.synthesize(text, voice.voice, typecast_key, voice.model, style="normal")
-        return gemini.synthesize(text, voice.voice, gemini_key, voice.model, pause)
+        return gemini.synthesize(text, voice.voice, gemini_key, voice.model)
     return tts
 
 

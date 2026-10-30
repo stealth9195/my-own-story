@@ -50,7 +50,6 @@ class TTSRequest(BaseModel):
     story: StoryKey
     index: int = Field(ge=0)
     segment: SignedSegment
-    pause: float | None = Field(default=None, ge=0.1, le=5)  # (실험) 문장 사이 쉼(초)
 
 
 EventType = Literal["card_select", "choice_time", "drop_off", "complete", "replay", "mute", "error"]

@@ -175,7 +175,7 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
         def counted(text: str, voice):
             nonlocal calls
             calls += 1
-            return tts(text, voice, pause=req.pause) if req.pause is not None else tts(text, voice)
+            return tts(text, voice)
 
         started = time.perf_counter()
         try:
