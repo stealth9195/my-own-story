@@ -67,7 +67,7 @@ const flush = () => act(async () => { await new Promise((r) => setTimeout(r, 0))
 async function openAndReplay() {
   render(<Reading saved={done} resume onUpdate={vi.fn()} onHome={vi.fn()} onNew={vi.fn()} />);
   await flush();
-  fireEvent.click(screen.getByText(/다시 듣기/));
+  fireEvent.click(screen.getByText(/처음부터/));
   await flush();
 }
 
@@ -105,7 +105,7 @@ test("moving to a shorter segment does not crash on the old page number", async 
     .map((segment, i) => ({ segment, sig: `sig${i}` })) };
   render(<Reading saved={saved} resume onUpdate={vi.fn()} onHome={vi.fn()} onNew={vi.fn()} />);
   await flush();
-  fireEvent.click(screen.getByText(/다시 듣기/));
+  fireEvent.click(screen.getByText(/처음부터/));
   await flush();
   fake.player.currentTime = 9;  // 0번 구간 3쪽째까지 들음 (음성 10초)
   await act(async () => {
@@ -116,4 +116,39 @@ test("moving to a shorter segment does not crash on the old page number", async 
   await act(async () => { fake.player.onended?.(); });  // 다음 구간(2쪽짜리)으로
   await flush();
   expect(screen.getByText("middle 1")).toBeTruthy();
+});
+
+test("done story offers to continue from the saved position", async () => {
+  fake.getAudio.mockResolvedValue(new Blob(["mp3"]));
+  localStorage.setItem("pos:s1", JSON.stringify({ view: 1, page: 1 }));  // 다시 듣다가 2번 구간 2쪽에서 멈춤
+  render(<Reading saved={done} resume onUpdate={vi.fn()} onHome={vi.fn()} onNew={vi.fn()} />);
+  await flush();
+  fireEvent.click(screen.getByText(/이어 듣기/));
+  await flush();
+  await act(async () => { (fake.player.onloadedmetadata as (() => void) | null)?.(); });
+  expect(screen.getByText("middle 2")).toBeTruthy();
+  expect(fake.player.currentTime).toBeGreaterThan(0);  // 그 쪽 위치부터 재생
+  localStorage.clear();
+});
+
+test("done story without saved position shows only start over", async () => {
+  localStorage.clear();
+  render(<Reading saved={done} resume onUpdate={vi.fn()} onHome={vi.fn()} onNew={vi.fn()} />);
+  await flush();
+  expect(screen.queryByText(/이어 듣기/)).toBeNull();
+  expect(screen.getByText(/처음부터/)).toBeTruthy();
+});
+
+test("replay remembers the position and forgets it at the end", async () => {
+  localStorage.clear();
+  fake.getAudio.mockResolvedValue(new Blob(["mp3"]));
+  render(<Reading saved={done} resume onUpdate={vi.fn()} onHome={vi.fn()} onNew={vi.fn()} />);
+  await flush();
+  fireEvent.click(screen.getByText(/처음부터/));
+  await flush();
+  await act(async () => { fake.player.onended?.(); });
+  await flush();
+  expect(JSON.parse(localStorage.getItem("pos:s1")!)).toEqual({ view: 1, page: 0 });
+  for (let i = 0; i < 2; i++) { await act(async () => { fake.player.onended?.(); }); await flush(); }
+  expect(localStorage.getItem("pos:s1")).toBeNull();
 });

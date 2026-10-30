@@ -8,6 +8,7 @@ import { getAnonId, getAudio, saveAudio, saveStory } from "../storage";
 import type { SavedStory } from "../storage";
 import { addSegment, choose, nextArgs, pageAt, pageStartTimes } from "../story";
 import Picture from "../components/Picture";
+import { clearPosition, getPosition, savePosition } from "../position";
 import { BGM, duckBgm, isMuted, pickBgm, playBgm, playSfx, setMuted, stopSound, storyRng } from "../sound";
 import Scene from "../components/Scene";
 import Problem from "./Problem";
@@ -53,6 +54,10 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
   const requesting = useRef(false);
   // 다시 듣기 중인지. 화면에 보일 값이 아니라서 ref (state 로 두면 바뀔 때 구간 준비가 다시 실행돼 결말을 또 재생했음)
   const replaying = useRef(false);
+  // '이어 듣기'로 시작할 쪽. 음성 길이를 알게 되면 그 쪽 위치로 옮기고 지운다
+  const startAt = useRef<number | null>(null);
+  // 같은 구간에서 다시 시작할 때(이어 듣기 위치가 지금 구간) 준비 단계를 다시 돌리기 위한 번호
+  const [restart, setRestart] = useState(0);
 
   const signed = saved.segments[view];
   const seg = signed.segment;
@@ -88,7 +93,9 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
       if (saved.story.voice.provider === "browser") {
         // 서버 음성 한도가 없을 때: 처음부터 끝까지 브라우저 음성
         setPhase("playing");
-        for (let i = 0; i < seg.pages.length; i++) {
+        const from = startAt.current ?? 0;
+        startAt.current = null;
+        for (let i = from; i < seg.pages.length; i++) {
           if (!isCurrent(t)) return;
           setPage(i);
           await speak(seg.pages[i].text, SPEEDS[getSpeed()]);
@@ -111,7 +118,15 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
       audio.src = url;
       audio.playbackRate = SPEEDS[getSpeed()];
       let starts = [0];
-      audio.onloadedmetadata = () => { starts = pageStartTimes(seg.pages.map((p) => p.text), audio.duration); };
+      audio.onloadedmetadata = () => {
+        starts = pageStartTimes(seg.pages.map((p) => p.text), audio.duration);
+        if (startAt.current !== null) {  // 이어 듣기: 저장된 쪽부터
+          const i = Math.min(startAt.current, seg.pages.length - 1);
+          startAt.current = null;
+          audio.currentTime = starts[i];
+          setPage(i);
+        }
+      };
       audio.ontimeupdate = () => { if (isCurrent(t)) setPage(pageAt(audio.currentTime, starts)); };
       audio.onended = () => { URL.revokeObjectURL(url); finish(); };
       audio.play().then(() => { if (isCurrent(t)) setPhase("playing"); })
@@ -120,13 +135,14 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
     run();
     // 화면을 떠나면(또는 구간이 바뀌면) 재생을 멈춘다
     return () => { if (isCurrent(t)) stopAll(); };
-  }, [view]);  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [view, restart]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   // 페이지가 바뀔 때: 분위기에 맞는 음악(같은 곡이면 끊지 않고 이어서) + 그 페이지 효과음 1번
   useEffect(() => {
     const p = shown;
     playBgm(pickBgm(BGM, p.mood, isEnding, storyRng(saved.story.id)));
     playSfx(p.sfx);
+    if (replaying.current) savePosition(saved.story.id, { view, page });  // 다시 듣는 위치 기억
   }, [view, page]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   // 이야기 음성이 나오는 동안 음악을 작게
@@ -142,6 +158,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
     } else if (isEnding) {
       if (!replaying.current) sendEvent(getAnonId(), "complete", saved.story.id);
       replaying.current = false;
+      clearPosition(saved.story.id);  // 끝까지 들었으니 이어 들을 곳 없음
       setPhase("end");
     } else {
       setPhase("choices");
@@ -187,6 +204,15 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
     request(s);
   }
 
+  // 다시 듣기 시작: 처음부터 또는 저장된 위치부터
+  function replayFrom(pos: { view: number; page: number }) {
+    resuming.current = false;
+    replaying.current = true;
+    startAt.current = pos.page > 0 ? pos.page : null;
+    if (pos.view === view) setRestart((n) => n + 1);
+    else setView(pos.view);
+  }
+
   function toggleMute() {
     setMuted(!muted);
     setMutedState(!muted);
@@ -197,6 +223,9 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
     setSpeed(next);
     setSpeedState(next);
   }
+
+  // 다 들은 이야기를 책장에서 열었을 때만 '이어 듣기' 를 보여 준다
+  const resumePos = phase === "end" && resume ? getPosition(saved.story.id) : null;
 
   if (phase === "waiting") return <Waiting emoji={emojiOf(seg.pages.at(-1)?.scene.characters[0]?.id ?? saved.story.cards[0])} />;
   if (phase === "problem") return <Problem code={problem} onRetry={() => request(pending.current!)} onHome={onHome} />;
@@ -239,7 +268,8 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
       {phase === "end" && (
         <div className="ending">
           <p className="ending-title">🌟 끝 🌟</p>
-          <button className="big-button" onClick={() => { resuming.current = false; replaying.current = true; setView(0); }}>🔁 다시 듣기</button>
+          {resumePos && <button className="big-button" onClick={() => replayFrom(resumePos)}>▶ 이어 듣기</button>}
+          <button className={`big-button${resumePos ? " soft" : ""}`} onClick={() => replayFrom({ view: 0, page: 0 })}>🔁 처음부터 다시 듣기</button>
           <button className="big-button soft" onClick={onNew}>✨ 새 이야기</button>
         </div>
       )}
