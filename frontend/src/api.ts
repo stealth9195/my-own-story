@@ -96,8 +96,20 @@ export async function getStartOptions(): Promise<StartOptions> {
   return (await request("/api/start-options")).json();
 }
 
+// 이야기 목소리 (설정, Gemini 목소리 이름). "" 이면 무작위. 새 이야기부터 적용
+export const STORY_VOICES: [string, string][] = [["", "무작위"], ["Kore", "또렷한"], ["Aoede", "산뜻한"], ["Leda", "앳된"]];
+
+export function getStoryVoice(): string {
+  try { return localStorage.getItem("storyVoice") ?? ""; } catch { return ""; }
+}
+
+export function setStoryVoice(v: string): void {
+  try { localStorage.setItem("storyVoice", v); } catch { /* 이번 실행에만 적용 */ }
+}
+
 export async function startStory(anonId: string, cards: string[], choiceCount = 4): Promise<SegmentResponse> {
-  return (await request("/api/stories", { anon_id: anonId, cards, choice_count: choiceCount }, STORY_TIMEOUT_MS)).json();
+  const voice = getStoryVoice();
+  return (await request("/api/stories", { anon_id: anonId, cards, choice_count: choiceCount, voice: voice || null }, STORY_TIMEOUT_MS)).json();
 }
 
 export async function nextSegment(anonId: string, story: StoryKey, history: SignedSegment[],

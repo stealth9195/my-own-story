@@ -7,3 +7,5 @@
 .settings-value { min-width: 32px; text-align: right; color: var(--muted); }
 .settings-rate, .settings-chips { display: flex; align-items: center; gap: 8px; }
 .settings-chips button.on { border-color: var(--accent); font-weight: 700; }
+.settings-hint { width: 100%; font-size: 14px; color: var(--muted); }
+.settings-chips { flex-wrap: wrap; }

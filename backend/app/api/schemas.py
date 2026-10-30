@@ -29,6 +29,7 @@ class StartRequest(BaseModel):
     anon_id: str = Field(min_length=1, max_length=64)
     cards: list[str] = Field(min_length=3, max_length=5)
     choice_count: int = Field(default=4, ge=2, le=5)
+    voice: Literal["Kore", "Aoede", "Leda"] | None = None  # 설정에서 고른 이야기 목소리 (없으면 무작위)
 
 
 class NextRequest(BaseModel):

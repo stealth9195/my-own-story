@@ -135,7 +135,7 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
         if result != "ok":
             _fail(429, result)
         story = StoryKey(id=uuid.uuid4().hex[:12], cards=req.cards, choice_count=req.choice_count,
-                         voice=pick_voice(limits, req.choice_count, rng))
+                         voice=pick_voice(limits, req.choice_count, rng, req.voice))
         log_event("story_start", story_id=story.id, anon_id=req.anon_id, cards=story.cards,
                   voice=story.voice.model_dump())
         return generate(story, [], [])

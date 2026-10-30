@@ -42,3 +42,16 @@ def test_browser_when_all_full():
     lim.reserve_typecast(14001)
     v = pick_voice(lim, choice_count=4, rng=random.Random(0))
     assert v.provider == "browser" and v.model is None
+
+
+def test_preferred_gemini_voice_is_used():
+    v = pick_voice(limits(), choice_count=4, rng=random.Random(0), preferred="Aoede")
+    assert v.provider == "gemini" and v.voice == "Aoede"
+
+
+def test_preferred_voice_ignored_for_typecast():
+    lim = limits()
+    for m in gemini.MODELS:
+        lim.reserve_gemini(m, 10)
+    v = pick_voice(lim, choice_count=4, rng=random.Random(0), preferred="Aoede")
+    assert v.provider == "typecast" and v.voice in typecast.VOICES

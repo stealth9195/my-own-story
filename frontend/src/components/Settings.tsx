@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getStoryVoice, setStoryVoice, STORY_VOICES } from "../api";
 import { getGuideVoice, getRate, getVoiceVolume, setGuideVoice, setRate, setVoiceVolume, speak, stepRate } from "../audio";
 import type { GuideVoice } from "../audio";
 import { getMusicVolume, setMusicVolume } from "../sound";
@@ -14,6 +15,7 @@ export default function Settings({ onClose }: Props) {
   const [voiceVol, setVoiceVol] = useState(getVoiceVolume());
   const [rate, setRateState] = useState(getRate());
   const [guide, setGuide] = useState(getGuideVoice());
+  const [storyVoice, setStoryVoiceState] = useState(getStoryVoice());
 
   return (
     // 바깥(어두운 곳)을 누르면 닫힘. 안쪽을 누를 때는 닫히지 않게 전달을 막는다(stopPropagation)
@@ -42,6 +44,18 @@ export default function Settings({ onClose }: Props) {
             <span>{rate.toFixed(1)}배</span>
             <button onClick={() => { const r = stepRate(rate, 1); setRate(r); setRateState(r); }} aria-label="더 빠르게">+</button>
           </div>
+        </div>
+
+        <div className="settings-row">
+          <span>📖 이야기 목소리</span>
+          <div className="settings-chips">
+            {STORY_VOICES.map(([v, label]) => (
+              <button key={v} className={storyVoice === v ? "on" : ""} onClick={() => { setStoryVoice(v); setStoryVoiceState(v); }}>
+                {label}
+              </button>
+            ))}
+          </div>
+          <span className="settings-hint">새 이야기부터 바뀌어요. 무료 한도를 다 쓰면 다른 목소리로 읽어요</span>
         </div>
 
         <div className="settings-row">

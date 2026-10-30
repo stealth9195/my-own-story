@@ -13,12 +13,16 @@ MODELS = [
 ]
 VOICES = ["Kore", "Aoede", "Leda"]
 # TTS 모델은 systemInstruction을 거부(400)하므로 본문 앞에 연출 지시를 붙인다.
-# 한국어 지시문은 3.x 모델이 소리 내어 읽은 사례가 있어 영어로, 짧게, 콜론(:)으로 본문과 나눈다.
-# 속도: 너무 빠르면 아이가 못 따라오고, 너무 느리면 졸리다 → '보통 대화보다 조금 느리게, 또렷하고 생기 있게'.
-# 재생 속도(playbackRate)를 낮추면 음질이 나빠져서, 속도는 되도록 이 지시로 맞춘다 (2026-10-30)
-DIRECTION = ("Read the following Korean story aloud like a warm, friendly picture-book storyteller "
-             "for young children: a little slower than normal conversation, clear and gently lively "
-             "(not sleepy), with a short pause between sentences:\n\n")
+# 한 문장짜리 지시(콜론으로 본문과 구분)는 3.x 모델이 지시까지 소리 내어 읽었다(2026-10-30).
+# Gemini TTS 안내서의 형식처럼 '연출 메모'와 '읽을 글(TRANSCRIPT)'을 제목으로 나눈다.
+# 속도: 너무 빠르면 아이가 못 따라오고, 너무 느리면 졸리다 → '보통보다 조금 느리게, 또렷하고 생기 있게'.
+# 재생 속도(playbackRate)를 낮추면 음질이 나빠져서, 속도는 되도록 이 지시로 맞춘다
+DIRECTION = ("### DIRECTOR'S NOTES\n"
+             "Voice: a warm, friendly picture-book storyteller for young children.\n"
+             "Pace: a little slower than normal conversation, clear and gently lively (not sleepy), "
+             "with a short pause between sentences.\n"
+             "Read ONLY the transcript below, in Korean. Never read these notes aloud.\n\n"
+             "#### TRANSCRIPT\n")
 
 
 class TTSError(Exception):

@@ -24,11 +24,12 @@ const signed: SignedSegment = { segment: { type: "intro", pages: [], choices: []
 afterEach(() => vi.restoreAllMocks());
 
 describe("api", () => {
-  test("startStory posts anon_id, cards, choice_count", async () => {
+  test("startStory posts anon_id, cards, choice_count, voice", async () => {
     mockFetch(() => json({ story, index: 0, segment: signed, done: false }));
     const res = await startStory("anon", story.cards);
     expect(calls[0].url).toBe("/api/stories");
-    expect(JSON.parse(String(calls[0].init?.body))).toEqual({ anon_id: "anon", cards: story.cards, choice_count: 4 });
+    // 이야기 목소리를 고르지 않았으면 voice: null (서버가 무작위)
+    expect(JSON.parse(String(calls[0].init?.body))).toEqual({ anon_id: "anon", cards: story.cards, choice_count: 4, voice: null });
     expect(res.index).toBe(0);
   });
 
