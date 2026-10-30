@@ -8,6 +8,10 @@
   flex-shrink: 0;
   background: #cdeccf;
 }
+/* 세로 화면(휴대폰): 배경 그림 비율(16:9) 그대로 → 잘리지 않고, 아래 글·선택지 자리가 넓어진다 */
+@media (orientation: portrait) {
+  .scene { aspect-ratio: 16 / 9; }
+}
 /* 배경 그림이 없을 때의 색 */
 .scene.bg-forest { background: #b8dcb0; }
 .scene.bg-sea { background: #bfe3f5; }
