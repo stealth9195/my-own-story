@@ -675,6 +675,21 @@
       "id": "exciting_loop",
       "name": "신나는 음악",
       "mood": "exciting"
+    },
+    {
+      "id": "tense",
+      "name": "살짝 긴장되는 음악",
+      "mood": "tense"
+    },
+    {
+      "id": "warm",
+      "name": "따뜻한 음악",
+      "mood": "warm"
+    },
+    {
+      "id": "ending",
+      "name": "결말 음악",
+      "mood": "ending"
     }
   ],
   "traits": [

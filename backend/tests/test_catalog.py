@@ -24,8 +24,14 @@ def test_cards_are_choice_ids_and_at_least_10():
 
 
 def test_bgm_mood_refers_to_existing_mood():
+    # "ending" 은 결말 전용 음악 (LLM 이 고르는 분위기는 아님, 프론트가 결말에서 고름)
     cat = load_catalog()
-    assert all(b.mood in cat.ids("moods") for b in cat.bgm)
+    assert all(b.mood in cat.ids("moods") | {"ending"} for b in cat.bgm)
+
+
+def test_bgm_covers_every_mood_and_ending():
+    cat = load_catalog()
+    assert cat.ids("moods") | {"ending"} <= {b.mood for b in cat.bgm}
 
 
 def test_name_of_and_listing():
