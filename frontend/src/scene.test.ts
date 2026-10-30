@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { actorSlots, arrangeActors, placeObjects, stateMark, timeFilter } from "./scene";
+import { ACTOR_SPREAD, actorSlots, arrangeActors, placeObjects, stateMark, timeFilter } from "./scene";
 
 test("actorSlots spreads evenly", () => {
   expect(actorSlots(1)[0].left).toBe(50);
@@ -9,6 +9,13 @@ test("actorSlots spreads evenly", () => {
     expect(left).toBeGreaterThanOrEqual(10);
     expect(left).toBeLessThanOrEqual(90);
   }
+});
+
+test("actorSlots uses the spread setting (two characters closer to the middle)", () => {
+  const [a, b] = actorSlots(2).map((s) => s.left);
+  expect(b - a).toBe(ACTOR_SPREAD[2]);
+  expect((a + b) / 2).toBe(50);  // 가운데를 기준으로 양쪽
+  expect(b - a).toBeLessThan(50);  // 예전(15%·85%, 70 차이)보다 가깝게
 });
 
 test("actorSlots keeps at most 4", () => {

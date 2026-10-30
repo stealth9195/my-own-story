@@ -4,13 +4,21 @@ export type Slot = { left: number; bottom: number; scale: number };
 
 const MAX_ACTORS = 4;
 
+// ── 배치 간격 (여기 숫자를 바꾸면 화면에 바로 반영) ──
+// 인원수별로 맨 왼쪽과 맨 오른쪽 캐릭터 가운데 사이의 거리(장면 폭의 %). 가운데(50%)를 기준으로 양쪽에 놓는다.
+// 예: 2명 40 → 30%·70% 자리. 작을수록 가깝게 모인다 (그림 폭이 32% 라 2명은 32 보다 작으면 겹침)
+export const ACTOR_SPREAD: Record<number, number> = { 2: 40, 3: 56, 4: 70 };
+// 바닥에서 띄우는 높이(장면 높이의 %)
+export const ACTOR_BOTTOM = 6;
+
 // n 명을 가로로 고르게 놓는다(left 는 % 위치, 그림 가운데 기준). 많을수록 조금 작게
 export function actorSlots(n: number): Slot[] {
   const count = Math.min(Math.max(n, 0), MAX_ACTORS);
   const scale = count <= 2 ? 1 : 0.8;
+  const spread = ACTOR_SPREAD[count] ?? 0;
   return Array.from({ length: count }, (_, i) => ({
-    left: count === 1 ? 50 : 15 + (70 * i) / (count - 1),
-    bottom: 6,
+    left: count === 1 ? 50 : 50 - spread / 2 + (spread * i) / (count - 1),
+    bottom: ACTOR_BOTTOM,
     scale,
   }));
 }
