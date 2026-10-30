@@ -29,7 +29,8 @@ class StartRequest(BaseModel):
     anon_id: str = Field(min_length=1, max_length=64)
     cards: list[str] = Field(min_length=3, max_length=5)
     choice_count: int = Field(default=4, ge=2, le=5)
-    voice: Literal["Kore", "Aoede", "Leda"] | None = None  # 설정에서 고른 이야기 목소리 (없으면 무작위)
+    # 설정에서 고른 이야기 목소리: Gemini 이름(Kore 등) 또는 시연용 번호(eleven1). 모르는 값·없음은 무작위 Gemini
+    voice: str | None = Field(default=None, max_length=20)
 
 
 class NextRequest(BaseModel):

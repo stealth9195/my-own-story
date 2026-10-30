@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { ApiError, AUDIO_TIMEOUT_MS, fetchSegmentAudio, getStartOptions, nextSegment, sendEvent, startStory, STORY_TIMEOUT_MS, WAKE_TIMEOUT_MS, wakeServer } from "./api";
+import { ApiError, AUDIO_TIMEOUT_MS, fetchSegmentAudio, getDemoVoices, getStartOptions, nextSegment, sendEvent, startStory, STORY_TIMEOUT_MS, WAKE_TIMEOUT_MS, wakeServer } from "./api";
 import type { SignedSegment, StoryKey } from "./api";
 
 const calls: { url: string; init?: RequestInit }[] = [];
@@ -117,5 +117,17 @@ describe("wake server", () => {
     expect(() => wakeServer()).not.toThrow();
     await Promise.resolve();
     expect(globalThis.fetch).toHaveBeenCalledWith(expect.stringContaining("/api/start-options"), expect.anything());
+  });
+});
+
+describe("demo voices", () => {
+  test("lists server demo voices", async () => {
+    globalThis.fetch = vi.fn(async () => new Response(JSON.stringify([{ id: "eleven1", name: "경상도 사투리" }]))) as typeof fetch;
+    expect(await getDemoVoices()).toEqual([["eleven1", "경상도 사투리"]]);
+  });
+
+  test("empty when server fails", async () => {
+    globalThis.fetch = vi.fn(async () => { throw new TypeError("offline"); }) as typeof fetch;
+    expect(await getDemoVoices()).toEqual([]);
   });
 });

@@ -198,20 +198,56 @@ class VoiceTTS(FakeTTS):
         return super().__call__(text, voice)
 
 
-def test_elevenlabs_story_when_configured():
-    s = settings().model_copy(update={"elevenlabs_api_key": "k", "elevenlabs_voice_id": "voice123"})
+ELEVEN = {"elevenlabs_api_key": "k", "elevenlabs_voice_id": "voice123", "elevenlabs_voice_name": "경상도 사투리",
+          "elevenlabs_voice_id_2": "voice456", "elevenlabs_voice_name_2": "둘째"}
+
+
+def eleven_client(tts, **update):
+    s = settings().model_copy(update={**ELEVEN, **update})
+    return TestClient(create_app(s, FakeLLM("fake-model", [seg(0)]), None, tts=tts, rng=random.Random(0)))
+
+
+def start_with(client, voice):
+    return client.post("/api/stories", json={"anon_id": "anon-1", "cards": ["rabbit", "rose", "star"],
+                                             "choice_count": 2, "voice": voice})
+
+
+# 시연용 목소리는 설정 창에서 골랐을 때만 쓴다. 목록에는 목소리 ID 대신 번호(eleven1, eleven2)와 이름만
+def test_voices_lists_demo_voices_without_ids():
+    client = eleven_client(VoiceTTS())
+    assert client.get("/api/voices").json() == [{"id": "eleven1", "name": "경상도 사투리"},
+                                                {"id": "eleven2", "name": "둘째"}]
+
+
+def test_no_demo_voices_without_key():
+    client = eleven_client(VoiceTTS(), elevenlabs_api_key="")
+    assert client.get("/api/voices").json() == []
+
+
+def test_chosen_demo_voice_is_used():
     tts = VoiceTTS()
-    client = TestClient(create_app(s, FakeLLM("fake-model", [seg(0)]), None, tts=tts, rng=random.Random(0)))
-    r0 = start(client).json()
-    assert r0["story"]["voice"] == {"provider": "elevenlabs", "model": "eleven_multilingual_v2", "voice": "voice123"}
+    client = eleven_client(tts)
+    r0 = start_with(client, "eleven2").json()
+    assert r0["story"]["voice"] == {"provider": "elevenlabs", "model": "eleven_multilingual_v2", "voice": "voice456"}
     assert client.post("/api/tts", json=tts_req(r0)).status_code == 200
     assert tts.voices == ["elevenlabs"]
 
 
+def test_gemini_unless_demo_voice_chosen():
+    client = eleven_client(VoiceTTS())
+    assert start_with(client, None).json()["story"]["voice"]["provider"] == "gemini"
+
+
+def test_unknown_voice_falls_back_to_gemini():
+    # 시연이 끝나 목소리를 지웠는데 기기에 'eleven1' 이 남아 있는 경우
+    client = eleven_client(VoiceTTS(), elevenlabs_voice_id="")
+    r = start_with(client, "eleven1")
+    assert r.status_code == 200 and r.json()["story"]["voice"]["provider"] == "gemini"
+
+
 def test_elevenlabs_failure_does_not_switch_voice():
-    s = settings().model_copy(update={"elevenlabs_api_key": "k", "elevenlabs_voice_id": "voice123"})
     tts = FakeTTS(fail=True)
-    client = TestClient(create_app(s, FakeLLM("fake-model", [seg(0)]), None, tts=tts, rng=random.Random(0)))
-    r0 = start(client).json()
+    client = eleven_client(tts)
+    r0 = start_with(client, "eleven1").json()
     assert client.post("/api/tts", json=tts_req(r0)).status_code == 502
     assert tts.calls == 2          # 같은 목소리로 1번 더, Gemini 로는 넘어가지 않음

@@ -60,9 +60,13 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
                        allow_methods=["GET", "POST"], allow_headers=["Content-Type"])
     catalog, banned = load_catalog(), load_banned_words()
     tts = tts or default_tts(settings.gemini_api_key, settings.typecast_api_key, settings.elevenlabs_api_key)
-    # 시연용 ElevenLabs: 키와 목소리 ID 가 둘 다 있으면 새 이야기는 이 목소리로 (실패해도 다른 목소리로 넘어가지 않음)
-    eleven = (Voice(provider="elevenlabs", model=settings.elevenlabs_model, voice=settings.elevenlabs_voice_id)
-              if settings.elevenlabs_api_key and settings.elevenlabs_voice_id else None)
+    # 시연용 ElevenLabs: 설정 창에서 골랐을 때만 그 목소리로 (실패해도 다른 목소리로 넘어가지 않음)
+    demo_voices = settings.demo_voices()
+
+    def demo_voice(choice: str | None) -> Voice | None:
+        if choice not in demo_voices:
+            return None
+        return Voice(provider="elevenlabs", model=settings.elevenlabs_model, voice=demo_voices[choice][1])
     limits = limits or Limits(settings.daily_stories_per_user, settings.daily_stories_total)
     rng = rng or random.Random()
     if speak is None and settings.azure_speech_key and settings.azure_speech_region:
@@ -135,6 +139,11 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
         elif calls:
             limits.reserve_gemini(used.model, calls)
 
+    @app.get("/api/voices")
+    def get_demo_voices():
+        """설정 창에 더할 시연용 이야기 목소리 (없으면 빈 목록)"""
+        return [{"id": k, "name": name} for k, (name, _) in demo_voices.items()]
+
     @app.get("/api/start-options")
     def get_start_options():
         return start_options(catalog, rng)
@@ -148,7 +157,8 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
             _fail(429, result)
         story = StoryKey(id=uuid.uuid4().hex[:12], cards=req.cards, choice_count=req.choice_count,
                          voice=pick_voice(limits, req.choice_count, rng, req.voice,
-                                          elevenlabs=eleven, elevenlabs_daily_chars=settings.elevenlabs_daily_chars))
+                                          elevenlabs=demo_voice(req.voice),
+                                          elevenlabs_daily_chars=settings.elevenlabs_daily_chars))
         log_event("story_start", story_id=story.id, anon_id=req.anon_id, cards=story.cards,
                   voice=story.voice.model_dump())
         return generate(story, [], [])

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { getStoryVoice, setStoryVoice, STORY_VOICES } from "../api";
+import { useEffect, useState } from "react";
+import { getDemoVoices, getStoryVoice, setStoryVoice, STORY_VOICES } from "../api";
 import { getGuideVoice, getRate, getVoiceVolume, playVoicePreview, setGuideVoice, setRate, setVoiceVolume, speak, stepRate,
          stopVoicePreview } from "../audio";
 import type { GuideVoice } from "../audio";
@@ -17,6 +17,9 @@ export default function Settings({ onClose }: Props) {
   const [rate, setRateState] = useState(getRate());
   const [guide, setGuide] = useState(getGuideVoice());
   const [storyVoice, setStoryVoiceState] = useState(getStoryVoice());
+  const [demoVoices, setDemoVoices] = useState<[string, string][]>([]);
+  // 창이 열리면 서버에 시연용 목소리가 있는지 묻는다 (없으면 기본 목소리만)
+  useEffect(() => { getDemoVoices().then(setDemoVoices); }, []);
 
   return (
     // 바깥(어두운 곳)을 누르면 닫힘. 안쪽을 누를 때는 닫히지 않게 전달을 막는다(stopPropagation)
@@ -50,7 +53,7 @@ export default function Settings({ onClose }: Props) {
         <div className="settings-row">
           <span>📖 이야기 목소리</span>
           <div className="settings-chips">
-            {STORY_VOICES.map(([v, label]) => (
+            {[...STORY_VOICES, ...demoVoices].map(([v, label]) => (
               <button key={v} className={storyVoice === v ? "on" : ""} onClick={() => { setStoryVoice(v); setStoryVoiceState(v); if (v) playVoicePreview(v); else stopVoicePreview(); }}>
                 {label}
               </button>

@@ -108,6 +108,16 @@ export function wakeServer(): void {
 // 이야기 목소리 (설정, Gemini 목소리 이름). "" 이면 무작위. 새 이야기부터 적용
 export const STORY_VOICES: [string, string][] = [["", "무작위"], ["Kore", "또렷한"], ["Aoede", "산뜻한"], ["Leda", "앳된"]];
 
+// 시연용 목소리(ElevenLabs): 서버에 설정돼 있을 때만 [번호, 이름] 목록이 온다. 못 받으면 빈 목록
+export async function getDemoVoices(): Promise<[string, string][]> {
+  try {
+    const list: { id: string; name: string }[] = await (await request("/api/voices")).json();
+    return list.map((v) => [v.id, v.name]);
+  } catch {
+    return [];
+  }
+}
+
 export function getStoryVoice(): string {
   try { return localStorage.getItem("storyVoice") ?? ""; } catch { return ""; }
 }

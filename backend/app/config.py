@@ -28,9 +28,12 @@ class Settings(BaseSettings):
     # 안내·선택지 읽기(Azure 무료 F0). 비우면 /api/speak 를 끄고 프론트는 브라우저 음성으로 읽는다
     azure_speech_key: str = ""
     azure_speech_region: str = ""
-    # 시연용 이야기 음성(ElevenLabs, 유료 구독 크레딧). 키와 목소리 ID 가 둘 다 있을 때만 켜진다
+    # 시연용 이야기 음성(ElevenLabs, 유료 구독 크레딧). 키와 목소리 ID 가 있으면 설정 창에 이름으로 나온다
     elevenlabs_api_key: str = ""
     elevenlabs_voice_id: str = ""
+    elevenlabs_voice_name: str = "시연 목소리 1"
+    elevenlabs_voice_id_2: str = ""
+    elevenlabs_voice_name_2: str = "시연 목소리 2"
     elevenlabs_model: str = "eleven_multilingual_v2"
     elevenlabs_daily_chars: int = 10000  # 크레딧을 한꺼번에 다 쓰지 않게 (1편 약 1,000자)
     daily_stories_per_user: int = 3
@@ -59,6 +62,14 @@ class Settings(BaseSettings):
     backup_json_mode: bool = True
     backup_merge_system: bool = True
     backup_timeout: float = 60.0
+
+    def demo_voices(self) -> dict[str, tuple[str, str]]:
+        """화면에 보일 번호 → (이름, ElevenLabs 목소리 ID). 목소리 ID 는 화면에 보내지 않는다"""
+        if not self.elevenlabs_api_key:
+            return {}
+        slots = {"eleven1": (self.elevenlabs_voice_name, self.elevenlabs_voice_id),
+                 "eleven2": (self.elevenlabs_voice_name_2, self.elevenlabs_voice_id_2)}
+        return {k: v for k, v in slots.items() if v[1]}
 
     @field_validator("primary_base_url", "secondary_base_url", "backup_base_url", mode="before")
     @classmethod
