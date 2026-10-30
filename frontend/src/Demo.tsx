@@ -26,7 +26,7 @@ export default function Demo() {
         사물 위치 정보 {placed ? "켜짐 (머리·손·하늘)" : "꺼짐 (캐릭터처럼 바닥)"}
       </label>
       {SAMPLES.map((s) => (
-        <section key={s.title} style={{ width: "100%", maxWidth: 520 }}>
+        <section key={s.title} style={{ width: "100%", maxWidth: 780 }}>
           <p style={{ margin: "0 0 6px" }}>{s.title}</p>
           <Scene scene={s.scene} placed={placed} />
         </section>

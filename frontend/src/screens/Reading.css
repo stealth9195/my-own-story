@@ -6,14 +6,14 @@
   gap: 16px;
   padding: 12px 16px 28px;
 }
-.reading-top { width: 100%; max-width: 520px; display: flex; align-items: center; justify-content: space-between; }
+.reading-top { width: 100%; max-width: 780px; display: flex; align-items: center; justify-content: space-between; }
 .icon-button { min-height: 48px; padding: 8px 14px; border-radius: 16px; background: var(--card); font-size: 18px; }
 .reading-tools { display: flex; gap: 8px; }
 .reading-step { color: var(--muted); font-size: 16px; }
 
 .reading-text {
   width: 100%;
-  max-width: 520px;
+  max-width: 780px;
   margin: 0;
   font-size: 22px;
   line-height: 1.7;
@@ -22,7 +22,7 @@
 }
 .reading-status { margin: 0; color: var(--muted); text-align: center; }
 
-.choices { width: 100%; max-width: 520px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.choices { width: 100%; max-width: 780px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .choices.phrases { grid-template-columns: minmax(0, 1fr); }
 .choices .reading-status { grid-column: 1 / -1; }
 .choice {

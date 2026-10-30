@@ -1,8 +1,10 @@
 .scene {
   position: relative;
   width: 100%;
-  max-width: 520px;
+  max-width: 780px;
   aspect-ratio: 4 / 3;
+  /* 안쪽 크기(상태 표시 등)를 장면 폭 기준(cqw)으로 → 화면이 커지면 함께 커진다 */
+  container-type: inline-size;
   border-radius: var(--radius);
   overflow: hidden;
   flex-shrink: 0;
@@ -11,6 +13,10 @@
 /* 세로 화면(휴대폰): 배경 그림 비율(16:9) 그대로 → 잘리지 않고, 아래 글·선택지 자리가 넓어진다 */
 @media (orientation: portrait) {
   .scene { aspect-ratio: 16 / 9; }
+}
+/* 가로 화면(태블릿 등): 위 버튼·글·선택지 높이(약 380px)를 남기고, 남는 높이만큼만 커진다 */
+@media (orientation: landscape) {
+  .scene { max-width: min(780px, calc((100dvh - 380px) * 4 / 3)); }
 }
 /* 배경 그림이 없을 때의 색 */
 .scene.bg-forest { background: #b8dcb0; }
@@ -27,7 +33,7 @@
   position: absolute;
   aspect-ratio: 1;
   translate: -50% 0;
-  font-size: clamp(40px, 14vw, 72px);
+  font-size: 13cqw;  /* 그림이 없을 때 이모지 크기 */
   animation: breathe 2.4s ease-in-out infinite;
 }
 .actor .picture { filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.18)); }
@@ -37,7 +43,7 @@
   position: absolute;
   top: -6%;
   z-index: 2;
-  font-size: clamp(18px, 6vw, 30px);
+  font-size: 7cqw;
   animation: bounce 1s ease-in-out infinite;
 }
 
