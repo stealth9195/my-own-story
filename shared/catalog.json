@@ -65,7 +65,8 @@
       "tags": [
         "동물"
       ],
-      "card": true
+      "card": true,
+      "facing": "right"
     },
     {
       "id": "bear",
@@ -74,7 +75,8 @@
       "tags": [
         "동물"
       ],
-      "card": true
+      "card": true,
+      "facing": "front"
     },
     {
       "id": "fox",
@@ -82,7 +84,8 @@
       "emoji": "🦊",
       "tags": [
         "동물"
-      ]
+      ],
+      "facing": "left"
     },
     {
       "id": "cat",
@@ -91,7 +94,8 @@
       "tags": [
         "동물"
       ],
-      "card": true
+      "card": true,
+      "facing": "right"
     },
     {
       "id": "puppy",
@@ -99,7 +103,8 @@
       "emoji": "🐶",
       "tags": [
         "동물"
-      ]
+      ],
+      "facing": "right"
     },
     {
       "id": "dragon",
@@ -108,7 +113,8 @@
       "tags": [
         "상상"
       ],
-      "card": true
+      "card": true,
+      "facing": "right"
     },
     {
       "id": "princess",
@@ -116,7 +122,8 @@
       "emoji": "👸",
       "tags": [
         "사람"
-      ]
+      ],
+      "facing": "front"
     },
     {
       "id": "robot",
@@ -125,7 +132,8 @@
       "tags": [
         "기계"
       ],
-      "card": true
+      "card": true,
+      "facing": "right"
     },
     {
       "id": "owl",
@@ -133,7 +141,8 @@
       "emoji": "🦉",
       "tags": [
         "동물"
-      ]
+      ],
+      "facing": "front"
     },
     {
       "id": "dinosaur",
@@ -142,7 +151,8 @@
       "tags": [
         "동물"
       ],
-      "card": true
+      "card": true,
+      "facing": "right"
     },
     {
       "id": "penguin",
@@ -151,7 +161,8 @@
       "tags": [
         "동물"
       ],
-      "card": true
+      "card": true,
+      "facing": "left"
     },
     {
       "id": "elephant",
@@ -159,7 +170,8 @@
       "emoji": "🐘",
       "tags": [
         "동물"
-      ]
+      ],
+      "facing": "right"
     },
     {
       "id": "lion",
@@ -167,7 +179,8 @@
       "emoji": "🦁",
       "tags": [
         "동물"
-      ]
+      ],
+      "facing": "front"
     },
     {
       "id": "monkey",
@@ -175,7 +188,8 @@
       "emoji": "🐵",
       "tags": [
         "동물"
-      ]
+      ],
+      "facing": "front"
     },
     {
       "id": "giraffe",
@@ -183,7 +197,8 @@
       "emoji": "🦒",
       "tags": [
         "동물"
-      ]
+      ],
+      "facing": "right"
     },
     {
       "id": "turtle",
@@ -191,7 +206,8 @@
       "emoji": "🐢",
       "tags": [
         "동물"
-      ]
+      ],
+      "facing": "left"
     },
     {
       "id": "squirrel",
@@ -199,7 +215,8 @@
       "emoji": "🐿️",
       "tags": [
         "동물"
-      ]
+      ],
+      "facing": "left"
     },
     {
       "id": "hedgehog",
@@ -207,7 +224,8 @@
       "emoji": "🦔",
       "tags": [
         "동물"
-      ]
+      ],
+      "facing": "right"
     },
     {
       "id": "duck",
@@ -215,7 +233,8 @@
       "emoji": "🦆",
       "tags": [
         "동물"
-      ]
+      ],
+      "facing": "right"
     },
     {
       "id": "frog",
@@ -223,7 +242,8 @@
       "emoji": "🐸",
       "tags": [
         "동물"
-      ]
+      ],
+      "facing": "front"
     },
     {
       "id": "butterfly",
@@ -231,7 +251,8 @@
       "emoji": "🦋",
       "tags": [
         "곤충"
-      ]
+      ],
+      "facing": "front"
     },
     {
       "id": "whale",
@@ -239,7 +260,8 @@
       "emoji": "🐳",
       "tags": [
         "바다"
-      ]
+      ],
+      "facing": "left"
     },
     {
       "id": "unicorn",
@@ -248,7 +270,8 @@
       "tags": [
         "상상"
       ],
-      "card": true
+      "card": true,
+      "facing": "left"
     },
     {
       "id": "fairy",
@@ -256,7 +279,8 @@
       "emoji": "🧚",
       "tags": [
         "상상"
-      ]
+      ],
+      "facing": "front"
     },
     {
       "id": "snowman",
@@ -264,7 +288,8 @@
       "emoji": "⛄",
       "tags": [
         "겨울"
-      ]
+      ],
+      "facing": "right"
     },
     {
       "id": "wizard",
