@@ -222,3 +222,40 @@ test("pause and resume the story voice", async () => {
   fireEvent.click(screen.getByLabelText("이어서 듣기"));
   expect(fake.player.play).toHaveBeenCalledTimes(2);
 });
+
+// 음성이 60초 넘게 늦으면 '다음' 버튼으로 먼저 넘길 수 있고, 음성이 오면 지금 쪽부터 이어서 나온다 (사용자 요청 2026-10-31)
+async function openSlow() {
+  vi.useFakeTimers();
+  fake.getAudio.mockResolvedValue(undefined);
+  let arrive: (b: Blob) => void = () => {};
+  fake.fetchSegmentAudio.mockReturnValue(new Promise<Blob>((ok) => { arrive = ok; }));
+  const notDone: SavedStory = { ...done, done: false, chosen: [], segments: done.segments.slice(0, 1) };
+  render(<Reading saved={notDone} onUpdate={vi.fn()} onHome={vi.fn()} onNew={vi.fn()} />);
+  await act(async () => { await vi.advanceTimersByTimeAsync(0); });
+  return (b: Blob) => act(async () => { arrive(b); await vi.advanceTimersByTimeAsync(0); });
+}
+
+test("slow voice shows next button after 60 seconds and still plays when it arrives", async () => {
+  const arrive = await openSlow();
+  await act(async () => { await vi.advanceTimersByTimeAsync(59_000); });
+  expect(screen.queryByText("다음 ▶")).toBeNull();
+  await act(async () => { await vi.advanceTimersByTimeAsync(1_000); });
+  fireEvent.click(screen.getByText("다음 ▶"));                // 먼저 2쪽으로
+  expect(screen.getByText("intro 2")).toBeTruthy();
+  await arrive(new Blob(["mp3"]));
+  expect(fake.player.play).toHaveBeenCalled();
+  await act(async () => { (fake.player.onloadedmetadata as (() => void) | null)?.(); });
+  expect(fake.player.currentTime).toBeGreaterThan(0);        // 넘긴 쪽부터 이어서
+  vi.useRealTimers();
+});
+
+test("slow voice that arrives after the child reached the choices is not played", async () => {
+  const arrive = await openSlow();
+  await act(async () => { await vi.advanceTimersByTimeAsync(60_000); });
+  fireEvent.click(screen.getByText("다음 ▶"));
+  fireEvent.click(screen.getByText("다음 ▶"));                // 구간 끝 → 선택지
+  expect(screen.getByText("bear")).toBeTruthy();
+  await arrive(new Blob(["mp3"]));
+  expect(fake.player.play).not.toHaveBeenCalled();
+  vi.useRealTimers();
+});

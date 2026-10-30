@@ -26,6 +26,10 @@ type Phase = "loading" | "playing" | "manual" | "choices" | "waiting" | "problem
 // 그때마다 서버 음성을 부르면 구간당 2번 한도와 Gemini 하루 한도를 헛되이 쓴다
 const audioRequests = new Map<string, Promise<Blob>>();
 
+// 음성이 이만큼 늦으면 '다음' 버튼으로 먼저 넘길 수 있게 한다. 음성은 계속 받아서, 오면 지금 쪽부터 들려준다
+// (사용자 요청 2026-10-31: 아이가 버튼 없이 오래 기다리지 않게. 요청 자체는 90초까지 기다림)
+export const SLOW_VOICE_MS = 60_000;
+
 function loadAudio(saved: SavedStory, index: number): Promise<Blob> {
   const key = `${saved.story.id}:${index}`;
   let req = audioRequests.get(key);
@@ -59,6 +63,12 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
   const startAt = useRef<number | null>(null);
   // 같은 구간에서 다시 시작할 때(이어 듣기 위치가 지금 구간) 준비 단계를 다시 돌리기 위한 번호
   const [restart, setRestart] = useState(0);
+  const [slow, setSlow] = useState(false);  // 음성이 늦어 '다음' 버튼을 보여 주는 중
+  // 늦게 온 음성을 어디서부터·들려줄지 정할 때 쓰는 지금 쪽과 단계 (effect 안에서는 state 가 옛 값이라 ref)
+  const pageNow = useRef(0);
+  const phaseNow = useRef<Phase>("loading");
+  pageNow.current = page;
+  phaseNow.current = phase;
 
   const signed = saved.segments[view];
   const seg = signed.segment;
@@ -74,6 +84,9 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
     setFocus(null);
     setPaused(false);
     setPhase("loading");
+    phaseNow.current = "loading";
+    setSlow(false);
+    const slowTimer = setTimeout(() => { if (isCurrent(t)) setSlow(true); }, SLOW_VOICE_MS);
 
     const finish = () => { if (isCurrent(t)) afterSegment(); };
     let stopWatch = () => {};
@@ -118,8 +131,12 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
           return;
         }
       }
+      clearTimeout(slowTimer);
       const audio = player;
       if (!isCurrent(t) || !audio) return;  // 기다리는 동안 화면을 떠났으면 재생하지 않음
+      // 늦은 음성: 기다리는 동안 아이가 선택지까지 넘겼으면 들려주지 않고, 쪽을 넘겼으면 그 쪽부터
+      if (phaseNow.current !== "loading") return;
+      if (pageNow.current > 0 && startAt.current === null) startAt.current = pageNow.current;
       const url = URL.createObjectURL(mp3);
       audio.src = url;
       audio.playbackRate = getRate();
@@ -147,7 +164,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
     }
     run();
     // 화면을 떠나면(또는 구간이 바뀌면) 재생을 멈춘다
-    return () => { stopWatch(); if (isCurrent(t)) stopAll(); };
+    return () => { clearTimeout(slowTimer); stopWatch(); if (isCurrent(t)) stopAll(); };
   }, [view, restart]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   // 페이지가 바뀔 때: 분위기에 맞는 음악(같은 곡이면 끊지 않고 이어서) + 그 페이지 효과음 1번
@@ -305,7 +322,9 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
           <p key={`${view}-${i}`} ref={i === pageIndex ? textEnd : undefined} className={i === pageIndex ? "now" : "past"}>{p.text}</p>
         ))}
         {/* 목소리 안내는 글 바로 아래에 */}
-        {phase === "loading" && <p className="voice-note">🔊 목소리를 준비하고 있어요</p>}
+        {phase === "loading" && <p className="voice-note">{slow
+          ? "🔊 목소리가 늦어지고 있어요. 먼저 넘겨 읽어도 목소리는 이어서 나와요"
+          : "🔊 목소리를 준비하고 있어요"}</p>}
         {/* 음성을 못 받았거나(무료 한도·오류) 재생이 막혔을 때: 글만 보여 주고 버튼으로 넘긴다 */}
         {phase === "manual" && <p className="voice-note">🔇 목소리를 불러오지 못했어요. 버튼을 눌러 넘겨 주세요</p>}
       </div>
@@ -314,7 +333,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
           <button className="big-button soft" onClick={() => goPage(-1)} aria-label="이전 쪽" disabled={view === 0 && pageIndex === 0}>◀ 이전</button>
           <button className="big-button soft" onClick={() => goPage(1)} aria-label="다음 쪽">다음 ▶</button>
         </div>
-      ) : phase === "manual" && <button className="big-button" onClick={nextPage}>다음 ▶</button>}
+      ) : (phase === "manual" || (phase === "loading" && slow)) && <button className="big-button" onClick={nextPage}>다음 ▶</button>}
 
       {phase === "choices" && (
         <div className={`choices ${seg.choices[0]?.kind === "phrase" ? "phrases" : ""}`}>
