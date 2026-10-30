@@ -86,7 +86,8 @@ MAX_PHRASE_CHARS = 20
 # 문장형 선택지는 빈칸을 채워 문장을 끝내는 답이라 '요', '다', 문장부호로 끝나야 한다 ('...', '~보니' 같은 미완성은 뺌)
 SENTENCE_END = re.compile(r"(요|다)[!.?~]*$|[!?]$")
 # 관대한 모드에서도 거절하는 오류: 읽을 수 없는 응답, 빈 본문, 한글 아님, 아이에게 부적절한 내용
-HARD_ERRORS = {"json", "schema", "empty_text", "not_korean", "unsafe"}
+# cut_off: 마지막이 아닌 페이지가 '...'로 끊김 (느슨한 검사에서도 거절 → 동시에 쓴 다른 모델 글을 씀)
+HARD_ERRORS = {"json", "schema", "empty_text", "not_korean", "unsafe", "cut_off"}
 
 
 def _clean_phrases(choices: list[Choice], banned: list[str], dropped: list[str],
@@ -204,6 +205,11 @@ def validate_segment(
         if p.sfx is not None and p.sfx not in catalog.ids("sfx"):
             dropped.append(p.sfx)
             p.sfx = None
+
+    # 중간 페이지는 완결된 문장으로 끝나야 한다. '표정은...'처럼 끊기면 음성으로 들을 때 이야기가 끊긴 것 같다
+    # (궁금하게 끝내는 건 구간의 마지막 페이지만, 2026-10-30)
+    if any(p.text.rstrip("\"'” ").endswith(("...", "…")) for p in pages[:-1]):
+        errors.append("cut_off")
 
     if segment_type == "ending":
         choices = []

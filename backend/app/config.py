@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     choice_count: int = Field(default=4, ge=2, le=5)
-    prompt_version: str = "v8"
+    prompt_version: str = "v9"
     max_page_chars: int = 150
 
     # 서비스 API: 구간 서명 비밀값, TTS 키, 하루 한도(KST), 허용할 프론트 주소

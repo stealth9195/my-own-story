@@ -48,7 +48,7 @@ def test_other_secret_rejected():
 def test_settings_defaults():
     s = Settings(primary_base_url="x", primary_api_key="k", primary_model="m", story_secret="s" * 32,
                  _env_file=None)
-    assert s.prompt_version == "v8"
+    assert s.prompt_version == "v9"
     assert s.daily_stories_per_user == 3 and s.daily_stories_total == 30
     assert s.cors_origins == ["http://localhost:5173"]
 
