@@ -70,6 +70,14 @@ class Limits:
         with self._lock:
             self._counts[(self._month(), "typecast")] += chars
 
+    # 시연용 ElevenLabs: 유료 크레딧을 한꺼번에 다 쓰지 않게 하루 글자 수 상한 (설정 ELEVENLABS_DAILY_CHARS)
+    def elevenlabs_left(self, daily_chars: int) -> int:
+        return daily_chars - self._counts[(self._day(), "elevenlabs")]
+
+    def reserve_elevenlabs(self, chars: int) -> None:
+        with self._lock:
+            self._counts[(self._day(), "elevenlabs")] += chars
+
     def azure_left(self) -> int:
         return AZURE_DAILY_CHARS - self._counts[(self._day(), "azure")]
 

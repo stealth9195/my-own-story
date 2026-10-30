@@ -30,6 +30,7 @@ Cloud Run 은 카드 등록·과금 위험 때문에 쓰지 않는다(2026-10-29
 | `PRIMARY_MODEL` / `SECONDARY_MODEL` | 로컬 `.env` 와 같은 이야기 생성 모델 |
 | `AZURE_SPEECH_KEY` / `AZURE_SPEECH_REGION` | 안내·선택지 목소리(무료 F0). 비우면 브라우저 음성 |
 | `TYPECAST_API_KEY` | 예비 TTS. 비워도 된다 |
+| `ELEVENLABS_API_KEY` / `ELEVENLABS_VOICE_ID` | **시연용** 이야기 음성(유료 구독 크레딧). 둘 다 있으면 새 이야기는 이 목소리로. 시연이 끝나면 `ELEVENLABS_VOICE_ID` 를 비운다. 하루 10,000자 상한(`ELEVENLABS_DAILY_CHARS`) |
 | `CORS_ORIGINS` | 허용할 프론트 주소 JSON 목록 |
 
 그 밖의 값(하루 한도 등)은 코드 기본값을 쓴다(`backend/app/config.py`).

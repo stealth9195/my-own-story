@@ -4,20 +4,22 @@ from collections.abc import Callable
 
 from app.api.audio import wav_to_mp3
 from app.api.schemas import Voice
-from app.tts import gemini, typecast
+from app.tts import elevenlabs, gemini, typecast
 from app.tts.gemini import TTSError
 
 # 본문 → WAV
 TTSFn = Callable[[str, Voice], bytes]
-# 한도 초과(429)·크레딧 부족(402)은 바로 다시 불러도 실패하고 한도만 더 쓴다
-NO_RETRY = {429, 402}
+# 한도 초과(429)·크레딧 부족(402, ElevenLabs 는 401)은 바로 다시 불러도 실패하고 한도만 더 쓴다
+NO_RETRY = {429, 402, 401}
 
 
-def default_tts(gemini_key: str, typecast_key: str) -> TTSFn:
+def default_tts(gemini_key: str, typecast_key: str, elevenlabs_key: str = "") -> TTSFn:
     # Gemini 는 gemini.DIRECTION(이야기꾼 말투·조금 느리게)을 붙여 읽는다. Typecast 는 보통 빠르기
     def tts(text: str, voice: Voice) -> bytes:
         if voice.provider == "typecast":
             return typecast.synthesize(text, voice.voice, typecast_key, voice.model, style="normal")
+        if voice.provider == "elevenlabs":
+            return elevenlabs.synthesize(text, voice.voice, elevenlabs_key, voice.model)
         return gemini.synthesize(text, voice.voice, gemini_key, voice.model)
     return tts
 

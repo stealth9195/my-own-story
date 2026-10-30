@@ -7,7 +7,7 @@ from app.story.schema import Segment
 
 class Voice(BaseModel):
     # browser: 서버 TTS 한도가 부족해 처음부터 브라우저 TTS 로 읽는 이야기
-    provider: Literal["gemini", "typecast", "browser"]
+    provider: Literal["gemini", "typecast", "elevenlabs", "browser"]
     model: str | None = None
     voice: str | None = None
 

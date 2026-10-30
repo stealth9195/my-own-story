@@ -2,7 +2,7 @@
 
 export type Voice = {
   // browser: 서버 음성 한도가 부족해 처음부터 브라우저 음성으로 읽는 이야기
-  provider: "gemini" | "typecast" | "browser";
+  provider: "gemini" | "typecast" | "elevenlabs" | "browser";
   model?: string | null;
   voice?: string | null;
 };

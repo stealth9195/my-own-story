@@ -16,7 +16,7 @@ from fastapi.responses import Response
 from app.api.limits import Limits
 from app.api.log import log_event
 from app.api.schemas import (EventRequest, NextRequest, SegmentResponse, SignedSegment, SpeakRequest,
-                             StartRequest, StoryKey, TTSRequest)
+                             StartRequest, StoryKey, TTSRequest, Voice)
 from app.api.signing import BadSignature, sign_segment, verify_history, verify_segment
 from app.api.tts_service import TTSFn, default_tts, is_daily_quota, synthesize_segment, voices_to_try
 from app.api.voice import pick_voice
@@ -59,7 +59,10 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
     app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins,
                        allow_methods=["GET", "POST"], allow_headers=["Content-Type"])
     catalog, banned = load_catalog(), load_banned_words()
-    tts = tts or default_tts(settings.gemini_api_key, settings.typecast_api_key)
+    tts = tts or default_tts(settings.gemini_api_key, settings.typecast_api_key, settings.elevenlabs_api_key)
+    # 시연용 ElevenLabs: 키와 목소리 ID 가 둘 다 있으면 새 이야기는 이 목소리로 (실패해도 다른 목소리로 넘어가지 않음)
+    eleven = (Voice(provider="elevenlabs", model=settings.elevenlabs_model, voice=settings.elevenlabs_voice_id)
+              if settings.elevenlabs_api_key and settings.elevenlabs_voice_id else None)
     limits = limits or Limits(settings.daily_stories_per_user, settings.daily_stories_total)
     rng = rng or random.Random()
     if speak is None and settings.azure_speech_key and settings.azure_speech_region:
@@ -122,6 +125,8 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
             limits.reserve_gemini(voice.model, extra_calls)
         elif voice.provider == "typecast":
             limits.reserve_typecast(chars * extra_calls)
+        elif voice.provider == "elevenlabs":
+            limits.reserve_elevenlabs(chars * extra_calls)
 
     def charge(used, story_voice, calls: int, reserved: bool, chars: int) -> None:
         """정해진 목소리는 예약분을 넘은 만큼만, 대신 쓴 모델은 부른 만큼 사용량에 더한다"""
@@ -142,7 +147,8 @@ def create_app(settings: Settings, primary: LLM, secondary: LLM | None, *,
         if result != "ok":
             _fail(429, result)
         story = StoryKey(id=uuid.uuid4().hex[:12], cards=req.cards, choice_count=req.choice_count,
-                         voice=pick_voice(limits, req.choice_count, rng, req.voice))
+                         voice=pick_voice(limits, req.choice_count, rng, req.voice,
+                                          elevenlabs=eleven, elevenlabs_daily_chars=settings.elevenlabs_daily_chars))
         log_event("story_start", story_id=story.id, anon_id=req.anon_id, cards=story.cards,
                   voice=story.voice.model_dump())
         return generate(story, [], [])

@@ -190,3 +190,28 @@ def test_all_models_fail_is_502():
     r0 = start(client).json()
     assert client.post("/api/tts", json=tts_req(r0)).status_code == 502
     assert tts.models == gemini.MODELS
+
+
+class VoiceTTS(FakeTTS):
+    def __call__(self, text, voice):
+        self.voices = getattr(self, "voices", []) + [voice.provider]
+        return super().__call__(text, voice)
+
+
+def test_elevenlabs_story_when_configured():
+    s = settings().model_copy(update={"elevenlabs_api_key": "k", "elevenlabs_voice_id": "voice123"})
+    tts = VoiceTTS()
+    client = TestClient(create_app(s, FakeLLM("fake-model", [seg(0)]), None, tts=tts, rng=random.Random(0)))
+    r0 = start(client).json()
+    assert r0["story"]["voice"] == {"provider": "elevenlabs", "model": "eleven_multilingual_v2", "voice": "voice123"}
+    assert client.post("/api/tts", json=tts_req(r0)).status_code == 200
+    assert tts.voices == ["elevenlabs"]
+
+
+def test_elevenlabs_failure_does_not_switch_voice():
+    s = settings().model_copy(update={"elevenlabs_api_key": "k", "elevenlabs_voice_id": "voice123"})
+    tts = FakeTTS(fail=True)
+    client = TestClient(create_app(s, FakeLLM("fake-model", [seg(0)]), None, tts=tts, rng=random.Random(0)))
+    r0 = start(client).json()
+    assert client.post("/api/tts", json=tts_req(r0)).status_code == 502
+    assert tts.calls == 2          # 같은 목소리로 1번 더, Gemini 로는 넘어가지 않음

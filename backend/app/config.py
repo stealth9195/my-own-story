@@ -28,6 +28,11 @@ class Settings(BaseSettings):
     # 안내·선택지 읽기(Azure 무료 F0). 비우면 /api/speak 를 끄고 프론트는 브라우저 음성으로 읽는다
     azure_speech_key: str = ""
     azure_speech_region: str = ""
+    # 시연용 이야기 음성(ElevenLabs, 유료 구독 크레딧). 키와 목소리 ID 가 둘 다 있을 때만 켜진다
+    elevenlabs_api_key: str = ""
+    elevenlabs_voice_id: str = ""
+    elevenlabs_model: str = "eleven_multilingual_v2"
+    elevenlabs_daily_chars: int = 10000  # 크레딧을 한꺼번에 다 쓰지 않게 (1편 약 1,000자)
     daily_stories_per_user: int = 3
     daily_stories_total: int = 30
     cors_origins: list[str] = ["http://localhost:5173"]
