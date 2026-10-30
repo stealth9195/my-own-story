@@ -1,15 +1,19 @@
 import { useState } from "react";
 import type { Page } from "../api";
-import { emojiOf, facingOf } from "../catalog";
-import { actorSlots, arrangeActors, stateMark, timeFilter } from "../scene";
+import { emojiOf, facingOf, placeOf } from "../catalog";
+import { actorSlots, arrangeActors, placeObjects, stateMark, timeFilter } from "../scene";
 import Picture from "./Picture";
 import "./Scene.css";
 
-type Props = { scene: Page["scene"] };
+// placed: (실험) catalog 의 place 로 사물을 머리·손·하늘에 둘지. 끄면 사물도 캐릭터처럼 바닥에 선다
+type Props = { scene: Page["scene"]; placed?: boolean };
 
 // 한 페이지의 장면: 배경 그림 + 시간대 색 + 캐릭터·사물 배치(서로 마주 보게) + 상태 표시
-export default function Scene({ scene }: Props) {
-  const actors = arrangeActors(scene.characters.map((c) => ({ ...c, facing: facingOf(c.id) })), scene.objects);
+export default function Scene({ scene, placed = false }: Props) {
+  const { worn, sky, ground } = placed
+    ? placeObjects(scene.characters.map((c) => c.id), scene.objects, placeOf)
+    : { worn: [], sky: [], ground: scene.objects };
+  const actors = arrangeActors(scene.characters.map((c) => ({ ...c, facing: facingOf(c.id) })), ground);
   const slots = actorSlots(actors.length);
 
   return (
@@ -18,9 +22,14 @@ export default function Scene({ scene }: Props) {
       <Backdrop key={scene.background} id={scene.background} filter={timeFilter(scene.time)} />
       {/* 밤·노을: 배경에 색을 덮는다 (캐릭터는 아이가 알아보기 쉽게 그대로, 낮은 투명) */}
       <div className="scene-tint" />
+      {sky.map((id, i) => (
+        <div key={id} className="sky-item" style={{ left: `${sky.length === 1 ? 78 : 22 + i * 56}%` }}><Picture id={id} /></div>
+      ))}
       {slots.map((slot, i) => {
         const actor = actors[i];
         const mark = actor.state ? stateMark(actor.state) : null;
+        // 손에 든 사물은 바라보는 쪽에. 정면이면 장면 가운데 쪽 손에
+        const handSide = actor.looks === "left" || (actor.looks === "front" && slot.left > 50) ? "on-left" : "on-right";
         return (
           <div
             key={`${i}-${actor.id}`}
@@ -34,7 +43,10 @@ export default function Scene({ scene }: Props) {
           >
             {/* 상태 표시는 뒤집는 그림 바깥에, 바라보는 쪽 머리 위에 (안에 두면 글자도 거울처럼 뒤집힘) */}
             {mark && <span className={`state-mark ${actor.looks === "left" ? "on-left" : "on-right"}`}>{mark}</span>}
-            <div className={actor.flip ? "flip" : undefined}><Picture id={actor.id} /></div>
+            <div className={`actor-body${actor.flip ? " flip" : ""}`}><Picture id={actor.id} /></div>
+            {worn.filter((w) => w.on === actor.id).map((w) => (
+              <div key={w.id} className={`worn ${w.place} ${handSide}`}><Picture id={w.id} /></div>
+            ))}
           </div>
         );
       })}

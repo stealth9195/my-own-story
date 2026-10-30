@@ -368,6 +368,7 @@
     {
       "id": "rose",
       "name": "장미",
+      "place": "hand",
       "emoji": "🌹",
       "tags": [
         "꽃"
@@ -377,6 +378,7 @@
     {
       "id": "star",
       "name": "별",
+      "place": "sky",
       "emoji": "⭐",
       "tags": [
         "하늘"
@@ -395,6 +397,7 @@
     {
       "id": "balloon",
       "name": "풍선",
+      "place": "hand",
       "emoji": "🎈",
       "tags": [
         "놀이"
@@ -411,6 +414,7 @@
     {
       "id": "magic_wand",
       "name": "요술봉",
+      "place": "hand",
       "emoji": "🪄",
       "tags": [
         "마법"
@@ -419,6 +423,7 @@
     {
       "id": "rainbow",
       "name": "무지개",
+      "place": "sky",
       "emoji": "🌈",
       "tags": [
         "하늘"
@@ -428,6 +433,7 @@
     {
       "id": "moon",
       "name": "달",
+      "place": "sky",
       "emoji": "🌙",
       "tags": [
         "하늘"
@@ -444,6 +450,7 @@
     {
       "id": "apple",
       "name": "사과",
+      "place": "hand",
       "emoji": "🍎",
       "tags": [
         "음식"
@@ -452,6 +459,7 @@
     {
       "id": "umbrella",
       "name": "우산",
+      "place": "hand",
       "emoji": "☂️",
       "tags": [
         "생활"
@@ -460,6 +468,7 @@
     {
       "id": "kite",
       "name": "연",
+      "place": "hand",
       "emoji": "🪁",
       "tags": [
         "놀이"
@@ -468,6 +477,7 @@
     {
       "id": "map",
       "name": "지도",
+      "place": "hand",
       "emoji": "🗺️",
       "tags": [
         "모험"
@@ -476,6 +486,7 @@
     {
       "id": "lantern",
       "name": "등불",
+      "place": "hand",
       "emoji": "🏮",
       "tags": [
         "빛"
@@ -484,6 +495,7 @@
     {
       "id": "flower_crown",
       "name": "꽃 왕관",
+      "place": "head",
       "emoji": "💐",
       "tags": [
         "꽃"
@@ -492,6 +504,7 @@
     {
       "id": "cookie",
       "name": "쿠키",
+      "place": "hand",
       "emoji": "🍪",
       "tags": [
         "음식"
@@ -516,6 +529,7 @@
     {
       "id": "crown",
       "name": "왕관",
+      "place": "head",
       "emoji": "👑",
       "tags": [
         "보물"
@@ -540,6 +554,7 @@
     {
       "id": "key",
       "name": "열쇠",
+      "place": "hand",
       "emoji": "🔑",
       "tags": [
         "모험"
@@ -548,6 +563,7 @@
     {
       "id": "letter",
       "name": "편지",
+      "place": "hand",
       "emoji": "💌",
       "tags": [
         "생활"
@@ -556,6 +572,7 @@
     {
       "id": "snowflake",
       "name": "눈송이",
+      "place": "sky",
       "emoji": "❄️",
       "tags": [
         "겨울"
