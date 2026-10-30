@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getStartOptions } from "../api";
 import type { StartOption, StartOptions } from "../api";
 import { speak } from "../audio";
-import { emojiOf } from "../catalog";
+import Picture from "../components/Picture";
 import { withJosa } from "../story";
 import "./StartPick.css";
 
@@ -91,7 +91,8 @@ export default function StartPick({ onDone, onBack }: Props) {
             className={`pick-card${focus === card.id ? " focus" : ""}`}
             onClick={() => tap(card)}
           >
-            <span className="pick-emoji">{card.emoji ?? emojiOf(card.id)}</span>
+            {/* 성격·상황 카드는 그림 대신 이모지(card.emoji), 나머지는 그림 */}
+            <span className="pick-emoji">{card.emoji ?? <Picture id={card.id} size={72} />}</span>
             <span className="pick-name">{card.name}</span>
           </button>
         ))}

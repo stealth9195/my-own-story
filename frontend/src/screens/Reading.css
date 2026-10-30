@@ -10,27 +10,6 @@
 .icon-button { min-height: 48px; padding: 8px 14px; border-radius: 16px; background: var(--card); font-size: 18px; }
 .reading-step { color: var(--muted); font-size: 16px; }
 
-/* 장면: 그림 에셋이 나오기 전까지 배경색 + 이모지 */
-.scene {
-  position: relative;
-  width: 100%;
-  max-width: 520px;
-  aspect-ratio: 4 / 3;
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: #cdeccf;
-}
-.scene.bg-forest { background: #b8dcb0; }
-.scene.bg-sea { background: #bfe3f5; }
-.scene.bg-castle { background: #e6d9f5; }
-.scene.bg-village { background: #f7e3c4; }
-.scene-bg { position: absolute; top: 10px; right: 14px; font-size: 44px; opacity: 0.7; }
-.scene-actors { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; gap: 6px; padding-bottom: 18px; }
-.actor { font-size: 72px; line-height: 1; animation: breathe 2.4s ease-in-out infinite; }
-.actor:nth-child(2) { animation-delay: 0.6s; }
-.actor:nth-child(3) { animation-delay: 1.2s; }
-@keyframes breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-
 .reading-text {
   width: 100%;
   max-width: 520px;

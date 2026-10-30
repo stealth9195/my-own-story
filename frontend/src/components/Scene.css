@@ -1,0 +1,42 @@
+.scene {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius);
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #cdeccf;
+}
+/* 배경 그림이 없을 때의 색 */
+.scene.bg-forest { background: #b8dcb0; }
+.scene.bg-sea { background: #bfe3f5; }
+.scene.bg-castle { background: #e6d9f5; }
+.scene.bg-village { background: #f7e3c4; }
+.scene.bg-meadow { background: #cfeab8; }
+
+.scene-backdrop { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.scene-bg { position: absolute; top: 10px; right: 14px; font-size: 44px; opacity: 0.7; }
+
+/* 그림 가운데를 left 위치에 맞추고, 숨 쉬듯 살짝 오르내린다 */
+.actor {
+  position: absolute;
+  aspect-ratio: 1;
+  translate: -50% 0;
+  font-size: clamp(40px, 14vw, 72px);
+  animation: breathe 2.4s ease-in-out infinite;
+}
+.actor .picture { filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.18)); }
+
+/* 상태 표시(💤 등): 머리 위에 작게, 통통 튄다 */
+.state-mark {
+  position: absolute;
+  top: -6%;
+  right: 4%;
+  z-index: 1;
+  font-size: clamp(18px, 6vw, 30px);
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4%); } }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30%); } }

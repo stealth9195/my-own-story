@@ -7,6 +7,8 @@ import { emojiOf } from "../catalog";
 import { getAnonId, getAudio, saveAudio, saveStory } from "../storage";
 import type { SavedStory } from "../storage";
 import { addSegment, choose, nextArgs, pageAt, pageStartTimes } from "../story";
+import Picture from "../components/Picture";
+import Scene from "../components/Scene";
 import Problem from "./Problem";
 import Waiting from "./Waiting";
 import "./Reading.css";
@@ -176,9 +178,6 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
   if (phase === "waiting") return <Waiting emoji={emojiOf(seg.pages.at(-1)?.scene.characters[0]?.id ?? saved.story.cards[0])} />;
   if (phase === "problem") return <Problem code={problem} onRetry={() => request(pending.current!)} onHome={onHome} />;
 
-  const scene = seg.pages[page].scene;
-  const actors = [...scene.characters.map((c) => c.id), ...scene.objects].slice(0, 4);
-
   return (
     <main className="reading">
       <header className="reading-top">
@@ -187,10 +186,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
         <button className="icon-button" onClick={toggleSpeed}>{speed === "slow" ? "🐢 천천히" : "🐇 보통"}</button>
       </header>
 
-      <section className={`scene bg-${scene.background}`} aria-hidden="true">
-        <span className="scene-bg">{emojiOf(scene.background)}</span>
-        <div className="scene-actors">{actors.map((id, i) => <span key={i} className="actor">{emojiOf(id)}</span>)}</div>
-      </section>
+      <Scene scene={seg.pages[page].scene} />
 
       <p className="reading-text">{seg.pages[page].text}</p>
 
@@ -201,7 +197,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
         <div className={`choices ${seg.choices[0]?.kind === "phrase" ? "phrases" : ""}`}>
           {seg.choices.map((c) => (
             <button key={c.id} className={`choice${focus === c.id ? " focus" : ""}`} onClick={() => tapChoice(c)}>
-              {c.kind === "item" && <span className="choice-emoji">{emojiOf(c.id)}</span>}
+              {c.kind === "item" && <span className="choice-emoji"><Picture id={c.id} size={64} /></span>}
               <span className="choice-label">{c.label}</span>
             </button>
           ))}
