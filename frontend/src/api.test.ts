@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { ApiError, AUDIO_TIMEOUT_MS, fetchSegmentAudio, nextSegment, sendEvent, startStory, STORY_TIMEOUT_MS } from "./api";
+import { ApiError, AUDIO_TIMEOUT_MS, fetchSegmentAudio, getStartOptions, nextSegment, sendEvent, startStory, STORY_TIMEOUT_MS, WAKE_TIMEOUT_MS, wakeServer } from "./api";
 import type { SignedSegment, StoryKey } from "./api";
 
 const calls: { url: string; init?: RequestInit }[] = [];
@@ -95,5 +95,27 @@ describe("timeouts", () => {
     await vi.advanceTimersByTimeAsync(AUDIO_TIMEOUT_MS + 1);
     expect((await p).code).toBe("network");
     vi.useRealTimers();
+  });
+});
+
+// Render 무료 서버는 15분 쉬면 잠들고 깨는 데 약 1분 걸린다
+describe("wake server", () => {
+  test("start options wait for a sleeping server", async () => {
+    vi.useFakeTimers();
+    let answer: (r: Response) => void = () => {};
+    globalThis.fetch = vi.fn(() => new Promise<Response>((ok) => { answer = ok; })) as typeof fetch;
+    const p = getStartOptions();
+    await vi.advanceTimersByTimeAsync(50_000);   // 예전 20초 제한이면 여기서 실패
+    answer(new Response(JSON.stringify({ steps: [] })));
+    await expect(p).resolves.toEqual({ steps: [] });
+    expect(WAKE_TIMEOUT_MS).toBeGreaterThanOrEqual(60_000);
+    vi.useRealTimers();
+  });
+
+  test("wakeServer ignores failures", async () => {
+    globalThis.fetch = vi.fn(async () => { throw new TypeError("offline"); }) as typeof fetch;
+    expect(() => wakeServer()).not.toThrow();
+    await Promise.resolve();
+    expect(globalThis.fetch).toHaveBeenCalledWith(expect.stringContaining("/api/start-options"), expect.anything());
   });
 });

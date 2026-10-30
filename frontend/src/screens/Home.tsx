@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { wakeServer } from "../api";
 import { unlockAudio } from "../audio";
 import Settings from "../components/Settings";
 import "./Home.css";
@@ -8,6 +9,8 @@ type Props = { onNew: () => void; onShelf: () => void };
 
 export default function Home({ onNew, onShelf }: Props) {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  // useEffect(…, []): 화면이 처음 뜰 때 한 번 실행. 잠든 배포 서버를 미리 깨운다(결과는 쓰지 않음)
+  useEffect(() => { wakeServer(); }, []);
 
   return (
     <main className="home">

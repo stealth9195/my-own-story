@@ -1,0 +1,33 @@
+# Render 백엔드 설정 (Blueprint). 무료 요금제: 카드 등록 없음, 15분 쉬면 잠듦(깨는 데 약 1분)
+# 비밀 값은 여기에 적지 않는다. sync: false 인 항목은 Render 화면에서 직접 넣는다 (docs/deploy.md)
+services:
+  - type: web
+    name: my-own-story-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install uv && uv sync --frozen --no-dev
+    # --no-dev: 테스트 도구(pytest)·그림 변환 도구(rembg)는 서버에 설치하지 않는다
+    startCommand: uv run --frozen --no-dev uvicorn --factory app.main:build_app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/start-options
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12"
+      - key: PROMPT_VERSION
+        value: v9
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: STORY_SECRET
+        sync: false
+      - key: PRIMARY_MODEL
+        sync: false
+      - key: SECONDARY_MODEL
+        sync: false
+      - key: AZURE_SPEECH_KEY
+        sync: false
+      - key: AZURE_SPEECH_REGION
+        sync: false
+      - key: TYPECAST_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false

@@ -93,8 +93,16 @@ async function request(path: string, body?: unknown, timeoutMs = DEFAULT_TIMEOUT
   return res;
 }
 
+// 배포 서버(Render 무료)는 15분 쉬면 잠들고, 깨는 데 약 1분 걸린다.
+// 홈 화면이 뜨면 미리 깨우고(wakeServer), 처음 선택 후보도 그만큼 기다린다
+export const WAKE_TIMEOUT_MS = 70_000;
+
 export async function getStartOptions(): Promise<StartOptions> {
-  return (await request("/api/start-options")).json();
+  return (await request("/api/start-options", undefined, WAKE_TIMEOUT_MS)).json();
+}
+
+export function wakeServer(): void {
+  request("/api/start-options", undefined, WAKE_TIMEOUT_MS).catch(() => {});
 }
 
 // 이야기 목소리 (설정, Gemini 목소리 이름). "" 이면 무작위. 새 이야기부터 적용
