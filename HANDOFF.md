@@ -1,6 +1,6 @@
 # HANDOFF — 다음 세션 시작 안내
 
-작성: 2026-10-30 · 브랜치 `feature/story-core` (master 에 아직 안 합침, 원격 저장소 없음)
+작성: 2026-10-30 · 브랜치 `master` (feature/story-core 를 fast-forward 로 합침) · 원격 `origin` = https://github.com/stealth9195/my-own-story (master push 완료)
 
 ## 다음 세션에서 "native로 작업 시작하자" 라고 하면
 
