@@ -191,4 +191,5 @@ uv run --group assets python -m tools.icons
   - 서비스 API 리뷰에서 미룬 작은 문제: 동시 시작 시 초과 예약, 시작 실패에도 한도 차감, anon_id 바꿔 전체 한도 소진 등 (배포 전 확인)
   - `run_generate` 기본 프롬프트가 v1 — `--version` 으로 지정해야 함
   - 아이폰 실제 소리 재생·PWA 설치 미확인 (배포 후)
-  - 기획안(PRD)은 3차 기준 — 4차 결정(Azure 안내 목소리, 설정 창, v9 등)이 반영 안 됨
+  - 기획안(PRD)은 3차 기준 — 본문은 고치지 않고 배포 후 실제 결과물과 비교하기로 함
+  - 서버 기록(story_start·tts·tts_failed 등)은 콘솔에만 남고 파일로는 저장 안 됨 (배포하면 Render 로그)
