@@ -140,6 +140,24 @@ def test_config_lists_voices_per_tts_model():
     assert {"id": "Kore", "name": "Kore"} in data["voices"]["gemini-2.5-flash-preview-tts"]
 
 
+def test_elevenlabs_voices_from_env(monkeypatch):
+    # .env 의 ELEVENLABS_VOICE_ID, ELEVENLABS_VOICE_ID_2 … 를 목소리로 보여 준다(ID 끝 4자리로 구분)
+    monkeypatch.setenv("ELEVENLABS_VOICE_ID", "aaaaaaaaaaaaaaaaA7R1")
+    monkeypatch.setenv("ELEVENLABS_VOICE_ID_2", "bbbbbbbbbbbbbbbbEXwD")
+    client, _ = make([])
+    data = client.get("/api/config").json()
+    voices = data["voices"]["eleven_multilingual_v2"]
+    assert [v["id"] for v in voices] == ["aaaaaaaaaaaaaaaaA7R1", "bbbbbbbbbbbbbbbbEXwD"]
+    assert "A7R1" in voices[0]["name"] and "eleven_multilingual_v2" in data["tts_models"]
+
+
+def test_no_elevenlabs_without_voice(monkeypatch):
+    monkeypatch.delenv("ELEVENLABS_VOICE_ID", raising=False)
+    monkeypatch.delenv("ELEVENLABS_VOICE_ID_2", raising=False)
+    client, _ = make([])
+    assert "eleven_multilingual_v2" not in client.get("/api/config").json()["tts_models"]
+
+
 def test_tts_credit_error_passes_status():
     def fail(*args):
         raise TTSError("credits", status=402)

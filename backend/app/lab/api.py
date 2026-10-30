@@ -21,6 +21,7 @@ from app.story.prompt import StoryContext
 from app.story.safety import load_banned_words
 from app.story.start import segment_types
 from app.story.start import start_options as pick_start_options
+from app.tts import elevenlabs as elevenlabs_tts
 from app.tts import gemini as gemini_tts
 from app.tts import typecast as typecast_tts
 
@@ -75,7 +76,16 @@ def prompt_versions() -> list[str]:
     return sorted(p.name for p in (REPO_ROOT / "prompts").iterdir() if (p / "system.md").exists())
 
 
+def elevenlabs_voices() -> list[dict]:
+    """시연용 ElevenLabs 목소리: .env 의 ELEVENLABS_VOICE_ID, ELEVENLABS_VOICE_ID_2, … (이름 대신 ID 끝 4자리)"""
+    keys = sorted((k for k in os.environ if k.startswith("ELEVENLABS_VOICE_ID")), key=lambda k: (len(k), k))
+    return [{"id": os.environ[k], "name": f"{k.removeprefix('ELEVENLABS_')} (…{os.environ[k][-4:]})"}
+            for k in keys if os.environ[k]]
+
+
 def default_tts(text: str, voice: str, model: str, style: str) -> bytes:
+    if model in elevenlabs_tts.MODELS:
+        return elevenlabs_tts.synthesize(text, voice, os.environ.get("ELEVENLABS_API_KEY", ""), model)
     if model in typecast_tts.MODELS:
         return typecast_tts.synthesize(text, voice, os.environ.get("TYPECAST_API_KEY", ""), model, style)
     return gemini_tts.synthesize(text, voice, os.environ.get("GEMINI_API_KEY", ""), model)
@@ -85,7 +95,9 @@ def tts_voices() -> dict[str, list[dict]]:
     """음성 모델마다 고를 수 있는 목소리 (값: id, 표시: name)"""
     gemini = [{"id": v, "name": v} for v in gemini_tts.VOICES]
     typecast = [{"id": i, "name": n} for i, n in typecast_tts.VOICES.items()]
-    return {**{m: gemini for m in gemini_tts.MODELS}, **{m: typecast for m in typecast_tts.MODELS}}
+    eleven = elevenlabs_voices()
+    return {**{m: gemini for m in gemini_tts.MODELS}, **{m: typecast for m in typecast_tts.MODELS},
+            **({m: eleven for m in elevenlabs_tts.MODELS} if eleven else {})}
 
 
 def create_app(models: dict[str, Callable[[], LLM]] | None = None,
@@ -154,7 +166,7 @@ def create_app(models: dict[str, Callable[[], LLM]] | None = None,
                        "emoji": catalog.emoji_of(c)} for c in catalog.card_ids()],
             "models": list(models),
             "model_ids": {n: labels.get(n, n) for n in models},
-            "tts_models": gemini_tts.MODELS + typecast_tts.MODELS,
+            "tts_models": gemini_tts.MODELS + typecast_tts.MODELS + (elevenlabs_tts.MODELS if elevenlabs_voices() else []),
             "voices": tts_voices(),
             "tts_styles": list(typecast_tts.TEMPOS),  # 빠르기 선택은 Typecast 에만 쓰인다
             "prompt_versions": prompt_versions(),
