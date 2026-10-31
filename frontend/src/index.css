@@ -1,27 +1,68 @@
-/* 앱 전체 공통 스타일: 색·글꼴·버튼 크기 */
+/* 앱 전체 공통 스타일: 색·글꼴·버튼 (디자인 A안 '크레파스 손그림') */
 :root {
-  --bg: #fff8ee;
-  --card: #ffffff;
-  --ink: #3b2f2a;
-  --muted: #8a7a70;
-  --accent: #ff8a3d;
-  --accent-soft: #ffe2cc;
-  --pick: #4caf7d;
-  --radius: 20px;
-  font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  /* 색 */
+  --bg: #eaf3f1;            /* 배경(연한 민트 종이) */
+  --card: #fdfefc;          /* 종이·카드 */
+  --paper: var(--card);
+  --ink: #2a2840;           /* 글자·테두리 */
+  --muted: #585672;         /* 보조 글자 */
+  --accent: #c73e08;        /* 주색(큰 버튼) */
+  --accent-ink: #ffffff;
+  --accent-hover: #a93306;  /* 마우스 올림: 흰 글씨 대비 6.64 : 1 */
+  --accent-soft: #ffe3d6;
+  --secondary: #1f78c8;
+  --secondary-deep: #14558f;
+  --pick: #1a7f4e;          /* 선택 상태(테두리·체크) */
+  --pick-fill: #ffd23f;
+  --disabled-bg: #d9dde3;
+  --disabled-ink: #4b4f5c;
+
+  /* 모양 */
+  --radius: 28px;
+  --wobble-a: 26px 40px 24px 42px / 38px 24px 42px 26px;  /* 손으로 그린 듯 삐뚤한 모서리 */
+  --wobble-b: 40px 24px 44px 26px / 24px 40px 26px 44px;
+  --stroke: 4px;
+  --shadow-ink: 0 5px 0 var(--ink);
+  --spine: linear-gradient(90deg, rgba(42, 40, 64, 0), rgba(42, 40, 64, .2) 50%, rgba(42, 40, 64, 0));  /* 펼친 책 가운데 책등 그림자 */
+  --tap: 64px;              /* 아이가 누르는 곳 최소 크기 */
+
+  /* 간격 */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 24px; --sp-6: 32px; --sp-7: 48px; --sp-8: 64px;
+
+  /* 글자 */
+  --font-display: "Jua", "Pretendard Variable", sans-serif;   /* 제목·버튼(손글씨 느낌) */
+  --font-body: "Pretendard Variable", "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --fs-btn: 28px;
+  --fs-ui: 16px;
+
+  /* 움직임 */
+  --fast: 150ms;
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+
+  --paper-tex: url("/paper.png");   /* 96px 종이 질감 한 장을 반복 */
+
+  font-family: var(--font-body);
   color: var(--ink);
   background: var(--bg);
   -webkit-text-size-adjust: 100%;
 }
 
-* { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
   margin: 0;
   min-height: 100dvh;
-  background: var(--bg);
+  background: var(--bg) var(--paper-tex) repeat;
+  font-size: var(--fs-ui);
+  line-height: 1.6;
+  word-break: keep-all;
+  overflow-wrap: break-word;
   overflow-x: hidden;
 }
+
+/* 화면 맨 위·아래 바깥 여백(margin)이 body 밖으로 새어 세로 스크롤이 생기지 않게 */
+#root { display: flow-root; }
 
 button {
   font: inherit;
@@ -32,17 +73,58 @@ button {
   touch-action: manipulation;
 }
 
-/* 아이가 누르기 쉬운 큰 버튼 */
+:focus-visible { outline: 4px solid var(--secondary); outline-offset: 4px; }
+
+.display { font-family: var(--font-display); font-weight: 400; }
+
+/* 아이가 누르기 쉬운 큰 버튼: 굵은 잉크 테두리 + 아래로 눌리는 그림자 */
 .big-button {
-  min-height: 64px;
-  padding: 14px 28px;
-  border-radius: var(--radius);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  min-height: var(--tap);
+  padding: var(--sp-3) var(--sp-6);
+  font-family: var(--font-display);
+  font-size: var(--fs-btn);
+  line-height: 1.2;
   background: var(--accent);
-  color: #fff;
-  font-size: 22px;
-  font-weight: 700;
-  box-shadow: 0 4px 0 #d96a22;
+  color: var(--accent-ink);
+  border: var(--stroke) solid var(--ink);
+  border-radius: var(--wobble-a);
+  box-shadow: var(--shadow-ink);
+  transition: transform var(--fast) var(--ease-out);
 }
-.big-button:active { transform: translateY(3px); box-shadow: 0 1px 0 #d96a22; }
-.big-button.soft { background: var(--card); color: var(--ink); box-shadow: 0 4px 0 #e8d8c8; }
-.big-button:disabled { opacity: 0.4; }
+.big-button:active { transform: translateY(5px); box-shadow: 0 1px 0 var(--ink); }
+.big-button.soft { background: var(--paper); color: var(--ink); }
+.big-button:disabled { background: var(--disabled-bg); color: var(--disabled-ink); border-style: dashed; box-shadow: none; cursor: not-allowed; transform: none; }
+
+/* 동그란 아이콘 버튼(🏠 ⏸️ 🎵 ⚙️) */
+.icon-button {
+  display: grid;
+  place-items: center;
+  flex: none;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0 var(--sp-2);
+  font-size: 22px;
+  line-height: 1;
+  background: var(--paper);
+  border: var(--stroke) solid var(--ink);
+  border-radius: 50% 44% 52% 46%;
+  box-shadow: 0 3px 0 var(--ink);
+  transition: transform var(--fast) var(--ease-out);
+}
+.icon-button:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+
+/* 마우스가 있는 기기(PC)에서만: 올리면 살짝 떠오름 */
+@media (hover: hover) {
+  .big-button:not(:disabled):hover { transform: translateY(-2px); background: var(--accent-hover); }
+  .big-button.soft:not(:disabled):hover { background: var(--accent-soft); }
+  .big-button:not(:disabled):active { transform: translateY(5px); }
+  .icon-button:hover { transform: translateY(-2px); background: var(--accent-soft); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .big-button, .icon-button { transition: none; }
+}

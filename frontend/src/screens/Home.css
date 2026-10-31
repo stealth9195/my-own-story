@@ -1,15 +1,136 @@
+/* 홈: 폰은 표지 카드 + 버튼, PC(≥1024px)는 펼친 그림책 */
 .home {
   min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  padding: 24px 20px;
-  text-align: center;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: var(--sp-4);
+  padding: var(--sp-5) var(--sp-4) var(--sp-5);
+  max-width: 520px;
+  margin: 0 auto;
 }
-.home-logo { font-size: 88px; line-height: 1; }
-.home h1 { margin: 0; font-size: 34px; }
-.home-sub { margin: 0 0 16px; color: var(--muted); font-size: 18px; }
-.home .big-button { width: 100%; max-width: 360px; }
-.home-settings { min-height: 44px; padding: 6px 16px; border-radius: 999px; background: transparent; color: var(--muted); font-size: 17px; }
+
+.home-cover {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto auto auto minmax(180px, 1fr);
+  justify-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-5) var(--sp-4) var(--sp-4);
+  text-align: center;
+  background: var(--paper) var(--paper-tex);
+  border: var(--stroke) solid var(--ink);
+  border-radius: var(--wobble-a);
+  box-shadow: 0 6px 0 var(--ink);
+}
+/* 책 표지 안쪽 점선 테두리 */
+.home-cover::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 3px dashed var(--secondary);
+  border-radius: var(--wobble-b);
+  opacity: .55;
+  pointer-events: none;
+}
+.home-badge {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  font-size: 30px;
+  line-height: 1;
+  background: var(--pick-fill);
+  border: var(--stroke) solid var(--ink);
+  border-radius: 50% 46% 52% 48%;
+  transform: rotate(-6deg);
+}
+.home-title { margin: 0; font-size: 56px; line-height: 1.1; color: var(--accent); text-shadow: 3px 3px 0 var(--pick-fill); }
+.home-squiggle { display: block; width: 140px; height: 14px; color: var(--secondary); }
+.home-sub { margin: 0; font-size: 18px; font-weight: 700; line-height: 1.5; }
+
+/* 표지 그림: 숲 배경 위에 곰·보물상자·여우, 달과 깜빡이는 별 */
+.home-art {
+  position: relative;
+  width: 100%;
+  margin-top: var(--sp-2);
+  overflow: hidden;
+  background: var(--paper);
+  border: var(--stroke) solid var(--ink);
+  border-radius: var(--wobble-b);
+  box-shadow: 0 3px 0 var(--ink);
+}
+.home-art img { position: absolute; display: block; height: auto; }
+.home-art .bg { inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.home-art .home-actor { bottom: 3%; }  /* 장면(Scene)의 .actor 와 이름이 겹치지 않게 */
+.home-art .bear { left: 6%; width: 22%; }
+.home-art .box { left: 40%; width: 24%; }
+.home-art .fox { right: 6%; width: 26%; }
+.home-art .moon { top: 8px; right: 12px; width: 44px; }
+.home-art .star { width: 30px; }
+.home-art .s1 { top: 14px; left: 18px; }
+.home-art .s2 { top: 40px; left: 46%; width: 22px; }
+.twinkle { animation: twinkle 2.4s ease-in-out infinite; }
+.twinkle.late { animation-delay: 1.2s; }
+@keyframes twinkle { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .55; transform: scale(.85); } }
+
+.home-actions { display: grid; gap: var(--sp-2); justify-items: center; }
+.home-actions .big-button { width: 100%; }
+.home-new { min-height: 72px; }
+.home-settings {
+  min-height: 48px;
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: 999px;
+  background: transparent;
+  font-weight: 700;
+  font-size: 20px;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+@media (hover: hover) { .home-settings:hover { background: var(--accent-soft); } }
+
+/* PC(≥1024px): 펼친 그림책 — 왼쪽 쪽 표지 그림, 오른쪽 쪽 제목과 버튼, 가운데 책등 */
+@media (min-width: 1024px) {
+  .home {
+    position: relative;
+    width: min(100% - 64px, 1200px);
+    max-width: none;
+    height: min(100dvh - 64px, 700px);
+    min-height: 0;
+    margin: 32px auto;
+    gap: 0;
+    padding: 0;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto auto auto auto auto minmax(0, 1fr);
+  }
+  .home::before {
+    content: "";
+    grid-area: 1 / 1 / 8 / 3;
+    background: var(--paper) var(--paper-tex);
+    border: var(--stroke) solid var(--ink);
+    border-radius: var(--wobble-a);
+    box-shadow: 0 8px 0 var(--ink);
+  }
+  .home::after { content: ""; grid-area: 1 / 1 / 8 / 3; justify-self: center; width: 64px; z-index: 2; background: var(--spine); pointer-events: none; }
+  /* display: contents — 표지 상자를 없애고 안의 요소를 바깥 격자에 바로 배치 */
+  .home-cover { display: contents; }
+  .home-cover::before { display: none; }
+  .home-art { grid-area: 1 / 1 / 8 / 2; margin: 44px; z-index: 1; }
+  .home-art .bear { left: 4%; width: 30%; }
+  .home-art .box { left: 38%; width: 26%; }
+  .home-art .fox { right: 4%; width: 34%; }
+  .home-art .moon { width: 76px; top: 16px; right: 20px; }
+  .home-art .star { width: 44px; }
+  .home-art .s1 { top: 24px; left: 28px; }
+  .home-art .s2 { top: 84px; left: 44%; width: 30px; }
+  .home-badge, .home-title, .home-squiggle, .home-sub { justify-self: center; text-align: center; position: relative; z-index: 1; }
+  .home-badge { grid-area: 2 / 2; width: 72px; height: 72px; font-size: 40px; }
+  .home-title { grid-area: 3 / 2; margin-top: var(--sp-3); font-size: clamp(64px, 11vh, 104px); }
+  .home-squiggle { grid-area: 4 / 2; margin: var(--sp-2) 0 var(--sp-3); width: 180px; height: 18px; }
+  .home-sub { grid-area: 5 / 2; font-size: 26px; margin-bottom: var(--sp-6); }
+  .home-actions { grid-area: 6 / 2; width: min(100% - 96px, 440px); justify-self: center; gap: var(--sp-3); position: relative; z-index: 1; }
+  .home-new { min-height: 80px; font-size: 32px; }
+  .home-actions .soft { min-height: 72px; font-size: 30px; }
+  .home-settings { font-size: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) { .twinkle { animation: none; } }

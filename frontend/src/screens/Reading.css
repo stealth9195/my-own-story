@@ -10,7 +10,6 @@
 /* 글 칸이 남는 높이를 채우고(넘치면 글 칸만 스크롤), 버튼·선택지는 그 아래 바닥에 붙는다 */
 .reading-body { width: 100%; flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .reading-top { width: 100%; max-width: 780px; display: flex; align-items: center; justify-content: space-between; }
-.icon-button { min-height: 48px; padding: 8px 14px; border-radius: 16px; background: var(--card); font-size: 18px; }
 .reading-tools { display: flex; gap: 8px; }
 .rate { display: flex; align-items: center; gap: 4px; }
 .rate .icon-button { min-width: 44px; padding: 8px 10px; font-weight: 700; }
