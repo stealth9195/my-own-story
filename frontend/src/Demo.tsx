@@ -41,12 +41,29 @@ function sampleStory(phrases: boolean): SavedStory {
   };
 }
 
+// 책장 넘김 확인용: 장면이 다른 3쪽. 브라우저 음성으로 쪽이 차례로 넘어간다
+function turnStory(): SavedStory {
+  const s = sampleStory(false);
+  const page = (text: string, sc: Page["scene"]) => ({ text, scene: sc, mood: "calm", sfx: null });
+  s.story.id = "demo-turn";
+  s.segments[0].segment.pages = [
+    page("곰돌이가 숲속을 걷고 있었어요.", scene("forest", "day", [["bear", "walking"]], [])),
+    page("여우가 반짝이는 보물상자를 찾았어요.", scene("forest", "day", [["fox", "surprised"]], ["treasure_box"])),
+    page("토끼도 달려와서 함께 웃었어요.", scene("meadow", "sunset", [["rabbit", "happy"], ["fox", "happy"]], [])),
+  ] as Page[];
+  return s;
+}
+
 export default function Demo() {
   // ?demo=reading (그림 선택지) / ?demo=reading-phrase (문장 선택지): 읽기 화면을 바로 띄운다
   const mode = new URLSearchParams(location.search).get("demo");
   if (mode === "reading" || mode === "reading-phrase") {
     return <Reading saved={sampleStory(mode === "reading-phrase")} resume onUpdate={() => {}}
                     onHome={() => { location.search = "?demo"; }} onNew={() => {}} />;
+  }
+  // ?demo=reading-turn: 3쪽을 차례로 읽으며 PC 책장 넘김 확인
+  if (mode === "reading-turn") {
+    return <Reading saved={turnStory()} onUpdate={() => {}} onHome={() => { location.search = "?demo"; }} onNew={() => {}} />;
   }
   // ?demo=waiting: 기다림 화면 (이야기를 만들지 않고 고른 카드 애니메이션만)
   if (mode === "waiting") return <Waiting cards={["bear", "kind", "forest", "treasure_box"]} />;
@@ -65,6 +82,7 @@ function SceneCompare() {
       <p style={{ margin: 0, display: "flex", gap: 16 }}>
         <a href="?demo=reading">읽기 화면 (그림 선택지)</a>
         <a href="?demo=reading-phrase">읽기 화면 (문장 선택지)</a>
+        <a href="?demo=reading-turn">책장 넘김 (3쪽)</a>
         <a href="?demo=waiting">기다림 화면</a>
       </p>
       {SAMPLES.map((s) => (

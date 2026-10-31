@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ApiError, fetchSegmentAudio, nextSegment, sendEvent } from "../api";
-import type { Choice } from "../api";
+import type { Choice, Page } from "../api";
 import { getRate, getVoiceVolume, isCurrent, player, playToken, speak, stopAll, watchEnd } from "../audio";
 import { emojiOf } from "../catalog";
 import Settings from "../components/Settings";
@@ -29,6 +29,12 @@ const audioRequests = new Map<string, Promise<Blob>>();
 // 음성이 이만큼 늦으면 '다음' 버튼으로 먼저 넘길 수 있게 한다. 음성은 계속 받아서, 오면 지금 쪽부터 들려준다
 // (사용자 요청 2026-10-31: 아이가 버튼 없이 오래 기다리지 않게. 요청 자체는 90초까지 기다림)
 export const SLOW_VOICE_MS = 60_000;
+
+// 책장 넘김은 PC(펼친 그림책 배치)에서만, 움직임 줄이기 설정이 아닐 때만
+function canTurnPage(): boolean {
+  if (typeof matchMedia !== "function") return false;  // 테스트(jsdom)에는 없음
+  return matchMedia("(min-width: 1024px)").matches && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
 
 function loadAudio(saved: SavedStory, index: number): Promise<Blob> {
   const key = `${saved.story.id}:${index}`;
@@ -76,6 +82,32 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
   // 구간이 바뀐 직후 한 번은 이전 구간의 페이지 번호로 그려진다(번호는 다음 준비 단계에서 0으로 바뀜).
   // 새 구간이 더 짧으면 없는 페이지를 읽어 화면이 멈췄으므로, 그 구간의 마지막 쪽을 넘지 않게 한다
   const shown = seg.pages[Math.min(page, seg.pages.length - 1)];
+  const pageIndex = Math.min(page, seg.pages.length - 1);
+  const texts = seg.pages.slice(0, pageIndex + 1).map((p) => p.text);
+
+  // 책장 넘김(PC). 넘김이 끝나면(애니메이션 끝) turn 을 지운다
+  // - 다음(next): 오른쪽 글 쪽이 책등을 축으로 왼쪽으로 넘어간다. 그동안 왼쪽 장면은 이전 그대로,
+  //   넘어간 쪽의 뒷면(새 장면)이 왼쪽에 내려앉는다
+  // - 이전(prev, 다시 듣기의 ◀): 거꾸로 왼쪽 장면 쪽이 오른쪽으로 넘어간다. 그동안 오른쪽 글은 이전 그대로,
+  //   넘어간 쪽의 뒷면(앞 쪽 글)이 오른쪽에 내려앉는다
+  type Turn = { id: number; dir: "next" | "prev"; from: Page["scene"]; texts: string[] };
+  const [turn, setTurn] = useState<Turn | null>(null);
+  const lastShown = useRef<{ view: number; page: number; scene: Page["scene"]; texts: string[] } | null>(null);
+  const turnStarted = useRef(0);
+  // useLayoutEffect: 화면에 그리기 직전에 실행 → 새 장면이 한 번 보였다가 넘어가는 깜빡임이 없다
+  useLayoutEffect(() => {
+    const prev = lastShown.current;
+    lastShown.current = { view, page: pageIndex, scene: shown.scene, texts };
+    if (!prev || !canTurnPage()) return;
+    // 구간이 바뀐 직후 쪽 번호는 잠깐 예전 값이다가 곧 바뀐다 → 구간은 view 로만 보고,
+    // 넘김을 막 시작한 직후(0.3초)의 쪽 번호 변화는 새 넘김으로 치지 않는다
+    if (Date.now() - turnStarted.current < 300) return;
+    const next = view > prev.view || (view === prev.view && pageIndex === prev.page + 1);
+    const back = view < prev.view || (view === prev.view && pageIndex === prev.page - 1);
+    if (!next && !back) return;
+    turnStarted.current = Date.now();
+    setTurn({ id: turnStarted.current, dir: next ? "next" : "prev", from: prev.scene, texts: prev.texts });
+  }, [view, pageIndex]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   // 구간이 바뀔 때마다: 글을 먼저 보여 주고, 음성을 받아 오면 자동 재생
   useEffect(() => {
@@ -287,7 +319,6 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
 
   const listening = phase === "playing" || phase === "loading" || phase === "manual";
   const canNavigate = replaying.current && listening;  // 다 만든 이야기를 다시 들을 때만 이전·다음
-  const pageIndex = Math.min(page, seg.pages.length - 1);
   if (phase === "problem") return <Problem code={problem} onRetry={() => request(pending.current!)} onHome={onHome} />;
 
   return (
@@ -311,7 +342,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
 
       {/* 세로 화면: 위 버튼 → 장면 → 글·선택지 순서로 한 줄. 가로 화면: 왼쪽 장면, 오른쪽 위 버튼·글·선택지 (Reading.css) */}
       <div className="reading-stage">
-        <Scene scene={shown.scene} placed />
+        <Scene scene={turn?.dir === "next" ? turn.from : shown.scene} placed />
         {/* 다음 이야기를 만드는 동안: 화면은 그대로 두고 장면 위에 살짝 덮어 알려 준다 */}
         {phase === "waiting" && (
           <div className="making" role="status">
@@ -368,7 +399,35 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
       )}
       </div>
       </div>
+      {/* 넘어가는 쪽. key 가 바뀌면 처음부터 다시 넘긴다 */}
+      {turn && (
+        <div key={turn.id} className={`page-leaf ${turn.dir}`} aria-hidden="true"
+             onAnimationEnd={(e) => { if (e.target === e.currentTarget) setTurn(null); }}>
+          {turn.dir === "next" ? (
+            <>
+              <div className="leaf-face front text-face"><LeafText texts={turn.texts} /></div>
+              <div className="leaf-face back scene-face"><Scene scene={shown.scene} placed /></div>
+            </>
+          ) : (
+            <>
+              <div className="leaf-face front scene-face"><Scene scene={turn.from} placed /></div>
+              <div className="leaf-face back text-face"><LeafText texts={texts} /></div>
+            </>
+          )}
+        </div>
+      )}
+      {/* 이전으로 넘기는 동안 오른쪽 쪽은 넘기기 전 글을 그대로 보여 준다 */}
+      {turn?.dir === "prev" && <div key={`hold-${turn.id}`} className="page-hold text-face" aria-hidden="true"><LeafText texts={turn.texts} /></div>}
       {settingsOpen && <Settings onClose={() => setSettingsOpen(false)} />}
     </main>
+  );
+}
+
+// 넘어가는 종이에 그리는 글 (지난 쪽은 흐리게, 마지막 쪽은 진하게)
+function LeafText({ texts }: { texts: string[] }) {
+  return (
+    <div className="reading-text">
+      {texts.map((t, i) => <p key={i} className={i === texts.length - 1 ? "" : "past"}>{t}</p>)}
+    </div>
   );
 }

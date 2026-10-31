@@ -38,6 +38,7 @@
 
   /* 움직임 */
   --fast: 150ms;
+  --turn-dur: 650ms;        /* 책장 넘김 (반쪽이라 0.4초보다 조금 길게) */
   --ease-out: cubic-bezier(.2, .8, .2, 1);
 
   --paper-tex: url("/paper.png");   /* 96px 종이 질감 한 장을 반복 */
