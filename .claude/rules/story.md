@@ -36,6 +36,8 @@ paths:
 ## 아이용 안전
 - 4~7세 대상. 무섭거나 폭력적인 표현은 `banned_words.txt`·`safety.py` 로 걸러낸다.
 - `validator.py` 가 형식·없는 ID·금지어·분량·선택지 규칙을 검사한다. 실패하면 생성기가 재시도한다(`rules/llm.md`).
+  - 서비스 API 는 느슨한 검사(lenient: 형식·안전 문제만 거절)지만 **쪽이 0개(`no_pages`)는 거절**한다.
+  - 겪은 버그(2026-10-31 배포판): 쪽 0개 구간이 쪽 수 경고(`page_count`)만 남기고 통과 → 화면이 그릴 쪽이 없어 하얗게 멈췄다(`Cannot read properties of undefined (reading 'scene')`).
 - 선택지 규칙(v2~): 이미 나온 선택지·카드를 다시 내지 않고, 고르지 않은 선택지가 이후 장면에 나오지 않게 한다.
 
 ## 평가 기준
