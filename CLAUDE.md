@@ -146,7 +146,8 @@ uv run --group assets python -m tools.icons
 ```bat
 :: 개발 중 확인 화면 (npm run dev 에서만, 서버·저장소 없이)
 :: http://localhost:5173/?demo            장면·사물 위치 비교
-:: http://localhost:5173/?demo=reading    읽기 화면 (?demo=reading-phrase 문장 선택지)
+:: http://localhost:5173/?demo=reading    읽기 화면 (?demo=reading-phrase 문장 선택지, ?demo=reading-turn 책장 넘김 3쪽)
+:: http://localhost:5173/?demo=waiting    기다림 화면 (?demo=problem / ?demo=problem-limit 오류 화면)
 :: 빌드 결과(PWA) 미리보기: npm run build 후 npm run preview -- --port 4173
 ```
 
@@ -180,7 +181,13 @@ uv run --group assets python -m tools.icons
   - 4차 Task 6 배포(2026-10-31): 프론트 https://my-own-story.pages.dev · 백엔드 https://my-own-story-api.onrender.com, 배포 서버에서 1편 확인. 브랜치 리뷰 후 master 합침
     - 배포 사고: Render 키 끝 줄바꿈 → 생성 실패 + 오류 글에 키가 로그로 노출(키 폐기·재발급). 키 앞뒤 빈칸 제거·오류 글에 예외 종류만·로그 비밀값 가리기, 실패한 시작은 하루 횟수 되돌림 (`rules/api.md`)
   - 음성이 60초 넘게 늦으면 '다음' 버튼으로 먼저 넘기기, 음성은 오면 넘긴 쪽부터 (`rules/frontend.md`)
-- 다음 후보: 디자인 개편(워크트리 실험) → 프롬프트 v1~v9 결과 품질 평가·비교(기준 점수) → 기획안과 결과물 비교(`prd-match-report`) → 3.8 TTS 지시 형식 시험(B)
+  - 5차 디자인 개편(2026-10-31, 워크트리 실험 후 master 합침): OpenDesign 시안 A안 '크레파스 손그림 + 그림책', 시연이 PC 라 PC 우선 (`rules/frontend.md`)
+    - 모든 화면을 PC 에서 펼친 그림책 배치로(홈·처음 선택·기다림·읽기·책장·설정·오류), 폰은 같은 디자인에 기존 배치
+    - PC 읽기 화면 책장 넘김(다음·이전), 기다림 화면에서 고른 카드가 책 속으로 날아감
+    - 책장: 두께 있는 책이 꽂힌 크레파스 책장, 책을 누르면 창(다시 듣기=바로 처음부터 / 이어하기 / 지우기), 표지 하트로 좋아하는 이야기 표시
+    - 다시 듣기에서 '다음'을 누르면 쪽이 앞 쪽으로 잠깐 돌아가던 버그 수정(MP3 위치 이동)
+    - 새 이야기 1편을 처음 선택부터 결말까지 실제로 진행해 확인
+- 다음 후보: 프롬프트 v1~v9 결과 품질 평가·비교(기준 점수) → 기획안과 결과물 비교(`prd-match-report`) → 3.8 TTS 지시 형식 시험(B)
 - 하지 않기로 함:
   - 임베딩으로 그림·소리 매칭 — 프롬프트에 목록을 넣고 ID 만 고르게 하는 것으로 충분
   - MVP 로그인 — 기기별 익명 ID 로 시작, 구글 로그인은 이후
@@ -193,6 +200,9 @@ uv run --group assets python -m tools.icons
   - 태블릿 화면 따로 맞추기 — 지금 상태로 충분, 문제가 되면 다시
   - 아이폰 음량 고치기(Web Audio 등) — 시연을 아이폰으로 하지 않음(2026-10-31). 실제로 설정의 음악·목소리 크기, 음성 중 음악 줄이기가 안 됨을 확인
 - 남은 문제:
+  - 글꼴(Jua·Pretendard)을 인터넷(Google Fonts·jsDelivr)에서 불러옴 → 시연 PC 인터넷이 끊기면 기본 글꼴. 필요하면 글꼴 파일을 앱에 넣기
+  - PWA 설치 색(`vite.config.ts` 의 `theme_color`·`background_color`)이 예전 주황·크림 그대로
+  - PC 책장 넘김은 실제 생성 중 구간 전환 3번 중 2번만 기록으로 확인(1번은 미리보기 창 크기가 풀린 때). 시연 PC 에서 한 번 더 보기
   - 3.8 TTS 는 짧은 글에서 영어 연출 지시까지 읽는다 → 길이 검사로 막지만 300자 넘는 구간은 놓칠 수 있음. 3.8 용 지시 형식 시험 필요
   - 어미 오타('찾으려'→찾으러)는 못 고침. 맞춤법 검사기·LLM 교정은 쓰지 않기로 함(시간·안정성)
   - 배포 전 리뷰에서 미룬 것: TTS 요청 한 번이 화면 대기(90초)보다 길어질 수 있음(모델 5번까지), Pages 에서 없는 소리 파일이 HTML 로 캐시될 수 있음(404.html), 서버 500 응답에 CORS 헤더 없음, '빠 빵' 같은 소리 흉내도 더듬기로 고쳐짐, ElevenLabs 목소리 ID 가 이야기 응답에 들어감(비밀 아님)
