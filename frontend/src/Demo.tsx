@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { Choice, Page } from "./api";
 import Scene from "./components/Scene";
 import Reading from "./screens/Reading";
+import Waiting from "./screens/Waiting";
 import type { SavedStory } from "./storage";
 
 const scene = (background: string, time: string, characters: [string, string][], objects: string[]): Page["scene"] =>
@@ -47,6 +48,8 @@ export default function Demo() {
     return <Reading saved={sampleStory(mode === "reading-phrase")} resume onUpdate={() => {}}
                     onHome={() => { location.search = "?demo"; }} onNew={() => {}} />;
   }
+  // ?demo=waiting: 기다림 화면 (이야기를 만들지 않고 고른 카드 애니메이션만)
+  if (mode === "waiting") return <Waiting cards={["bear", "kind", "forest", "treasure_box"]} />;
   return <SceneCompare />;
 }
 
@@ -62,6 +65,7 @@ function SceneCompare() {
       <p style={{ margin: 0, display: "flex", gap: 16 }}>
         <a href="?demo=reading">읽기 화면 (그림 선택지)</a>
         <a href="?demo=reading-phrase">읽기 화면 (문장 선택지)</a>
+        <a href="?demo=waiting">기다림 화면</a>
       </p>
       {SAMPLES.map((s) => (
         <section key={s.title} style={{ width: "100%", maxWidth: 780 }}>

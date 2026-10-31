@@ -1,15 +1,89 @@
+/* 기다림: 가운데 펼친 책으로 고른 카드가 날아 들어간다. --bw = 책 너비(화면 크기에 맞춤) */
 .waiting {
+  --bw: min(88vw, 58dvh, 760px);
   min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  font-size: 20px;
-  color: var(--muted);
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-5) var(--sp-4);
+  text-align: center;
 }
-.waiting-emoji { font-size: 96px; animation: bounce 0.9s ease-in-out infinite; }
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-24px); }
+.wait-stage { position: relative; display: grid; place-items: center; width: var(--bw); height: calc(var(--bw) * .9); }
+
+/* 책: 왼쪽 쪽에 주인공이 나타났다 사라지고, 오른쪽 쪽에 크레파스 줄이 그어진다 */
+.wait-book { position: relative; width: var(--bw); height: calc(var(--bw) * .56); }
+.wait-page { position: absolute; top: 0; bottom: 0; width: 50%; overflow: hidden; background: var(--paper) var(--paper-tex); border: var(--stroke) solid var(--ink); box-shadow: 0 6px 0 var(--ink); }
+.wait-page.left { left: 0; display: grid; place-items: end center; border-right-width: 2px; border-radius: 26px 0 0 42px / 38px 0 0 26px; }
+.wait-page.right { left: 50%; display: grid; align-content: center; gap: calc(var(--bw) * .035); padding: 0 12%; border-left-width: 2px; border-radius: 0 40px 24px 0 / 0 24px 42px 0; }
+.wait-book::after { content: ""; position: absolute; top: 0; bottom: 0; left: 45%; width: 10%; background: var(--spine); pointer-events: none; }
+/* 그림(Picture)은 칸을 채우며 비율을 지킨다(object-fit: contain) → 칸 크기만 정해 준다 */
+.wait-draw { position: absolute; left: 0; right: 0; bottom: 0; height: 82%; animation: draw-in 6s ease-in-out infinite; }
+.wait-page.right i { display: block; height: max(8px, calc(var(--bw) * .025)); border-radius: 6px; background: var(--secondary); animation: pop 6s ease-in-out infinite; }
+.wait-page.right i:nth-child(2) { width: 82%; background: var(--accent); animation-delay: .8s; }
+.wait-page.right i:nth-child(3) { width: 90%; background: var(--pick); animation-delay: 1.6s; }
+.wait-page.right i:nth-child(4) { width: 60%; animation-delay: 2.4s; }
+
+/* 책 위에서 통통 튀는 주인공 */
+.wait-hero { position: absolute; left: 50%; bottom: calc(50% + var(--bw) * .24); width: calc(var(--bw) * .13); height: calc(var(--bw) * .2); margin-left: calc(var(--bw) * -.065); animation: bob 2.6s ease-in-out infinite; }
+
+/* 고른 카드: 네 모서리에서 차례로 책 가운데로 날아 들어가며 작아진다 */
+.wait-card {
+  --ts: clamp(64px, calc(var(--bw) * .22), 112px);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  width: var(--ts);
+  margin: calc(var(--ts) / -2) 0 0 calc(var(--ts) / -2);
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  padding: 6px 4px;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: var(--wobble-b);
+  box-shadow: 0 3px 0 var(--ink);
+  opacity: 0;
+  animation: fly 6s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 1.3s);
+}
+.wait-card-pic { display: grid; place-items: center; width: 100%; height: calc(var(--ts) * .56); overflow: hidden; border-radius: 8px; font-size: calc(var(--ts) * .4); }
+.wait-card-name { font-family: var(--font-display); font-size: 17px; line-height: 1.2; white-space: nowrap; }
+
+.wait-title { margin: 0; font-size: min(9vw, 6dvh, 56px); line-height: 1.2; }
+.wait-sub { margin: 0; max-width: 30em; font-size: 20px; font-weight: 500; line-height: 1.6; color: var(--muted); }
+
+/* 크레파스 선 일곱 개가 차례로 진해진다(숫자 없는 진행 표시) */
+.wait-crayons { display: flex; gap: var(--sp-2); }
+.wait-crayons svg { width: 40px; height: 20px; opacity: .15; animation: pop 4.2s ease-in-out infinite; }
+.wait-crayons svg:nth-child(3n + 1) { color: var(--accent); }
+.wait-crayons svg:nth-child(3n + 2) { color: var(--secondary); }
+.wait-crayons svg:nth-child(3n) { color: var(--pick); }
+.wait-crayons svg:nth-child(2) { animation-delay: .5s; }
+.wait-crayons svg:nth-child(3) { animation-delay: 1s; }
+.wait-crayons svg:nth-child(4) { animation-delay: 1.5s; }
+.wait-crayons svg:nth-child(5) { animation-delay: 2s; }
+.wait-crayons svg:nth-child(6) { animation-delay: 2.5s; }
+.wait-crayons svg:nth-child(7) { animation-delay: 3s; }
+
+@keyframes fly {
+  0% { opacity: 0; transform: translate(calc(var(--bw) * var(--dx)), calc(var(--bw) * var(--dy))) rotate(var(--r)) scale(1); }
+  12% { opacity: 1; }
+  62% { opacity: 1; transform: translate(0, 0) rotate(0deg) scale(.38); }
+  76%, 100% { opacity: 0; transform: translate(0, 0) rotate(0deg) scale(.2); }
+}
+@keyframes draw-in { 0%, 8% { opacity: 0; } 40%, 85% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes pop { 0%, 6% { opacity: .15; } 30%, 80% { opacity: 1; } 100% { opacity: .15; } }
+@keyframes bob { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-8px) rotate(3deg); } }
+
+@media (min-width: 1024px) {
+  .wait-sub { font-size: 24px; }
+  .wait-card-name { font-size: 20px; }
+}
+
+/* 움직임 줄이기: 카드는 책 둘레에 가만히 놓고, 그림·줄은 다 보이게 */
+@media (prefers-reduced-motion: reduce) {
+  .wait-hero, .wait-draw, .wait-page.right i, .wait-crayons svg { animation: none; opacity: 1; }
+  .wait-card { animation: none; opacity: 1; transform: translate(calc(var(--bw) * var(--dx)), calc(var(--bw) * var(--dy))) rotate(var(--r)); }
 }

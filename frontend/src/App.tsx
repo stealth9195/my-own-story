@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { ApiError, sendEvent, startStory } from "./api";
 import { stopAll, unlockAudio } from "./audio";
-import { emojiOf } from "./catalog";
 import Home from "./screens/Home";
 import Problem from "./screens/Problem";
 import Reading from "./screens/Reading";
@@ -19,7 +18,7 @@ export default function App() {
   const [screen, setScreen] = useState<Screen>("home");
   const [current, setCurrent] = useState<SavedStory | null>(null);
   const [resume, setResume] = useState(false);  // 책장에서 연 이야기인지
-  const [waitEmoji, setWaitEmoji] = useState("📖");
+  const [waitCards, setWaitCards] = useState<string[]>([]);  // 기다림 화면에서 책 속으로 날아가는 고른 카드
   const [problem, setProblem] = useState<{ code: string; retry: () => void } | null>(null);
 
   function goHome() {
@@ -28,7 +27,7 @@ export default function App() {
   }
 
   async function begin(cards: string[]) {
-    setWaitEmoji(emojiOf(cards[0]));
+    setWaitCards(cards);
     setScreen("waiting");
     try {
       const res = await startStory(getAnonId(), cards);
@@ -50,7 +49,7 @@ export default function App() {
     case "pick":
       return <StartPick onDone={begin} onBack={goHome} />;
     case "waiting":
-      return <Waiting emoji={waitEmoji} />;
+      return <Waiting cards={waitCards} />;
     case "problem":
       return <Problem code={problem!.code} onRetry={problem!.retry} onHome={goHome} />;
     case "reading":
