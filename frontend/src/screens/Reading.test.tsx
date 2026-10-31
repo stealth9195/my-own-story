@@ -259,3 +259,14 @@ test("slow voice that arrives after the child reached the choices is not played"
   expect(fake.player.play).not.toHaveBeenCalled();
   vi.useRealTimers();
 });
+
+test("segment without pages shows the problem screen instead of a blank screen", async () => {
+  // 겪은 버그(2026-10-31 배포판): 서버가 쪽이 0개인 구간을 보내 그릴 쪽이 없어(undefined.scene) 화면이 하얗게 멈췄다.
+  // 이미 저장된 이야기에도 남아 있을 수 있어 화면에서도 막는다
+  const empty: Segment = { type: "middle", pages: [], choices: [] };
+  const saved: SavedStory = { ...done, done: false, chosen: ["bear"],
+    segments: [seg("intro", ["bear", "owl", "moon"]), empty].map((segment, i) => ({ segment, sig: `sig${i}` })) };
+  render(<Reading saved={saved} onUpdate={vi.fn()} onHome={vi.fn()} onNew={vi.fn()} />);
+  await flush();
+  expect(screen.getByText("이야기가 잠깐 멈췄어요")).toBeTruthy();
+});

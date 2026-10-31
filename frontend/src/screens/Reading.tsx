@@ -97,6 +97,7 @@ export default function Reading({ saved, resume = false, startOver = false, onUp
   const turnStarted = useRef(0);
   // useLayoutEffect: 화면에 그리기 직전에 실행 → 새 장면이 한 번 보였다가 넘어가는 깜빡임이 없다
   useLayoutEffect(() => {
+    if (!shown) return;  // 쪽이 없는 구간 (아래에서 오류 화면)
     const prev = lastShown.current;
     lastShown.current = { view, page: pageIndex, scene: shown.scene, texts };
     if (!prev || !canTurnPage()) return;
@@ -125,6 +126,7 @@ export default function Reading({ saved, resume = false, startOver = false, onUp
     let stopWatch = () => {};
 
     async function run() {
+      if (seg.pages.length === 0) return;  // 쪽이 없는 구간: 음성도 받지 않는다 (아래에서 오류 화면)
       // resuming 은 다른 구간으로 넘어갈 때 끈다 (개발 모드는 이 준비를 두 번 실행하므로 여기서 끄면 안 됨)
       if (resuming.current) {
         if (saved.done) {
@@ -210,6 +212,7 @@ export default function Reading({ saved, resume = false, startOver = false, onUp
   // 페이지가 바뀔 때: 분위기에 맞는 음악(같은 곡이면 끊지 않고 이어서) + 그 페이지 효과음 1번
   useEffect(() => {
     const p = shown;
+    if (!p) return;
     playBgm(pickBgm(BGM, p.mood, isEnding, storyRng(saved.story.id)));
     playSfx(p.sfx);
     if (replaying.current) savePosition(saved.story.id, { view, page });  // 다시 듣는 위치 기억
@@ -321,6 +324,9 @@ export default function Reading({ saved, resume = false, startOver = false, onUp
   const listening = phase === "playing" || phase === "loading" || phase === "manual";
   const canNavigate = replaying.current && listening;  // 다 만든 이야기를 다시 들을 때만 이전·다음
   if (phase === "problem") return <Problem code={problem} onRetry={() => request(pending.current!)} onHome={onHome} />;
+  // 쪽이 없는 구간(예전 서버가 통과시킴, 2026-10-31 배포판에서 화면이 하얗게 멈춤): 그리지 않고 오류 화면.
+  // 'broken' 은 다시 해볼 수 없는 오류라 '처음으로'만 보인다
+  if (!shown) return <Problem code="broken" onRetry={onHome} onHome={onHome} />;
 
   return (
     <main className="reading">

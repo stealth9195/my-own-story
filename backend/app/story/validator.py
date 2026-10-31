@@ -87,7 +87,8 @@ MAX_PHRASE_CHARS = 20
 SENTENCE_END = re.compile(r"(요|다)[!.?~]*$|[!?]$")
 # 관대한 모드에서도 거절하는 오류: 읽을 수 없는 응답, 빈 본문, 한글 아님, 아이에게 부적절한 내용
 # cut_off: 마지막이 아닌 페이지가 '...'로 끊김 (느슨한 검사에서도 거절 → 동시에 쓴 다른 모델 글을 씀)
-HARD_ERRORS = {"json", "schema", "empty_text", "not_korean", "unsafe", "cut_off"}
+# no_pages: 쪽이 하나도 없음. 쪽 수 경고(page_count)로만 통과시키면 화면이 그릴 쪽이 없어 멈췄다(2026-10-31 배포판)
+HARD_ERRORS = {"json", "schema", "empty_text", "not_korean", "unsafe", "cut_off", "no_pages"}
 
 
 def _clean_phrases(choices: list[Choice], banned: list[str], dropped: list[str],
@@ -188,6 +189,8 @@ def validate_segment(
     low, high = page_range or PAGE_RANGES[segment_type]
     if not low <= len(pages) <= high:
         errors.append("page_count")
+    if not pages:
+        errors.append("no_pages")
 
     for p in pages:
         text = p.text.strip()

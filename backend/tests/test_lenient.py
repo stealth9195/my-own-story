@@ -23,6 +23,15 @@ def test_page_count_is_warning_in_lenient_mode():
     assert "page_count" in r.warnings and r.errors == []
 
 
+def test_no_pages_rejected_even_in_lenient_mode():
+    # 겪은 버그(2026-10-31 배포판): 쪽이 0개인 구간이 쪽 수 경고만 남기고 통과 → 화면이 그릴 쪽이 없어 하얗게 멈춤
+    data = json.loads(segment_json(pages=3))
+    data["pages"] = []
+    for seg_type in ("middle", "ending"):
+        r = validate_segment(json.dumps(data, ensure_ascii=False), seg_type, cat, banned, lenient=True, fill_pool=POOL)
+        assert not r.ok and "no_pages" in r.errors
+
+
 def test_unsafe_still_rejected_in_lenient_mode():
     data = json.loads(segment_json(pages=3))
     data["pages"][0]["text"] = "용이 기사를 죽였어요."
