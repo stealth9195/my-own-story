@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Choice, Page } from "./api";
 import Scene from "./components/Scene";
+import Problem from "./screens/Problem";
 import Reading from "./screens/Reading";
 import Waiting from "./screens/Waiting";
 import type { SavedStory } from "./storage";
@@ -65,6 +66,10 @@ export default function Demo() {
   if (mode === "reading-turn") {
     return <Reading saved={turnStory()} onUpdate={() => {}} onHome={() => { location.search = "?demo"; }} onNew={() => {}} />;
   }
+  // ?demo=problem (다시 할 수 있는 오류) / ?demo=problem-limit (하루 한도): 오류 화면
+  if (mode === "problem" || mode === "problem-limit") {
+    return <Problem code={mode === "problem" ? "unknown" : "user_limit"} onRetry={() => {}} onHome={() => { location.search = "?demo"; }} />;
+  }
   // ?demo=waiting: 기다림 화면 (이야기를 만들지 않고 고른 카드 애니메이션만)
   if (mode === "waiting") return <Waiting cards={["bear", "kind", "forest", "treasure_box"]} />;
   return <SceneCompare />;
@@ -84,6 +89,7 @@ function SceneCompare() {
         <a href="?demo=reading-phrase">읽기 화면 (문장 선택지)</a>
         <a href="?demo=reading-turn">책장 넘김 (3쪽)</a>
         <a href="?demo=waiting">기다림 화면</a>
+        <a href="?demo=problem">오류 화면</a>
       </p>
       {SAMPLES.map((s) => (
         <section key={s.title} style={{ width: "100%", maxWidth: 780 }}>

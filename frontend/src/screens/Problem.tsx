@@ -12,16 +12,22 @@ const RETRYABLE = new Set(["generation_failed", "network", "unknown"]);
 
 type Props = { code: string; onRetry: () => void; onHome: () => void };
 
+// 폰: 가운데 정렬. PC(≥1024px): 펼친 그림책(왼쪽 쪽 큰 이모지, 오른쪽 쪽 글·버튼)
 export default function Problem({ code, onRetry, onHome }: Props) {
   const message = MESSAGES[code] ?? "이야기가 잠깐 멈췄어요";
+  const retryable = RETRYABLE.has(code);
   useEffect(() => { speak(message); }, [message]);
 
   return (
     <main className="problem">
-      <div className="problem-emoji" aria-hidden="true">{RETRYABLE.has(code) ? "🙈" : "🌙"}</div>
-      <p>{message}</p>
-      {RETRYABLE.has(code) && <button className="big-button" onClick={onRetry}>다시 해볼까요?</button>}
-      <button className="big-button soft" onClick={onHome}>🏠 처음으로</button>
+      <div className="problem-art" aria-hidden="true"><span>{retryable ? "🙈" : "🌙"}</span></div>
+      <div className="problem-body">
+        <p className="problem-title display">{message}</p>
+        <div className="problem-actions">
+          {retryable && <button className="big-button" onClick={onRetry}>다시 해볼까요?</button>}
+          <button className="big-button soft" onClick={onHome}>🏠 처음으로</button>
+        </div>
+      </div>
     </main>
   );
 }

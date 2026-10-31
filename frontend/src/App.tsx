@@ -60,6 +60,7 @@ export default function App() {
       return (
         <Shelf
           onBack={goHome}
+          onNew={() => setScreen("pick")}
           onOpen={(s) => {
             unlockAudio();  // 책장에서 고른 터치로 소리 잠금 해제 (아이폰)
             sendEvent(getAnonId(), "replay", s.story.id);
