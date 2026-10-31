@@ -142,16 +142,23 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
       audio.playbackRate = getRate();
       audio.volume = getVoiceVolume();  // 앞 구간 끝에서 0으로 줄여 둔 음량을 재생 직전에 되돌린다
       let starts = [0];
+      // 길이를 알고 시작 위치로 옮기기 전에도 '0초' 재생 위치 알림이 온다. 그대로 쓰면 쪽이 앞 쪽으로 잠깐
+      // 돌아갔다 와서(2→1→2) 책장이 두 번 넘어갔다 → 길이를 안 뒤, 위치를 옮기는 중(seeking)이 아닐 때만 쓴다
+      let ready = false;
       audio.onloadedmetadata = () => {
         starts = pageStartTimes(seg.pages.map((p) => p.text), audio.duration);
         if (startAt.current !== null) {  // 이어 듣기: 저장된 쪽부터
           const i = Math.min(startAt.current, seg.pages.length - 1);
           startAt.current = null;
-          audio.currentTime = starts[i];
+          // MP3 는 위치를 정확히 못 옮기고 살짝 앞에 멈춰 앞 쪽으로 계산되기도 한다 → 0.05초 뒤로
+          audio.currentTime = i > 0 ? starts[i] + 0.05 : 0;
           setPage(i);
         }
+        ready = true;
       };
-      audio.ontimeupdate = () => { if (isCurrent(t)) setPage(pageAt(audio.currentTime, starts)); };
+      audio.ontimeupdate = () => {
+        if (ready && !audio.seeking && isCurrent(t)) setPage(pageAt(audio.currentTime, starts));
+      };
       // 끝나기 조금 전부터 소리를 줄이고 일찍 멈춘다 (끝의 '콱' 소리 방지, audio.ts)
       stopWatch = watchEnd(audio, () => { URL.revokeObjectURL(url); finish(); });
       audio.play().then(() => { if (isCurrent(t)) setPhase("playing"); })
