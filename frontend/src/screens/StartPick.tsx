@@ -3,6 +3,7 @@ import { getStartOptions } from "../api";
 import type { StartOption, StartOptions } from "../api";
 import { speak } from "../audio";
 import Picture from "../components/Picture";
+import Settings from "../components/Settings";
 import { withJosa } from "../story";
 import "./StartPick.css";
 
@@ -23,6 +24,7 @@ export default function StartPick({ onDone, onBack }: Props) {
   const [picked, setPicked] = useState<StartOption[]>([]);
   const [focus, setFocus] = useState<string | null>(null);  // 한 번 누른 카드 (한 번 더 누르면 선택)
   const [failed, setFailed] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   // useEffect: 화면이 처음 나타날 때 한 번 실행 (후보 받아 오기)
   useEffect(() => {
@@ -68,40 +70,73 @@ export default function StartPick({ onDone, onBack }: Props) {
     else setStep(step - 1);
   }
 
-  if (failed) {
+  // 위쪽 줄: 🏠, 진행 점(끝난 단계 ✓, 지금 단계 번호), ⚙️
+  const top = (
+    <header className="pick-top">
+      <button className="icon-button" onClick={onBack} aria-label="처음으로">🏠</button>
+      <ol className="pick-dots" aria-label={`4단계 중 ${step + 1}단계`}>
+        {STEPS.map((_, i) => (
+          <li key={i} className={i < step ? "done" : i === step ? "now" : ""}>
+            {i < step ? "✓" : i === step ? i + 1 : ""}
+          </li>
+        ))}
+      </ol>
+      <button className="icon-button" onClick={() => setSettingsOpen(true)} aria-label="설정">⚙️</button>
+    </header>
+  );
+  const settings = settingsOpen && <Settings onClose={() => setSettingsOpen(false)} />;
+
+  if (failed || !options) {
     return (
-      <main className="pick">
-        <p className="pick-question">이야기 친구를 부르지 못했어요</p>
-        <button className="big-button" onClick={() => location.reload()}>다시 해볼까요?</button>
+      <main className="pick pick-wait">
+        {top}
+        <div className="pick-msg">
+          <span className="pick-msg-emoji" aria-hidden="true">{failed ? "🙈" : "🐻"}</span>
+          <p className="pick-msg-title display">{failed ? "이야기 친구를 부르지 못했어요" : "준비하고 있어요..."}</p>
+          {failed && <button className="big-button" onClick={() => location.reload()}>다시 해볼까요?</button>}
+        </div>
+        {settings}
       </main>
     );
   }
-  if (!options) return <main className="pick"><p className="pick-question">준비하고 있어요...</p></main>;
 
+  const cards = options[STEPS[step].key];
   return (
     <main className="pick">
-      <div className="pick-dots" aria-label={`${step + 1} / ${STEPS.length}`}>
-        {STEPS.map((_, i) => <span key={i} className={i <= step ? "on" : ""} />)}
+      {top}
+      <div className="pick-ask">
+        <button className="pick-question big-button soft" onClick={() => speak(question)}>
+          <span className="pick-question-icon" aria-hidden="true">🔊</span>
+          <span>{question}</span>
+        </button>
+        <div className="pick-deco" aria-hidden="true">
+          <img src="/img/star.webp" alt="" />
+          <img src="/img/moon.webp" alt="" />
+        </div>
       </div>
-      <button className="pick-question" onClick={() => speak(question)}>🔊 {question}</button>
-      <div className="pick-cards">
-        {options[STEPS[step].key].map((card) => (
+      <div className={`pick-cards${cards.length > 4 ? " many" : ""}`}>
+        {cards.map((card) => (
           <button
             key={card.id}
-            className={`pick-card${focus === card.id ? " focus" : ""}`}
+            className={`pick-card${focus === card.id ? " is-first" : ""}`}
             onClick={() => tap(card)}
+            aria-label={focus === card.id ? `${card.name}, 한 번 더 누르면 골라요` : card.name}
           >
-            {/* 성격·상황 카드는 그림 대신 이모지(card.emoji), 나머지는 그림 */}
-            <span className="pick-emoji">{card.emoji ?? <Picture id={card.id} size={72} />}</span>
-            <span className="pick-name">{card.name}</span>
+            {focus === card.id && <span className="pick-badge" aria-hidden="true">🔊</span>}
+            {/* 성격·상황 카드는 그림 대신 이모지(card.emoji), 배경은 넓은 그림을 잘라서, 나머지는 그림 */}
+            <span className={`pick-media${card.kind === "background" ? " wide" : ""}`}>
+              {card.emoji ? <span className="pick-emoji">{card.emoji}</span> : <Picture id={card.id} />}
+            </span>
+            <span className="pick-name display">{card.name}</span>
           </button>
         ))}
       </div>
       <p className="pick-hint">{focus ? "한 번 더 누르면 골라요" : "카드를 눌러 보세요"}</p>
-      <div className="pick-actions">
+      <nav className="pick-actions" aria-label="이동">
         <button className="big-button soft" onClick={back}>◀ 이전</button>
-        <button className="big-button soft" onClick={redraw}>🔄 다시 뽑기</button>
-      </div>
+        <button className="big-button secondary" onClick={redraw}>🔄 다시 뽑기</button>
+      </nav>
+      {settings}
     </main>
   );
 }
