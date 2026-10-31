@@ -287,7 +287,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
     <main className="reading">
       <header className="reading-top">
         <button className="icon-button" onClick={onHome} aria-label="처음으로">🏠</button>
-        <span className="reading-step">{view + 1} / {saved.story.choice_count + 1}</span>
+        <span className="reading-step display">{view + 1} / {saved.story.choice_count + 1}</span>
         <div className="reading-tools">
           {/* 음소거: 음악·효과음만 끔. 이야기 목소리는 계속 */}
           {phase === "playing" && (
@@ -309,7 +309,7 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
         {phase === "waiting" && (
           <div className="making" role="status">
             <span className="making-emoji">{emojiOf(shown.scene.characters[0]?.id ?? saved.story.cards[0])}</span>
-            <span>다음 이야기를 만들고 있어요</span>
+            <span className="display">다음 이야기를 만들고 있어요</span>
             <span className="making-dots"><i /><i /><i /></span>
           </div>
         )}
@@ -328,6 +328,8 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
         {/* 음성을 못 받았거나(무료 한도·오류) 재생이 막혔을 때: 글만 보여 주고 버튼으로 넘긴다 */}
         {phase === "manual" && <p className="voice-note">🔇 목소리를 불러오지 못했어요. 버튼을 눌러 넘겨 주세요</p>}
       </div>
+      {/* 아래 버튼 칸: 이전·다음, 선택지, 결말. 아무것도 없으면 숨는다(:empty) */}
+      <div className="reading-dock">
       {canNavigate ? (
         <div className="page-nav">
           <button className="big-button soft" onClick={() => goPage(-1)} aria-label="이전 쪽" disabled={view === 0 && pageIndex === 0}>◀ 이전</button>
@@ -340,21 +342,24 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
           {seg.choices.map((c) => (
             <button key={c.id} className={`choice${focus === c.id ? " focus" : ""}`} onClick={() => tapChoice(c)}>
               {c.kind === "item" && <span className="choice-emoji"><Picture id={c.id} size={64} /></span>}
-              <span className="choice-label">{c.label}</span>
+              {c.kind === "item" && focus === c.id && <span className="choice-badge" aria-hidden="true">🔊</span>}
+              <span className="choice-label display">{c.label}</span>
             </button>
           ))}
           <p className="reading-status">{focus ? "한 번 더 누르면 골라요" : "무엇이 나올까요?"}</p>
         </div>
       )}
 
+
       {phase === "end" && (
         <div className="ending">
-          <p className="ending-title">🌟 끝 🌟</p>
+          <p className="ending-title display">🌟 끝 🌟</p>
           {resumePos && <button className="big-button" onClick={() => replayFrom(resumePos)}>▶ 이어 듣기</button>}
           <button className={`big-button${resumePos ? " soft" : ""}`} onClick={() => replayFrom({ view: 0, page: 0 })}>🔁 처음부터 다시 듣기</button>
           <button className="big-button soft" onClick={onNew}>✨ 새 이야기</button>
         </div>
       )}
+      </div>
       </div>
       {settingsOpen && <Settings onClose={() => setSettingsOpen(false)} />}
     </main>
