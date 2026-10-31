@@ -54,7 +54,9 @@ export default function App() {
       return <Problem code={problem!.code} onRetry={problem!.retry} onHome={goHome} />;
     case "reading":
       // key: 이야기가 바뀌면 읽기 화면을 새로 만든다 (이전 이야기 상태가 남지 않게)
-      return <Reading key={current!.story.id} saved={current!} resume={resume} onUpdate={setCurrent} onHome={goHome}
+      // startOver: 책장에서 다 들은 이야기를 열면('다시 듣기') 바로 처음부터
+      return <Reading key={current!.story.id} saved={current!} resume={resume} startOver={resume && current!.done}
+                      onUpdate={setCurrent} onHome={goHome}
                       onNew={() => { stopAll(); setScreen("pick"); }} />;
     case "shelf":
       return (

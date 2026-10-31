@@ -2,7 +2,7 @@ import "fake-indexeddb/auto";
 import { clear } from "idb-keyval";
 import { beforeEach, expect, test } from "vitest";
 import type { StoryKey } from "./api";
-import { getAnonId, getAudio, getStory, listStories, pruneAudio, saveAudio, saveStory } from "./storage";
+import { deleteStory, getAnonId, getAudio, getStory, listStories, pruneAudio, saveAudio, saveStory } from "./storage";
 import type { SavedStory } from "./storage";
 
 function saved(id: string, createdAt: number): SavedStory {
@@ -41,6 +41,25 @@ test("prune keeps latest 20 audios", async () => {
   expect(await getAudio("s1", 0)).toBeUndefined();
   expect(await getAudio("s2", 0)).toBeDefined();
   expect((await listStories()).length).toBe(22);
+});
+
+test("delete removes the story and its audio only", async () => {
+  await saveStory(saved("a", 1));
+  await saveStory(saved("ab", 2));  // id 가 'a' 로 시작해도 지우지 않는다
+  await saveAudio("a", 0, new Blob([new Uint8Array([1])]));
+  await saveAudio("a", 3, new Blob([new Uint8Array([2])]));
+  await saveAudio("ab", 0, new Blob([new Uint8Array([3])]));
+  await deleteStory("a");
+  expect(await getStory("a")).toBeUndefined();
+  expect(await getAudio("a", 0)).toBeUndefined();
+  expect(await getAudio("a", 3)).toBeUndefined();
+  expect(await getStory("ab")).toBeDefined();
+  expect(await getAudio("ab", 0)).toBeDefined();
+});
+
+test("favorite is saved with the story", async () => {
+  await saveStory({ ...saved("a", 1), favorite: true });
+  expect((await getStory("a"))?.favorite).toBe(true);
 });
 
 test("anon id is stable", () => {

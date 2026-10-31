@@ -10,6 +10,7 @@ export type SavedStory = {
   chosen: string[];            // 지금까지 고른 선택지 id
   createdAt: number;
   done: boolean;
+  favorite?: boolean;          // 책장에서 하트로 표시한 이야기 (예전에 저장한 이야기에는 없음)
 };
 
 const storyKey = (id: string) => `story:${id}`;
@@ -51,6 +52,13 @@ export async function pruneAudio(keep = 20): Promise<void> {
   if (old.size === 0) return;
   const all = await quiet(() => keys<string>(), []);
   const targets = all.filter((k) => String(k).startsWith("audio:") && old.has(String(k).split(":")[1]));
+  await Promise.all(targets.map((k) => quiet(() => del(k), undefined)));
+}
+
+// 책장에서 지우기: 이야기와 그 이야기의 음성을 모두 지운다 (다른 이야기는 그대로)
+export async function deleteStory(id: string): Promise<void> {
+  const all = await quiet(() => keys<string>(), []);
+  const targets = all.filter((k) => String(k) === storyKey(id) || String(k).startsWith(`audio:${id}:`));
   await Promise.all(targets.map((k) => quiet(() => del(k), undefined)));
 }
 

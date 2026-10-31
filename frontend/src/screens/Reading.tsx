@@ -15,8 +15,9 @@ import Problem from "./Problem";
 import "./Reading.css";
 
 // resume: 책장에서 연 이야기. 다 들은 이야기는 결말 화면부터, 아니면 마지막 선택지부터 시작
-type Props = { saved: SavedStory; resume?: boolean; onUpdate: (s: SavedStory) => void; onHome: () => void;
-               onNew: () => void };
+// startOver: 책장의 '다시 듣기' — 다 들은 이야기를 결말 화면 없이 바로 처음부터 들려준다
+type Props = { saved: SavedStory; resume?: boolean; startOver?: boolean; onUpdate: (s: SavedStory) => void;
+               onHome: () => void; onNew: () => void };
 
 // loading: 음성 받는 중(다음 장 잠금) / playing: 음성 재생 중 / manual: 음성 없이 버튼으로 넘김
 // choices: 선택지 / waiting: 다음 구간 만드는 중 / problem: 오류 / end: 결말까지 들음
@@ -48,9 +49,9 @@ function loadAudio(saved: SavedStory, index: number): Promise<Blob> {
   return req;
 }
 
-export default function Reading({ saved, resume = false, onUpdate, onHome, onNew }: Props) {
+export default function Reading({ saved, resume = false, startOver = false, onUpdate, onHome, onNew }: Props) {
   const last = saved.segments.length - 1;
-  const [view, setView] = useState(last);       // 보여 주는 구간 (다시 듣기 때는 0부터)
+  const [view, setView] = useState(startOver ? 0 : last);       // 보여 주는 구간 (다시 듣기 때는 0부터)
   const [page, setPage] = useState(0);
   const [phase, setPhase] = useState<Phase>("loading");
   const [focus, setFocus] = useState<string | null>(null);
@@ -61,10 +62,10 @@ export default function Reading({ saved, resume = false, onUpdate, onHome, onNew
   const textEnd = useRef<HTMLParagraphElement | null>(null);  // 마지막으로 읽는 쪽 (자동 스크롤)
   // useRef: 화면을 다시 그려도 유지되지만, 바뀌어도 다시 그리지는 않는 값 (마지막 선택 요청 기억)
   const pending = useRef<SavedStory | null>(null);
-  const resuming = useRef(resume);  // 이어하기로 연 구간에서만 true
+  const resuming = useRef(resume && !startOver);  // 이어하기로 연 구간에서만 true
   const requesting = useRef(false);
   // 다시 듣기 중인지. 화면에 보일 값이 아니라서 ref (state 로 두면 바뀔 때 구간 준비가 다시 실행돼 결말을 또 재생했음)
-  const replaying = useRef(false);
+  const replaying = useRef(startOver);
   // '이어 듣기'로 시작할 쪽. 음성 길이를 알게 되면 그 쪽 위치로 옮기고 지운다
   const startAt = useRef<number | null>(null);
   // 같은 구간에서 다시 시작할 때(이어 듣기 위치가 지금 구간) 준비 단계를 다시 돌리기 위한 번호
