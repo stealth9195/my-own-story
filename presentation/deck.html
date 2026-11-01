@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="ko" data-od-deck-protocol="1"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>나만의 이야기 (my-own-story) — 7분 발표</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Jua&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root {
+    /* 앱(reference/app-index.css)과 같은 색·모양 */
+    --bg: #eaf3f1;
+    --card: #fdfefc;
+    --ink: #2a2840;
+    --muted: #585672;
+    --accent: #c73e08;
+    --accent-soft: #ffe3d6;
+    --secondary: #1f78c8;
+    --sky-soft: #d6e8f7;
+    --pick: #1a7f4e;
+    --leaf-soft: #d7efe1;
+    --sun: #ffd23f;
+    --sun-soft: #fff0b8;
+    --gray-bar: #aeb5c2;
+    --shell: #1d1b2e;
+    --wobble-a: 26px 40px 24px 42px / 38px 24px 42px 26px;
+    --wobble-b: 40px 24px 44px 26px / 24px 40px 26px 44px;
+    --stroke: 4px;
+    --shadow-ink: 0 6px 0 var(--ink);
+    --font-display: "Jua", "Pretendard Variable", "Pretendard", sans-serif;
+    --font-body: "Pretendard Variable", "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    --ease-out: cubic-bezier(.2, .8, .2, 1);
+    --ease-pop: cubic-bezier(.3, 1.4, .5, 1);
+    --paper-tex: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .16 0 0 0 0 .16 0 0 0 0 .25 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+    --squiggle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='18' viewBox='0 0 60 18'%3E%3Cpath d='M0 9 Q15 -1 30 9 T60 9' fill='none' stroke='%23c73e08' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    background: var(--shell); color: var(--ink);
+    font: 32px/1.6 var(--font-body);
+    word-break: keep-all; overflow-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
+  }
+  .deck-shell { position: fixed; inset: 0; overflow: hidden; }
+  .deck-stage {
+    width: 1920px; height: 1080px; position: relative; overflow: hidden;
+    transform-origin: top left; perspective: 2800px;
+    background: var(--bg) var(--paper-tex) repeat;
+    box-shadow: 0 30px 80px rgba(0,0,0,.45);
+  }
+
+  /* ---------- 슬라이드 + 책장 넘김 ---------- */
+  .slide {
+    position: absolute; inset: 0; overflow: hidden; display: none;
+    background: var(--bg) var(--paper-tex) repeat;
+    backface-visibility: hidden;
+  }
+  .slide.active { display: block; z-index: 2; }
+  .slide.leaving { display: block; z-index: 3; transform-origin: left center; animation: pageOut .68s cubic-bezier(.5,0,.75,.4) forwards; }
+  .slide.leaving.under { z-index: 1; animation: none; }
+  .slide.flip-in { display: block; z-index: 3; transform-origin: left center; animation: pageIn .68s cubic-bezier(.2,.7,.3,1) both; }
+  @keyframes pageOut {
+    0%   { transform: rotateY(0); box-shadow: 0 0 0 rgba(42,40,64,0); }
+    100% { transform: rotateY(-100deg); box-shadow: 40px 0 80px rgba(42,40,64,.45); }
+  }
+  @keyframes pageIn {
+    0%   { transform: rotateY(-100deg); box-shadow: 40px 0 80px rgba(42,40,64,.45); }
+    100% { transform: rotateY(0); box-shadow: 0 0 0 rgba(42,40,64,0); }
+  }
+
+  /* 입장 모션 */
+  @keyframes rise { from { opacity: 0; transform: translateY(44px) scale(.95); } to { opacity: 1; transform: none; } }
+  @keyframes bob  { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+  .slide.active .in { animation: rise .7s var(--ease-out) both; animation-delay: calc(.38s + var(--i, 0) * .09s); }
+  .fl { animation: bob 3.6s ease-in-out infinite; animation-delay: var(--fl, 0s); }
+
+  /* 클릭으로 나타나는 단계 */
+  .st { opacity: 0; transform: translateY(30px) scale(.94); pointer-events: none;
+        transition: opacity .45s ease, transform .6s var(--ease-pop); transition-delay: calc(var(--k, 0) * .1s); }
+  .st.on { opacity: 1; transform: none; }
+  .st .kid { opacity: 0; transform: translateY(18px); transition: opacity .4s ease, transform .5s var(--ease-out); transition-delay: calc(var(--k, 0) * .14s + .2s); }
+  .st.on .kid { opacity: 1; transform: none; }
+
+  /* ---------- 공통 부품 ---------- */
+  .hd { position: absolute; left: 96px; top: 48px; right: 340px; display: flex; align-items: center; gap: 26px; }
+  .hd.sm { top: 26px; }
+  .kick { flex: none; font-family: var(--font-display); font-size: 32px; line-height: 1.3; padding: 6px 22px; color: #fff; background: var(--accent);
+          border: var(--stroke) solid var(--ink); border-radius: var(--wobble-a); box-shadow: 0 4px 0 var(--ink); }
+  .hd h2 { position: relative; font-family: var(--font-display); font-weight: 400; font-size: 68px; line-height: 1.3; letter-spacing: 0; white-space: nowrap; }
+  .hd.sm h2 { font-size: 58px; }
+  .hd h2 small { font-size: 40px; color: var(--muted); margin-left: 8px; }
+  .hd h2::after { content: ""; position: absolute; left: 0; right: 0; bottom: -16px; height: 18px; background: var(--squiggle) repeat-x; }
+  .hd-deco { position: absolute; right: 100px; top: 24px; width: 150px; height: auto; rotate: 8deg; }
+  .cnt { position: absolute; left: 96px; right: 96px; top: 214px; }
+  .cnt.sm { top: 160px; }
+
+  .card { position: relative; background: var(--card); border: var(--stroke) solid var(--ink); border-radius: var(--wobble-a);
+          box-shadow: var(--shadow-ink); padding: 26px 34px; }
+  .card::after { content: ""; position: absolute; inset: -4px; border: 3px solid rgba(42,40,64,.32); border-radius: var(--wobble-b); filter: url(#rough); pointer-events: none; }
+  .c-sun  { background: var(--sun-soft); }
+  .c-rose { background: var(--accent-soft); }
+  .c-sky  { background: var(--sky-soft); }
+  .c-leaf { background: var(--leaf-soft); }
+  .tilt-l { rotate: -1.4deg; } .tilt-r { rotate: 1.4deg; }
+
+  .tag { flex: none; display: inline-block; font-family: var(--font-display); font-size: 40px; line-height: 1.3; padding: 4px 24px; background: var(--sun);
+         border: 3px solid var(--ink); border-radius: var(--wobble-b); box-shadow: 0 4px 0 var(--ink); white-space: nowrap; }
+  .tag.sec { background: var(--secondary); color: #fff; }
+  .tag.ok  { background: var(--pick); color: #fff; }
+  .tag.bad { background: var(--accent); color: #fff; }
+  .line { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .big { font-family: var(--font-display); font-size: 56px; line-height: 1.35; }
+  .h3 { font-family: var(--font-display); font-size: 42px; line-height: 1.35; }
+  .tx { font-size: 32px; line-height: 1.6; }
+  .sub { font-size: 30px; line-height: 1.6; color: var(--muted); }
+  .small { font-size: 24px; line-height: 1.6; color: var(--muted); }
+  b { font-weight: 800; background: linear-gradient(transparent 58%, rgba(255,210,63,.8) 58%); padding: 0 3px; }
+  .ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .ul li { position: relative; padding-left: 40px; font-size: 36px; line-height: 1.55; }
+  .ul.sm li { font-size: 31px; }
+  .ul.sm li::before { top: 17px; }
+  .ul li::before { content: ""; position: absolute; left: 4px; top: 22px; width: 18px; height: 18px; background: var(--accent); border: 3px solid var(--ink); border-radius: 50% 44% 52% 46%; }
+  .chip { display: inline-block; font-family: var(--font-display); font-size: 36px; line-height: 1.3; padding: 6px 24px; background: var(--card);
+          border: 3px solid var(--ink); border-radius: var(--wobble-b); box-shadow: 0 4px 0 var(--ink); }
+  .arr { font-family: var(--font-display); font-size: 44px; color: var(--accent); line-height: 1; flex: none; }
+  .chain { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .chain .chip { font-size: 32px; }
+  .im { display: block; height: auto; }
+  .abs { position: absolute; }
+  .num { flex: none; display: grid; place-items: center; width: 64px; height: 64px; font-family: var(--font-display); font-size: 38px; background: var(--sun);
+         border: 3px solid var(--ink); border-radius: 50% 44% 52% 46%; box-shadow: 0 4px 0 var(--ink); }
+  .shot { justify-self: center; height: 500px; width: auto; border: 4px solid var(--ink); border-radius: 22px; box-shadow: 0 6px 0 var(--ink); background: #fff; }
+  .cap { display: grid; place-items: center; text-align: center; color: var(--muted); font-size: 30px; font-weight: 600; background: rgba(253,254,252,.6);
+         border: 4px dashed var(--ink); border-radius: var(--wobble-a); }
+  .pager { position: absolute; right: 44px; bottom: 26px; z-index: 20; font-family: var(--font-display); font-size: 28px; line-height: 1; padding: 10px 22px;
+           background: var(--card); border: 3px solid var(--ink); border-radius: var(--wobble-b); box-shadow: 0 3px 0 var(--ink); }
+  .pager em { font-style: normal; color: var(--muted); }
+  .notes { display: none; }
+  /* 편집 모드 (E): 숨은 단계까지 모두 보이고 글자를 바로 고침 */
+  body.editing .st, body.editing .st .kid { opacity: 1 !important; transform: none !important; pointer-events: auto; }
+  body.editing .slide.active [contenteditable] { outline: 3px dashed var(--accent); outline-offset: 6px; cursor: text; }
+  body.editing .slide.active .notes { display: block; position: absolute; left: 44px; right: 260px; bottom: 22px; z-index: 30; padding: 10px 18px;
+    font: 500 24px/1.4 var(--font-body); background: #fffbe6; border: 2px solid var(--ink); border-radius: 10px; }
+  .edit-bar { display: none; position: fixed; left: 50%; top: 10px; transform: translateX(-50%); z-index: 99; padding: 6px 8px 6px 16px; border-radius: 999px;
+    font: 600 14px/1.3 sans-serif; color: #fff; background: #c73e08; box-shadow: 0 2px 8px rgba(0,0,0,.25); align-items: center; gap: 6px; white-space: nowrap; }
+  body.editing .edit-bar { display: flex; }
+  .edit-bar button { font: 600 13px/1 sans-serif; padding: 6px 10px; border: 0; border-radius: 999px; background: #fff; color: #c73e08; cursor: pointer; }
+  .edit-bar button:disabled { opacity: .45; cursor: default; }
+  .edit-bar .msg { margin-left: 6px; font-weight: 500; opacity: .95; }
+  body.editing .ed-sel { outline: 4px solid #1f78c8 !important; outline-offset: 4px; }
+  .ed-handle { display: none; position: absolute; z-index: 60; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%;
+    background: #1f78c8; border: 4px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.3); cursor: nwse-resize; }
+  body.editing .ed-handle.on { display: block; }
+  .ed-picker { position: fixed; inset: 60px 40px 40px; z-index: 100; background: #fff; border: 3px solid #2a2840; border-radius: 16px; padding: 14px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); align-content: start; gap: 8px; overflow: auto; box-shadow: 0 8px 30px rgba(0,0,0,.35); }
+  .ed-picker button { border: 2px solid #ddd; border-radius: 10px; background: #f7f7f7; padding: 4px; cursor: pointer; font: 12px sans-serif; }
+  .ed-picker button:hover { border-color: #1f78c8; }
+  .ed-picker img { width: 100%; height: 72px; object-fit: contain; display: block; }
+
+  /* 표 */
+  .tbl { width: 100%; border-collapse: separate; border-spacing: 0 8px; font-size: 30px; }
+  .tbl th { font-family: var(--font-display); font-weight: 400; font-size: 32px; padding: 4px 14px; text-align: center; color: var(--muted); }
+  .tbl td { padding: 8px 14px; text-align: center; background: rgba(255,255,255,.7); border-top: 3px solid var(--ink); border-bottom: 3px solid var(--ink); }
+  .tbl td:first-child { text-align: left; border-left: 3px solid var(--ink); border-radius: 18px 0 0 18px; font-weight: 600; }
+  .tbl td:last-child { border-right: 3px solid var(--ink); border-radius: 0 18px 18px 0; }
+  .tbl td.n { font-family: var(--font-display); font-size: 38px; }
+  .tbl td.zero { color: var(--muted); font-family: var(--font-display); font-size: 34px; background: rgba(214,218,226,.5); }
+  .tbl td.hot { background: var(--accent-soft); }
+  .tbl td.up { color: var(--pick); font-family: var(--font-display); font-size: 38px; background: var(--leaf-soft); }
+
+  /* 막대 그래프 */
+  .chart h3 { font-family: var(--font-display); font-weight: 400; font-size: 38px; line-height: 1.3; margin-bottom: 10px; }
+  .chart h3 small { font-family: var(--font-body); font-size: 24px; color: var(--muted); margin-left: 8px; }
+  .cols { display: flex; gap: 22px; align-items: flex-start; }
+  .cols .col { flex: 1; display: flex; flex-direction: column; align-items: center; }
+  .track { width: 100%; height: 190px; display: flex; align-items: flex-end; border-bottom: 4px solid var(--ink); }
+  .bar { width: 100%; height: 0; background-color: var(--c); border-radius: 18px 22px 0 0 / 22px 18px 0 0;
+         background-image: repeating-linear-gradient(115deg, rgba(255,255,255,.22) 0 6px, transparent 6px 16px);
+         box-shadow: inset 0 0 0 4px var(--ink); transition: height 1.1s var(--ease-out) .3s; }
+  .st.on .bar { height: calc(var(--v) / var(--max) * 100%); }
+  .val { font-family: var(--font-display); font-size: 44px; line-height: 1.3; margin-top: 8px; background: none; padding: 0; }
+  .lab { font-size: 26px; font-weight: 600; color: var(--muted); line-height: 1.3; text-align: center; }
+
+  /* ---------- 표지 ---------- */
+  .cover-title { position: absolute; left: 96px; top: 190px; width: 900px; }
+  .cover-title h1 { font-family: var(--font-display); font-weight: 400; font-size: 136px; line-height: 1.3; letter-spacing: 0; }
+  .cover-title .en { display: inline-block; font-family: var(--font-display); font-size: 58px; line-height: 1.3; color: #fff; background: var(--secondary);
+         padding: 2px 28px; border: var(--stroke) solid var(--ink); border-radius: var(--wobble-a); box-shadow: 0 5px 0 var(--ink); margin-top: 6px; }
+  .cover-title .lead { margin-top: 40px; font-size: 46px; font-weight: 600; line-height: 1.55; }
+  .cover-title .meta { margin-top: 36px; font-size: 30px; color: var(--muted); line-height: 1.7; }
+  .book { position: absolute; left: 1010px; top: 560px; width: 800px; height: 400px; display: flex; }
+  .book .pg { flex: 1; position: relative; background: var(--card); border: var(--stroke) solid var(--ink); box-shadow: var(--shadow-ink); padding: 36px 40px;
+              background-image: repeating-linear-gradient(transparent 0 40px, rgba(31,120,200,.22) 40px 43px); }
+  .book .pg.l { border-radius: 40px 0 0 44px / 44px 0 0 40px; border-right-width: 2px; }
+  .book .pg.r { border-radius: 0 44px 40px 0 / 0 40px 44px 0; border-left-width: 2px; }
+  /* 소개 영상: 표지 책 위에서 소리 없이 반복 → 클릭하면 화면 가득 소리와 함께 처음부터 */
+  .promo { position: absolute; left: 1090px; top: 580px; width: 640px; height: 360px; z-index: 5; object-fit: cover; background: #000;
+           border: var(--stroke) solid var(--ink); border-radius: 18px; box-shadow: var(--shadow-ink);
+           transition: left .6s var(--ease-out), top .6s var(--ease-out), width .6s var(--ease-out), height .6s var(--ease-out), border-radius .6s, border-width .6s; }
+  .promo.big { left: 0; top: 0; width: 1920px; height: 1080px; z-index: 50; border-radius: 0; border-width: 0; object-fit: contain; }
+  @media (prefers-reduced-motion: reduce) { .promo { transition: none; } }
+  body.promo-on .pager { display: none; }
+  .book::after { content: ""; position: absolute; left: 50%; top: 4px; bottom: 4px; width: 90px; transform: translateX(-50%); background: linear-gradient(90deg, rgba(42,40,64,0), rgba(42,40,64,.22) 50%, rgba(42,40,64,0)); }
+  .hero { position: absolute; width: 250px; padding: 14px 14px 12px; background: var(--card); border: var(--stroke) solid var(--ink); border-radius: var(--wobble-a); box-shadow: var(--shadow-ink); text-align: center; }
+  .hero img { width: 190px; margin: 0 auto; }
+  .hero span { display: block; font-family: var(--font-display); font-size: 34px; line-height: 1.3; }
+
+  /* ---------- 슬라이드별 ---------- */
+  .pipe { display: grid; grid-template-columns: repeat(6, 1fr); gap: 22px; }
+  .pipe .card { padding: 18px 20px 22px; }
+  .pipe .card:not(:last-child)::before { content: "▶"; position: absolute; right: -27px; top: 44px; z-index: 3; font-size: 30px; color: var(--accent); }
+  .pipe .im { width: 120px; margin: 0 auto 6px; }
+  .pipe .no { font-family: var(--font-display); font-size: 34px; color: var(--accent); line-height: 1.2; }
+  .pipe .h3 { font-size: 38px; line-height: 1.3; margin-bottom: 8px; }
+  .pipe .tx { font-size: 26px; line-height: 1.55; }
+
+  .vtl { position: absolute; left: 96px; top: 150px; width: 1300px; display: flex; flex-direction: column; gap: 6px; }
+  .vrow { display: grid; grid-template-columns: 84px 720px 1fr; gap: 20px; align-items: center; min-height: 84px; padding: 6px 22px 6px 12px;
+          background: rgba(255,255,255,.75); border: 3px solid var(--ink); border-radius: 30px 40px 28px 42px / 40px 28px 42px 30px; box-shadow: 0 4px 0 var(--ink); }
+  .vrow .v { font-family: var(--font-display); font-size: 36px; line-height: 1; text-align: center; padding: 10px 0; color: #fff; background: var(--c); border: 3px solid var(--ink); border-radius: var(--wobble-b); }
+  .vrow .ch { font-size: 25px; line-height: 1.4; font-weight: 600; }
+  .vrow .why { font-size: 24px; line-height: 1.4; color: var(--muted); }
+  .vrow .why::before { content: "← "; color: var(--accent); font-weight: 800; }
+
+  .pair { display: grid; grid-template-columns: 1fr 64px 1fr; gap: 14px; align-items: stretch; }
+  .pair .card { display: flex; align-items: center; font-size: 30px; line-height: 1.5; padding: 14px 28px; }
+  .pair .mid { align-self: center; text-align: center; font-family: var(--font-display); font-size: 44px; color: var(--accent); }
+  .pairs { display: flex; flex-direction: column; gap: 16px; }
+
+  .seg { display: flex; gap: 6px; }
+  .seg div { flex: var(--w); min-width: 0; text-align: center; padding: 14px 0 12px; background: var(--c); border: 3px solid var(--ink); border-radius: 18px 22px 16px 24px / 22px 16px 24px 18px; font-size: 26px; font-weight: 600; line-height: 1.25; }
+  .seg div b { display: block; background: none; padding: 0; font-family: var(--font-display); font-weight: 400; font-size: 36px; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+
+  .tri { display: grid; grid-template-columns: 1.25fr 1fr 1.25fr; gap: 20px; }
+  .tri .cell { padding: 14px 26px; font-size: 29px; line-height: 1.5; background: rgba(255,255,255,.78); border: 3px solid var(--ink); border-radius: 22px 30px 20px 32px / 30px 20px 32px 22px; box-shadow: 0 4px 0 var(--ink); display: flex; align-items: center; }
+  .tri .cell.hdr { background: none; border: none; box-shadow: none; font-family: var(--font-display); font-size: 34px; color: var(--muted); padding: 0 8px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+
+  /* 인쇄 / PDF: 모든 쪽, 모든 단계 보이기 */
+  @media print {
+    @page { size: 1920px 1080px; margin: 0; }
+    html, body { width: 1920px !important; height: auto !important; overflow: visible !important; background: #fff !important; }
+    .deck-shell { position: static !important; display: block !important; }
+    .deck-stage { width: 1920px !important; height: auto !important; transform: none !important; box-shadow: none !important; position: static !important; overflow: visible !important; }
+    .slide { display: block !important; position: relative !important; inset: auto !important; width: 1920px !important; height: 1080px !important; page-break-after: always; break-after: page; animation: none !important; transform: none !important; }
+    .st, .st .kid { opacity: 1 !important; transform: none !important; }
+    .st .bar { height: calc(var(--v) / var(--max) * 100%) !important; }
+    .pager { display: none !important; }
+  }
+</style>
+</head>
+<body tabindex="-1" style="outline: none;">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="4" result="n"></feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7"></feDisplacementMap>
+  </filter>
+</svg>
+
+<div class="deck-shell">
+<div class="deck-stage" id="deck-stage" style="">
+
+<!-- 01 표지 -->
+<section class="slide active" data-screen-label="01 표지">
+  <img class="abs in fl" src="assets/img/moon.webp" alt="" style="left:1640px;top:8px;width:170px;--i:6;--fl:.4s">
+  <img class="abs in fl" src="assets/img/star.webp" alt="" style="left:1040px;top:70px;width:120px;--i:7;--fl:1.2s">
+  <div class="cover-title">
+    <h1 class="in" style="--i:0">나만의 이야기</h1>
+    <span class="en in" style="--i:1">my-own-story</span>
+    <p class="lead in" style="--i:2">아이의 선택으로 이야기를 만들고,<br>그 이야기를 AI가 읽어줘요</p>
+    <p class="meta in" style="--i: 3; translate: 2px 42px;">React + FastAPI + Gemini<br>https://my-own-story.pages.dev</p>
+  </div>
+  <div class="hero in" style="left:1040px;top:200px;--i:3"><div class="fl" style="--fl:0s"><img class="im" src="assets/img/dragon.webp" alt=""><span>용</span></div></div>
+  <div class="hero in" style="left:1330px;top:150px;--i:4;rotate:5deg"><div class="fl" style="--fl:.7s"><img class="im" src="assets/img/fox.webp" alt=""><span>여우</span></div></div>
+  <div class="hero in" style="left: 1590px; top: 178px; --i: 5; rotate: -5deg; scale: 0.87; translate: 10px -32px;"><div class="fl" style="--fl:1.4s"><img class="im" src="assets/img/princess.webp" alt=""><span>공주</span></div></div>
+  <div class="book in" style="--i:2"><div class="pg l"></div><div class="pg r"></div></div>
+  <video class="promo in" id="promo" src="my-own-story-promo.mp4" style="--i:3" muted="" autoplay="" playsinline="" preload="auto"></video>
+  <i data-step="1" hidden=""></i>
+  <aside class="notes">말: 4~7세 아이가 카드와 선택지로 이야기를 이어 가는 AI 구연동화 앱입니다. (클릭) 30초 소개 영상을 먼저 보시겠습니다.</aside>
+</section>
+
+<!-- 02 문제 정의 -->
+<section class="slide" data-screen-label="02 문제 정의">
+  <header class="hd in"><span class="kick">문제 정의</span><h2>왜 만들었을까요?</h2></header>
+  <img class="hd-deco in" src="assets/img/moon.webp" alt="" style="--i:2">
+  <div class="cnt" style="display:flex;flex-direction:column;gap:30px">
+    <div style="display:grid;grid-template-columns:1fr 520px;gap:40px">
+      <div style="display:flex;flex-direction:column;gap:26px">
+        <div class="st line" data-step="1"><span class="tag">대상</span><span class="big">4~7세 아이와 부모</span></div>
+        <div class="st line" data-step="2"><span class="tag">언제</span><span class="big">아이가 부모님께 책을 읽어달라고 조를 때</span></div>
+        <div class="st card c-rose" data-step="3">
+          <div class="line" style="margin-bottom:10px"><span class="tag bad">이전에는...</span></div>
+          <ul class="ul">
+            <li class="kid" style="--k:0">부모가 바쁘거나 아프면 매번 읽어주기 어렵다.&nbsp;</li>
+            <li class="kid" style="--k:1">같은 책을 반복하면 아이가 지루해하고, 새 책을 매번 사기엔 부담이다.</li>
+            <li class="kid" style="--k:2">아이가 능동적으로 이야기에 참여하는 책이 거의 없다.&nbsp;</li>
+          </ul>
+        </div>
+      </div>
+      <div style="position:relative;height:520px">
+        <img class="abs in fl" src="assets/img/bear.webp" alt="" style="left: 230px; top: 0px; width: 250px; --i: 3; translate: -64px -24px;">
+        <img class="abs in fl" src="assets/img/girl.webp" alt="" style="left:0;top:150px;width:260px;--i:4;--fl:.5s">
+        <img class="abs in fl" src="assets/img/boy.webp" alt="" style="left:250px;top:250px;width:240px;--i:5;--fl:1s">
+      </div>
+    </div>
+    <div class="st card c-sun" data-step="4" style="text-align:center"><span class="big" style="font-size:54px">“아이가 직접 만든 이야기를 실감나게 읽어주는 책이 있다면 어떨까?”</span></div>
+  </div>
+</section>
+
+<!-- 03 무엇을 만들었나 -->
+<section class="slide" data-screen-label="03 무엇을 만들었나">
+  <header class="hd in"><h2>무엇을 만들었나요?</h2></header>
+  <img class="hd-deco in" src="assets/img/star.webp" alt="" style="--i:2">
+  <div class="cnt" style="display:flex;flex-direction:column;gap:24px">
+    <div class="st" data-step="1">
+      <div class="h3" style="margin-bottom:14px">아이가 <b>카드 4장</b>을 고르면 이야기가 시작</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:44px">
+        <div class="card c-sky tilt-l" style="text-align:center;padding:16px 12px"><img class="im" src="assets/img/fox.webp" alt="" style="height:150px;width:auto;margin:0 auto"><div class="h3">주인공</div></div>
+        <div class="card c-rose tilt-r" style="text-align:center;padding:16px 12px"><img class="im" src="assets/img/rainbow.webp" alt="" style="height:150px;width:auto;margin:0 auto"><div class="h3">성격</div></div>
+        <div class="card c-leaf tilt-l" style="text-align:center;padding:16px 12px"><img class="im" src="assets/img/castle.webp" alt="" style="height:150px;width:auto;margin:0 auto"><div class="h3">장소</div></div>
+        <div class="card c-sun tilt-r" style="text-align:center;padding:16px 12px"><img class="im" src="assets/img/key.webp" alt="" style="height: 150px; width: auto; margin: 0px auto; scale: 0.86;"><div class="h3">사물</div></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:8px">
+      <div class="st card" data-step="2"><div class="tag sec" style="margin-bottom:10px">선택</div><div class="tx">구간마다 <b>선택지 3개</b><br>→ 고른 것이 다음 장면의 중심</div></div>
+      <div class="st card" data-step="3"><div class="tag sec" style="margin-bottom:10px">읽어 주기</div><div class="tx">AI가 <b>실감 나게 읽어 줌</b> (Gemini TTS)+ 그림 조립 + 효과음·음악</div></div>
+      <div class="st card" data-step="4"><div class="tag sec" style="margin-bottom:10px">책장</div><div class="tx">끝난 이야기는 <b>내 책장</b>에 꽂혀<br>다시 듣기·이어하기</div></div>
+    </div>
+    <div class="st line" data-step="5" style="gap:16px;justify-content:space-between">
+      <span class="chip">그림 63장</span><span class="chip">음악 6곡</span><span class="chip">효과음 10개</span><span class="chip">한 편 약 5구간</span><span class="chip">11~15쪽</span>
+    </div>
+  </div>
+</section>
+
+<!-- 04 사용 흐름 -->
+<section class="slide" data-screen-label="04 사용 흐름">
+  <header class="hd in"><span class="kick">사용 흐름</span><h2>→ 시연</h2></header>
+  <img class="hd-deco in" src="assets/img/map.webp" alt="" style="--i:2">
+  <div class="cnt">
+    <div class="in" style="--i:1;display:grid;grid-template-columns:repeat(5,1fr);gap:56px">
+      <div class="card c-sky" style="text-align:center;padding:14px 8px"><div class="no" style="font-family:var(--font-display);color:var(--accent);font-size:32px">1</div><div class="h3">첫 카드 고르기</div></div>
+      <div class="card c-rose" style="text-align:center;padding:14px 8px"><div class="no" style="font-family:var(--font-display);color:var(--accent);font-size:32px">2</div><div class="h3">이야기 생성/읽기</div><div class="small" style="line-height:1.3">자동 재생·넘김</div></div>
+      <div class="card c-leaf" style="text-align:center;padding:14px 8px"><div class="no" style="font-family:var(--font-display);color:var(--accent);font-size:32px">3</div><div class="h3">중간 선택지</div></div>
+      <div class="card c-sun" style="text-align:center;padding:14px 8px"><div class="no" style="font-family:var(--font-display);color:var(--accent);font-size:32px">4</div><div class="h3">결말</div></div>
+      <div class="card c-sky" style="text-align:center;padding:14px 8px"><div class="no" style="font-family:var(--font-display);color:var(--accent);font-size:32px">5</div><div class="h3">책장</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:56px;margin-top:36px">
+      <img class="st shot" data-step="1" style="--k:0" src="assets/flow-img/1.jpg" alt="앱 화면 1">
+      <img class="st shot" data-step="1" style="--k:1" src="assets/flow-img/2.jpg" alt="앱 화면 2">
+      <img class="st shot" data-step="1" style="--k:2" src="assets/flow-img/3.jpg" alt="앱 화면 3">
+      <img class="st shot" data-step="1" style="--k:3" src="assets/flow-img/4.jpg" alt="앱 화면 4">
+      <img class="st shot" data-step="1" style="--k:4" src="assets/flow-img/5.jpg" alt="앱 화면 5">
+    </div>
+    <div class="st" data-step="2" style="text-align:center;margin-top:34px"><span class="big" style="color:var(--accent);font-size:58px">지금 시연으로 보여 드리겠습니다</span></div>
+  </div>
+  <aside class="notes">말: 여기서 시연 영상/라이브로 넘어갑니다.</aside>
+</section>
+
+<!-- 05 구조 ① 전체 -->
+<section class="slide" data-screen-label="05 구조 전체">
+  <header class="hd in"><span class="kick">★ 구조 ①</span><h2>한 눈에 보기</h2></header>
+  <img class="hd-deco in" src="assets/img/robot.webp" alt="" style="--i:2">
+  <!-- 브라우저 -->
+  <div class="st card c-sky abs" data-step="1" style="left:96px;top:214px;width:980px;height:132px;display:flex;align-items:center;gap:30px">
+    <span class="h3" style="font-size:46px">브라우저 PWA</span><span class="sub" style="font-size:32px">React · IndexedDB(책장)</span>
+  </div>
+  <div class="st abs" data-step="2" style="left:560px;top:352px;width:560px;height:96px;display:flex;align-items:center;gap:20px">
+    <span class="arr" style="font-size:50px">▼</span><span class="sub" style="font-size:30px;color:var(--ink);font-weight:600">/api (구간 + 서명)</span>
+  </div>
+  <!-- 서비스 API -->
+  <div class="st card abs" data-step="2" style="left:96px;top:450px;width:980px;height:540px;padding:22px 28px">
+    <div class="line" style="gap:24px"><span class="h3" style="font-size:46px">서비스 API</span><span class="sub" style="font-size:30px">FastAPI · 저장 없음 · Render 무료</span></div>
+    <div class="st" data-step="2" style="display:none"></div>
+  </div>
+  <div class="st abs" data-step="3" style="left:124px;top:566px;width:924px;display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <div class="card c-sun" style="padding:16px 24px;text-align:center"><div class="h3" style="font-size:36px">Gemini 3.5 Flash Lite</div></div>
+    <div class="card c-sun" style="padding:16px 24px;text-align:center"><div class="h3" style="font-size:36px">Gemini 3.1 Flash Lite</div></div>
+    <div style="grid-column:1 / 3;text-align:center;font-size:32px;font-weight:800;color:var(--accent);line-height:1.3">⨽동시에 불러 먼저 통과한 글 ⨼</div>
+  </div>
+  <div class="st abs" data-step="4" style="left:124px;top:790px;width:924px;display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <div class="card c-leaf" style="padding:14px 24px;text-align:center"><div class="h3" style="font-size:34px">Gemini TTS</div><div class="small" style="color:var(--ink)">이야기 음성 → 같은 목소리 다른 모델</div></div>
+    <div class="card c-leaf" style="padding:14px 24px;text-align:center"><div class="h3" style="font-size:34px">Azure TTS F0</div><div class="small" style="color:var(--ink)">안내·선택지 읽기</div></div>
+  </div>
+  <!-- Cloudflare -->
+  <div class="st abs" data-step="5" style="left:1090px;top:214px;width:60px;height:132px;display:flex;align-items:center;justify-content:center"><span class="arr" style="font-size:44px">◀</span></div>
+  <div class="st card c-rose abs" data-step="5" style="left:1170px;top:214px;width:654px;height:132px;display:flex;flex-direction:column;justify-content:center;padding:12px 30px">
+    <span class="h3" style="font-size:42px">Cloudflare Pages</span><span class="sub" style="font-size:28px">프론트 배포</span>
+  </div>
+  <div class="st card c-sun abs" data-step="6" style="left:1170px;top:450px;width:654px;height:270px;display:flex;flex-direction:column;justify-content:center">
+    <div class="tx" style="font-size:34px">서버는 이야기를 <b>저장하지 않음</b></div>
+    <div class="tx" style="font-size:34px">→ 책장은 브라우저 <b>IndexedDB</b></div>
+  </div>
+  <div class="st card c-leaf abs" data-step="7" style="left:1170px;top:760px;width:654px;height:230px;display:flex;flex-direction:column;justify-content:center">
+    <div class="tx" style="font-size:34px">모든 외부 서비스 <b>무료 티어</b></div>
+    <div class="big" style="color:var(--pick)">월 0원</div>
+  </div>
+</section>
+
+<!-- 06 구조 ② -->
+<section class="slide" data-screen-label="06 한 구간이 만들어지는 길">
+  <header class="hd in"><span class="kick">★ 구조 ②</span><h2>한 구간이 만들어지는 과정</h2></header>
+  <img class="hd-deco in" src="assets/img/magic_wand.webp" alt="" style="--i:2">
+  <div class="cnt pipe" style="align-items:start">
+    <div class="st card c-sky" data-step="1"><img class="im" src="assets/img/letter.webp" alt=""><div class="no">1</div><div class="h3">프롬프트 조립</div><div class="tx">고른 카드·지난 선택·5단계 플롯 위치·그림 ID 목록</div></div>
+    <div class="st card c-sun" data-step="2"><img class="im" src="assets/img/robot.webp" alt=""><div class="no">2</div><div class="h3">생성</div><div class="tx">두 모델 동시 호출, JSON 으로만 답하게</div></div>
+    <div class="st card c-leaf" data-step="3"><img class="im" src="assets/img/owl.webp" alt=""><div class="no">3</div><div class="h3">검사</div><div class="tx">형식·없는 그림 ID·금지어·쪽 수·선택지 규칙</div></div>
+    <div class="st card c-rose" data-step="4"><img class="im" src="assets/img/magic_wand.webp" alt=""><div class="no">4</div><div class="h3">다듬기</div><div class="tx">더듬기 오타('꼬 꼭' → '꼭'), 결말에 주인공 빠지면 장면에 넣기</div></div>
+    <div class="st card c-sky" data-step="5"><img class="im" src="assets/img/key.webp" alt=""><div class="no">5</div><div class="h3">서명</div><div class="tx">HMAC 서명을 붙여 돌려줌. 다음 요청에 그대로 돌려받아 위조 차단</div></div>
+    <div class="st card c-sun" data-step="6"><img class="im" src="assets/img/music_box.webp" alt=""><div class="no">6</div><div class="h3">음성</div><div class="tx">구간 단위 MP3</div></div>
+  </div>
+  <aside class="notes">말: LLM 이 그림을 고를 때도 자유롭게 쓰지 않고, 목록에 있는 ID 만 고르게 해서 검사로 걸러냅니다.</aside>
+</section>
+
+<!-- 07 오류 처리 ① -->
+<section class="slide" data-screen-label="07 오류 처리 이야기 생성">
+  <header class="hd in"><span class="kick">★ 오류 처리 ①</span><h2>이야기 생성</h2></header>
+  <img class="hd-deco in" src="assets/img/frog.webp" alt="" style="--i:2">
+  <div class="cnt" style="height:780px">
+    <div style="display:grid;grid-template-columns:860px 1fr;gap:36px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:30px">
+        <div class="st card c-rose" data-step="1">
+          <span class="tag bad" style="margin-bottom:10px">문제</span>
+          <div class="tx" style="font-size:36px"><b>LLM 출력은 매번 다르고 규칙을 어긴다</b></div>
+          <div class="sub" style="margin-top:6px">선택지 규칙 위반, 쪽 수 틀림, 카드 누락</div>
+        </div>
+        <div class="st card" data-step="3" style="height:330px">
+          <span class="tag" style="margin-bottom:10px">겪은 버그</span>
+          <div class="tx" style="font-size:31px">쪽 0개 구간이 경고만 남기고 통과</div>
+          <div class="chain" style="margin-top:10px"><span class="chip">하얀 화면</span><span class="arr">→</span><span class="chip">거절로 변경</span></div>
+          <div class="sub" style="margin-top:8px;font-size:26px">화면이 하얗게 멈춤 → 검사기에서 거절로 바꿈</div>
+        </div>
+      </div>
+      <div class="st card c-sky" data-step="2" style="min-height:560px">
+        <span class="tag sec" style="margin-bottom:14px">대응</span>
+        <div class="kid" style="--k:0">
+          <div class="tx" style="font-size:31px;margin-bottom:8px">검사기가 거절 →</div>
+          <div class="chain"><span class="chip">같은 모델 1번 더</span><span class="arr">→</span><span class="chip">예비 모델</span></div>
+        </div>
+        <div class="tx kid" style="--k:1;font-size:31px;margin-top:22px">서비스는 두 모델을 <b>동시에</b> 불러 먼저 통과한 글 사용<br><span class="sub" style="font-size:27px">구간당 10~25초 → 줄임</span></div>
+        <div class="tx kid" style="--k:2;font-size:31px;margin-top:18px">서비스는 ‘느슨한 검사’(안전·형식만), 단 <b>쪽이 0개면 거절</b></div>
+      </div>
+    </div>
+    <div class="st card c-sun" data-step="4" style="margin-top:34px;text-align:center">
+      <div class="tx" style="font-size:33px"><span class="tag ok" style="margin-right:14px;font-size:34px">판단</span>오류 종류와 상관없이 예비 모델로 → <b>아이가 듣는 중 끊기지 않는 쪽</b>, 대신 호출 정보를 기록</div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 오류 처리 ② -->
+<section class="slide" data-screen-label="08 오류 처리 음성">
+  <header class="hd in"><span class="kick">★ 오류 처리 ②</span><h2>음성</h2></header>
+  <img class="hd-deco in" src="assets/img/music_box.webp" alt="" style="--i:2">
+  <div class="cnt">
+    <div class="grid2" style="grid-auto-rows:minmax(290px,auto)">
+      <div class="st card c-sky" data-step="1"><span class="num" style="margin-bottom:10px">1</span><div class="h3" style="font-size:38px">막히면 <b>같은 목소리 이름</b>으로 다른 Gemini 모델</div><div class="sub" style="margin-top:8px;font-size:27px">→ 이야기 도중에 완전 다른 목소리로 전환되지 않도록</div></div>
+      <div class="st card c-sun" data-step="2"><span class="num" style="margin-bottom:10px">2</span><div class="h3" style="font-size:38px">하루 한도 초과되어 429 응답을 받으면 그 모델을 <b>오늘 다 쓴 것으로 기억</b></div><div class="sub" style="margin-top:8px;font-size:27px">→ 잘못 호출하여 시간이 지연되는 것을 방지</div></div>
+      <div class="st card c-rose" data-step="3"><span class="num" style="margin-bottom:10px">3</span><div class="h3" style="font-size:38px">TTS 가 <b>연출 지시까지 소리 내어 읽음</b> (20자 글에 25초)</div><div class="sub" style="margin-top:8px;font-size:27px">→ 음성이 <b style="color:var(--ink)">2초 + 글자당 0.27초</b>보다 길면 실패로 보고 다음 모델</div></div>
+      <div class="st card c-leaf" data-step="4"><span class="num" style="margin-bottom:10px">4</span><div class="h3" style="font-size:38px">음성이 <b>60초 넘게 늦으면</b> ‘다음 ▶’ 버튼으로 먼저 넘김</div><div class="sub" style="margin-top:8px;font-size:27px">→ 음성은 오면 현재 보고 있는 페이지부터 읽음</div></div>
+    </div>
+    <div class="small in" style="--i:4;margin-top:34px;font-size:26px">시작 잡음·끝 ‘콱’ 소리 → WAV 를 PCM 으로 잘못 감싼 것, 소리 부분만 사용</div>
+  </div>
+</section>
+
+<!-- 09 오류 처리 ③ -->
+<section class="slide" data-screen-label="09 오류 처리 배포 사고">
+  <header class="hd in"><span class="kick">★ 오류 처리 ③</span><h2>배포</h2></header>
+  <img class="hd-deco in" src="assets/img/turtle.webp" alt="" style="--i: 2; translate: -58px 50px; scale: 1.57;">
+  <div class="cnt">
+    <div style="display:grid;grid-template-columns:1fr 70px 1fr 70px 1fr;align-items:center">
+      <div class="st card c-sun" data-step="1"><span class="num" style="margin-bottom:8px">1</span><div class="tx" style="font-size:31px">Render 에 붙여 넣은 API 키 <b>끝에 줄바꿈</b></div></div>
+      <div class="st arr" data-step="2" style="text-align:center">→</div>
+      <div class="st card c-rose" data-step="2"><span class="num" style="margin-bottom:8px">2</span><div class="tx" style="font-size:31px">요청 머리 오류, <b>이야기 생성 실패</b></div></div>
+      <div class="st arr" data-step="3" style="text-align:center">→</div>
+      <div class="st card c-rose" data-step="3"><span class="num" style="margin-bottom:8px">3</span><div class="tx" style="font-size:31px">오류 글에 <b>키가 통째로 로그에</b> 남음</div></div>
+    </div>
+    <div class="st" data-step="4" style="margin-top:34px">
+      <div class="h3" style="margin-bottom:14px"><span class="tag ok">대응 4가지</span></div>
+      <div class="grid2" style="gap:22px 36px">
+        <div class="card c-leaf kid" style="--k:0;display:flex;gap:20px;align-items:center;padding:16px 28px"><span class="num">1</span><span class="tx" style="font-size:30px">키 폐기·재발급</span></div>
+        <div class="card c-leaf kid" style="--k:1;display:flex;gap:20px;align-items:center;padding:16px 28px"><span class="num">2</span><span class="tx" style="font-size:30px">설정에서 비밀값 앞뒤 빈칸·줄바꿈 제거</span></div>
+        <div class="card c-leaf kid" style="--k:2;display:flex;gap:20px;align-items:center;padding:16px 28px"><span class="num">3</span><span class="tx" style="font-size:30px">로그에는 예외 <b>종류만</b>, 등록한 비밀값은 끝 4자리로 가림&nbsp;</span></div>
+        <div class="card c-leaf kid" style="--k:3;display:flex;gap:20px;align-items:center;padding:16px 28px"><span class="num">4</span><span class="tx" style="font-size:30px">첫 구간 실패 시 하루 이야기 수 되돌리기 (‘내일 또 만나요’ 오표시 방지)</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 설계 판단 AI -->
+<section class="slide" data-screen-label="10 개발자 관점">
+  <header class="hd in"><span class="kick">설계 판단</span><h2>개발자 관점</h2></header>
+  <img class="hd-deco in" src="assets/img/owl.webp" alt="" style="--i:2">
+  <div class="cnt">
+    <div class="tri in" style="--i:1;display:grid;grid-template-columns:1fr 1fr;gap:20px 134px;padding:0 194px;margin-top:-16px"><div class="cell hdr">설계 판단</div><div class="cell hdr">결과</div></div>
+    <div class="pairs" style="margin-top:2px;gap:10px">
+      <div class="st tri" data-step="1" style="display:grid;grid-template-columns:1fr 1fr;gap:20px 134px;padding:0 194px"><div class="cell" style="grid-column:1"><span>기본·예비 LLM 을 <b>동시에</b> 부르고 먼저 통과한 글 사용</span></div><div class="cell" style="grid-column:2"><span>구간 10~25초 → <b>2~4초</b>, 대신 모델 호출 횟수가 증가(하루 30편이면 모델당 약 150회)</span></div></div>
+      <div class="st tri" data-step="2" style="display:grid;grid-template-columns:1fr 1fr;gap:20px 134px;padding:0 194px"><div class="cell" style="grid-column:1"><span>검사는 <b>느슨하게</b>, 꼭 막을 것만 <b>코드로 검사</b> (금지 규칙·검수 LLM 대신)</span></div><div class="cell" style="grid-column:2"><span>다시 만들기·호출 횟수·대기 시간 ↓, 대신 전개가 <b>조금 어색한</b> 글도 출력</span></div></div>
+      <div class="st tri" data-step="3" style="display:grid;grid-template-columns:1fr 1fr;gap:20px 134px;padding:0 194px"><div class="cell" style="grid-column:1"><span>선택지 후보·종류는 <b>코드가</b> 정함</span></div><div class="cell" style="grid-column:2"><span>LLM 자유도 ↓, 대신 목록 밖 그림·들쭉날쭉한 끝맺음이 없어짐</span></div></div>
+      <div class="st tri" data-step="4" style="display:grid;grid-template-columns:1fr 1fr;gap:20px 134px;padding:0 194px"><div class="cell" style="grid-column:1"><span>장면은 <b>미리 만든 그림 조각</b>을 조립 (실시간 생성 안 함)</span></div><div class="cell" style="grid-column:2"><span>표현 자유도 ↓, 대신 <b>0원</b>·바로 표시</span></div></div>
+      <div class="st tri" data-step="5" style="display:grid;grid-template-columns:1fr 1fr;gap:20px 134px;padding:0 194px"><div class="cell" style="grid-column:1;background:var(--sky-soft)"><span>서버에 <b>저장 없음</b> + <b>HMAC 서명</b>, 책장은 기기 <b>IndexedDB</b></span></div><div class="cell" style="grid-column:2"><span>기기를 바꾸면 책장 없음, 대신 빠른 완성·본문 위조(프롬프트 주입) 차단</span></div></div>
+      <div class="st tri" data-step="6" style="display:grid;grid-template-columns:1fr 1fr;gap:20px 134px;padding:0 194px"><div class="cell" style="grid-column:1;background:var(--sky-soft)"><span><b>프론트(Pages)·백엔드(Render) 따로 배포</b></span></div><div class="cell" style="grid-column:2"><span>서버가 잠들어 있어도 <b>화면은 바로 뜸</b> → 그동안 홈에서 서버 미리 깨우기</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 프롬프트 v1 → v9 -->
+<section class="slide" data-screen-label="11 프롬프트 v1 → v9">
+  <header class="hd sm in"><span class="kick">★ 프롬프트</span><h2>v1 → v9</h2></header>
+  <img class="hd-deco in" src="assets/img/letter.webp" alt="" style="--i:2;top:12px;width:120px">
+  <div class="vtl">
+    <div class="st vrow" data-step="1" style="--c:#7d8597"><span class="v">v1</span><span class="ch">기본 프롬프트 (비교 기준)</span><span class="why" style="visibility:hidden">—</span></div>
+    <div class="st vrow" data-step="2" style="--c:#4f6fa8"><span class="v">v2</span><span class="ch">선택지 반복·고르지 않은 것 등장 금지, 쪽당 2문장으로 축소</span><span class="why">같은 선택지 반복, 4~7세에게 긴 분량</span></div>
+    <div class="st vrow" data-step="3" style="--c:#2f73b5"><span class="v">v3</span><span class="ch">출력 예시를 자리 표시로, 고른 카드 등장 규칙</span><span class="why">곰을 골랐는데 주인공이 토끼 (예시 ID 에 끌려감)</span></div>
+    <div class="st vrow" data-step="4" style="--c:#1f78c8"><span class="v">v4</span><span class="ch">“작은 문제 → 애쓰기 → 해결 → 달라진 마음” 구조·교훈</span><span class="why">규칙 위주라 이야기가 밋밋하고 비슷함</span></div>
+    <div class="st vrow" data-step="5" style="--c:#1f8a96"><span class="v">v5</span><span class="ch">빈 선택지·모순·너무 빠른 해결·결말 설교 방지</span><span class="why">v1·v4 첫 평가 실패</span></div>
+    <div class="st vrow" data-step="6" style="--c:#1d8a70"><span class="v">v6</span><span class="ch">문장형 선택지, 물건형 후보는 <b>코드가</b> 정함</span><span class="why">LLM 이 목록 밖 ID 를 지어내 계속 실패</span></div>
+    <div class="st vrow" data-step="7" style="--c:#1a8260"><span class="v">v7</span><span class="ch">5단계 플롯, 선택지 3개 고정, 발단·결말 3쪽</span><span class="why">선택지가 3개였다 4개였다 함</span></div>
+    <div class="st vrow" data-step="8" style="--c:#1a7f4e"><span class="v">v8</span><span class="ch">금지 규칙 대신 역할 설명 + 다양한 예시, 끝맺음 종류는 <b>코드가</b> 결정</span><span class="why">금지가 많으면 예상 못 한 문제, 예시 하나면 그 형태만 씀</span></div>
+    <div class="st vrow" data-step="9" style="--c:#146b3f"><span class="v">v9</span><span class="ch">각 쪽은 완결된 문장, ‘...’는 구간 끝에만</span><span class="why">중간 쪽이 ‘...’로 끊김</span></div>
+  </div>
+  <div class="st card c-sun abs" data-step="10" style="left:1440px;top:150px;width:384px;padding:22px 26px">
+    <span class="tag" style="font-size:34px;margin-bottom:10px">원칙</span>
+    <div class="tx" style="font-size:31px">이전 버전 파일은 <b>고치지 않음</b> → 버전끼리 비교 가능</div>
+  </div>
+  <div class="st card c-leaf abs" data-step="11" style="left:1440px;top:470px;width:384px;padding:22px 26px">
+    <span class="tag ok" style="font-size:34px;margin-bottom:10px">배운 것</span>
+    <div class="tx" style="font-size:31px">프롬프트가 못 지키는 규칙은 <b>코드로 옮김</b></div>
+    <div class="sub" style="font-size:26px;margin-top:6px">끝맺음 종류, 금지 목록, 주인공 넣기</div>
+  </div>
+</section>
+
+<!-- 13 평가 방법 -->
+<section class="slide" data-screen-label="12 평가 방법">
+  <header class="hd in"><span class="kick">★ 평가 방법</span><h2>수치로 비교하기</h2></header>
+  <img class="hd-deco in" src="assets/img/treasure_box.webp" alt="" style="--i:2">
+  <div class="cnt" style="display:flex;flex-direction:column;gap:20px">
+    <div style="display:grid;grid-template-columns:840px 1fr;gap:30px">
+      <div class="st card c-sky" data-step="1"><span class="tag sec" style="margin-bottom:10px">같은 조건</span><div class="tx" style="font-size:33px">같은 사례 <b>10개</b>(카드 조합) × <b>v1 · v4 · v9</b><br>같은 모델 (Gemini 3.5 Flash Lite)</div></div>
+      <div class="st card c-sun" data-step="2"><span class="tag" style="margin-bottom:10px">자동 지표</span>
+        <div class="line" style="gap:12px"><span class="chip" style="font-size:30px">완료율</span><span class="chip" style="font-size:30px">첫 시도 성공률</span><span class="chip" style="font-size:30px">생성 시간</span></div>
+        <div class="small" style="margin-top:8px;color:var(--ink)">완료율 = 검사를 통과해 결말까지</div></div>
+    </div>
+    <div class="st card" data-step="3">
+      <div class="line" style="margin-bottom:12px"><span class="tag ok">품질 점수 100점</span></div>
+      <div class="seg">
+        <div style="--w:15;--c:#d6e8f7"><b>15</b>어휘</div>
+        <div style="--w:15;--c:#d7efe1"><b>15</b>줄거리</div>
+        <div style="--w:15;--c:#fff0b8"><b>15</b>구조</div>
+        <div style="--w:10;--c:#ffe3d6"><b>10</b>교훈</div>
+        <div style="--w:20;--c:#ffd23f"><b>20</b>일관성</div>
+        <div style="--w:10;--c:#d6e8f7"><b>10</b>선택지</div>
+        <div style="--w:5;--c:#d7efe1"><b>5</b>분량</div>
+        <div style="--w:10;--c:#ffe3d6"><b>10</b>안전</div>
+      </div>
+    </div>
+    <div class="st card c-leaf" data-step="4">
+      <div class="line" style="flex-wrap:nowrap;gap:20px">
+        <div><span class="tag sec" style="margin-bottom:6px">심사</span><div class="tx" style="font-size:30px">익명 파일 <b>s01, s02…</b><br>(버전을 모르게 섞음)</div></div>
+        <span class="arr">→</span>
+        <span class="chip">Claude</span><span class="chip">ChatGPT</span><span class="chip">Gemini</span>
+        <div class="tx" style="font-size:30px">세 곳이 같은 기준으로 <b>따로 채점</b></div>
+      </div>
+    </div>
+    <div class="small in" style="--i:5;font-size:24px">평가는 엄격한 검사 + 모델 1개. 서비스(두 모델·느슨한 검사)보다 완료율이 낮게 나옴</div>
+  </div>
+</section>
+
+<!-- 14 개선 전후 -->
+<section class="slide" data-screen-label="13 개선 전후">
+  <header class="hd sm in"><span class="kick">★ 개선 전후</span><h2>v1 → v4 → v9</h2></header>
+  <img class="hd-deco in" src="assets/img/rainbow.webp" alt="" style="--i:2;top:10px;width:150px">
+  <div class="cnt sm" style="display:flex;flex-direction:column;gap:16px;top:148px">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:26px">
+      <div class="st card chart" data-step="1" style="--max:100;padding:20px 28px 18px">
+        <h3>완료율 <small>결말까지</small></h3>
+        <div class="cols">
+          <div class="col"><div class="track"><div class="bar" style="--v:0;--c:var(--gray-bar)"></div></div><b class="val">0%</b><span class="lab">v1</span></div>
+          <div class="col"><div class="track"><div class="bar" style="--v:50;--c:var(--secondary)"></div></div><b class="val">50%</b><span class="lab">v4</span></div>
+          <div class="col"><div class="track"><div class="bar" style="--v:80;--c:var(--pick)"></div></div><b class="val">80%</b><span class="lab">v9</span></div>
+        </div>
+      </div>
+      <div class="st card chart" data-step="2" style="--max:100;padding:20px 28px 18px">
+        <h3>첫 시도 성공률</h3>
+        <div class="cols">
+          <div class="col"><div class="track"><div class="bar" style="--v:60;--c:var(--gray-bar)"></div></div><b class="val">60%</b><span class="lab">v1</span></div>
+          <div class="col"><div class="track"><div class="bar" style="--v:85;--c:var(--secondary)"></div></div><b class="val">85%</b><span class="lab">v4</span></div>
+          <div class="col"><div class="track"><div class="bar" style="--v:92;--c:var(--pick)"></div></div><b class="val">92%</b><span class="lab">v9</span></div>
+        </div>
+      </div>
+      <div class="st card chart" data-step="3" style="--max:100;padding:20px 28px 18px">
+        <h3>품질 총점 <small>100점, 심사 3곳 평균</small></h3>
+        <div class="cols">
+          <div class="col"><div class="track"><div class="bar" style="--v:0;--c:var(--gray-bar)"></div></div><b class="val">—</b><span class="lab">v1 (완료 0편)</span></div>
+          <div class="col"><div class="track"><div class="bar" style="--v:73.7;--c:var(--secondary)"></div></div><b class="val">73.7</b><span class="lab">v4 (5편)</span></div>
+          <div class="col"><div class="track"><div class="bar" style="--v:81.5;--c:var(--pick)"></div></div><b class="val">81.5</b><span class="lab">v9 (8편)</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:900px 1fr;gap:30px;align-items:start">
+      <div class="st card" data-step="4" style="padding:10px 26px 6px">
+        <div class="h3" style="font-size:34px">심사자별 총점 <span class="small">같은 13편, 버전을 가린 파일</span></div>
+        <table class="tbl" style="font-size:28px;margin-top:-6px;border-spacing:0 5px">
+          <tbody><tr><th style="text-align:left">심사</th><th>v4</th><th>v9</th><th>차이</th></tr>
+          <tr><td>Claude</td><td class="n">59.4</td><td class="n">75.2</td><td class="up">+15.8</td></tr>
+          <tr><td>ChatGPT</td><td class="n">76.8</td><td class="n">81.4</td><td class="up">+4.6</td></tr>
+          <tr><td>Gemini</td><td class="n">85.0</td><td class="n">87.9</td><td class="up">+2.9</td></tr>
+        </tbody></table>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="st card c-leaf" data-step="5" style="padding:14px 28px"><div class="tx" style="font-size:31px"><b>세 심사 모두 v9 &gt; v4</b>, 가장 낮게 본 이야기도 같음 (v4 의 s03)<br>점수 폭은 제각각 → 절대 점수보다 <b>순위·방향</b></div></div>
+        <div class="st card c-sun" data-step="6" style="padding:14px 28px"><div class="tx" style="font-size:31px">가장 크게 오른 건 ‘앞뒤가 맞는가’<br><b>일관성 13.0 → 15.8</b>/20 · 교훈은 7.2 → 7.0/10, <b>다음 개선 대상</b></div></div>
+      </div>
+    </div>
+    <div class="small in" style="--i:5;font-size:22px;line-height:1.5;margin-top:-4px;max-width:1620px">2026-10-31 평가 · 사례 10개씩 · 평균 생성 시간(호출당) v1 3.4초 → v4 2.3초 → v9 1.9초 · 지난 평가(10-28) v1 0% → v4 10%<br>표본이 작음(v4 5편·v9 8편) · 만든 모델이 Gemini 라 Gemini 심사는 후할 수 있음 · 분당 한도(429)로 끊긴 5편은 같은 사례로 다시 생성</div>
+  </div>
+  <aside class="notes">말: 가장 크게 오른 건 '앞뒤가 맞는가'. 교훈은 오르지 않음 → 다음 개선 대상</aside>
+</section>
+
+<!-- 15 실패 원인 분석 -->
+<section class="slide" data-screen-label="14 실패 원인 분석">
+  <header class="hd in"><span class="kick">★ 실패 원인</span><h2>분석</h2></header>
+  <img class="hd-deco in" src="assets/img/hedgehog.webp" alt="" style="--i:2">
+  <div class="cnt" style="display:grid;grid-template-columns:870px 1fr;gap:34px;top:204px">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="st card c-sky" data-step="1" style="padding:14px 26px">
+        <div class="h3" style="font-size:33px">지난 평가 <span class="small">실패 19편 · 마지막 시도 거절 이유</span></div>
+        <div class="tx" style="font-size:27px;line-height:1.55;margin-top:2px"><b>v1</b> 선택지 규칙 <b>9</b>/10편 · 카드 누락 5 · 주인공 틀림 3<br><b>v4</b> 선택지 규칙 7 · 쪽 수 4</div>
+      </div>
+      <div class="st card" data-step="2" style="padding:12px 24px 8px">
+        <div class="h3" style="font-size:33px">이번 평가 실패 원인 <span class="small">마지막 시도 기준</span></div>
+        <table class="tbl" style="font-size:28px;margin-top:-4px">
+          <tbody><tr><th></th><th>v1 (실패 10)</th><th>v4 (실패 5)</th><th>v9 (실패 2)</th></tr>
+          <tr><td>처음 고른 카드 누락</td><td class="n hot">6</td><td class="n">1</td><td class="n">2</td></tr>
+          <tr><td>쪽 수 틀림·쪽 0개</td><td class="n">2</td><td class="n hot">4</td><td class="zero">0</td></tr>
+          <tr><td>고르지 않은 선택지 등장</td><td class="n">2</td><td class="zero">0</td><td class="zero">0</td></tr>
+        </tbody></table>
+      </div>
+      <div class="st card c-leaf" data-step="3" style="padding:14px 22px">
+        <div class="chain" style="gap:8px;flex-wrap:nowrap;align-items:stretch">
+          <div style="flex:1;font-size:25px;line-height:1.4"><b>v1</b> 첫 구간부터 카드를 빼먹음</div><span class="arr" style="font-size:36px;align-self:center">→</span>
+          <div style="flex:1;font-size:25px;line-height:1.4"><b>v4</b> 이야기는 이어지나 쪽 수를 못 지킴</div><span class="arr" style="font-size:36px;align-self:center">→</span>
+          <div style="flex:1;font-size:25px;line-height:1.4"><b>v9</b> 쪽 수 해결, 남은 건 카드 누락</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="st card c-rose" data-step="4" style="padding:16px 28px">
+        <div class="h3" style="font-size:34px">품질 심사에서 반복된 약점 <span class="small">Claude 심사 의견</span></div>
+        <ul class="ul" style="gap:6px;margin-top:6px">
+          <li class="kid" style="--k:0;font-size:29px;line-height:1.45"><b>주인공 대신 마법·조력자가 해결</b> (요술봉, 별가루, 바람…) → 구조 점수 ↓</li>
+          <li class="kid" style="--k:1;font-size:29px;line-height:1.45"><b>고른 것이 이어지지 않음</b> — 고른 열쇠가 끝내 안 쓰임, 고르지 않은 것이 끼어듦</li>
+          <li class="kid" style="--k:2;font-size:29px;line-height:1.45"><b>앞 구간에서 갈등이 다 풀림</b> → 남은 구간은 나열, 교훈을 “~배웠답니다”로 정리</li>
+        </ul>
+      </div>
+      <div class="st card" data-step="5" style="padding:12px 28px"><div class="tx" style="font-size:27px;line-height:1.5">안전은 모두 만점, 다만 ‘어둡고 무서웠어요’ 같은 <b>약한 두려움 표현</b>은 경계 사례</div></div>
+      <div class="st card c-sun" data-step="6" style="padding:14px 28px">
+        <span class="tag ok" style="font-size:30px;margin-bottom:6px">대응</span>
+        <div class="tx" style="font-size:27px;line-height:1.5">선택지 → <b>v6·v8</b> (물건형 후보·끝맺음 종류를 코드가) · 쪽 수 → <b>v7</b> (구간별 쪽 수 고정) · 끊긴 쪽 → <b>v9</b> + 검사기 <code style="font-family:var(--font-body);font-weight:800">cut_off</code></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 AI 활용 ① -->
+<section class="slide" data-screen-label="15 AI 활용 도구 1">
+  <header class="hd in"><span class="kick">★ AI 활용 ①</span><h2>사용한 AI 도구</h2></header>
+  <img class="hd-deco in" src="assets/img/wizard.webp" alt="" style="--i:2">
+  <div class="cnt">
+    <div class="grid2" style="grid-auto-rows:720px">
+      <div class="st card c-sky" data-step="1" style="padding:30px 40px">
+        <div class="h3" style="font-size:52px">Claude Code</div>
+        <ul class="ul" style="margin-top:18px;gap:22px">
+          <li><b>CLAUDE.md</b>: <span style="font-size:31px">작은 단위로 확인 후 다음 작업, 선택지로 답변 입력</span></li>
+          <li><b>규칙 파일</b>: <span style="font-size:31px">영역별(API, LLM, 이야기, 화면, 그림, 테스트) 규칙파일 생성, 버그와 발생 이유 기록</span></li>
+          <li><b>스킬</b>: <span style="font-size:31px">설계 노트 커밋, 기획/스펙, 기획안 일치율 확인</span></li>
+          <li><b>워크트리</b>: <span style="font-size:31px">큰 변경은 워크트리에서 실험 후 병합</span></li>
+        </ul>
+      </div>
+      <div class="st card c-sun" data-step="2" style="padding:30px 40px">
+        <div class="h3" style="font-size:52px">ElevenLabs</div>
+        <ul class="ul sm" style="margin-top:18px;gap:14px"><li>음악 파일 생성(1분 분량, 6곡)<div><br></div></li><li>한 달 구독해서 음성 API도 사용</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 16-2 AI 활용 도구 2 -->
+<section class="slide" data-screen-label="16 AI 활용 도구 2">
+  <header class="hd in"><span class="kick">★ AI 활용 ②</span><h2>사용한 AI 도구</h2></header>
+  <img class="hd-deco in" src="assets/img/duck.webp" alt="" style="--i:2">
+  <div class="cnt">
+    <div class="grid2" style="grid-auto-rows:720px">
+      <div class="st card c-leaf" data-step="1" style="padding:30px 40px">
+        <div class="h3" style="font-size:52px">ComfyUI</div>
+        <ul class="ul sm" style="margin-top:18px;gap:14px"><li>장면에서 보여줄 모든 이미지를 생성<div><br></div></li><li>모든 그림의 화풍을 통일하기 위해 직접 생성 결정<div><br></div></li><li>Comfy를 통해 로컬 모델 다운 받아서 사용<div><br></div></li><li>Claude에서 첨삭 받은 영어 프롬프트 직접 입력</li></ul>
+      </div>
+      <div class="st card c-rose" data-step="2" style="padding:30px 40px">
+        <div class="h3" style="font-size:52px">ChatGPT &amp; Gemini</div>
+        <ul class="ul sm" style="margin-top:18px;gap:14px"><li>생성된 이야기의 품질 평가를 위해 사용<div><br></div></li><li>Claude, ChatGPT, Gemini 모두 같은 평가 기준 적용<div><br></div></li><li>이야기 생성 프롬프트 개선을 수치로 확인</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 AI 활용 ② -->
+<section class="slide" data-screen-label="17 AI 실수를 잡아 고친 사례">
+  <header class="hd in"><span class="kick">★ AI 활용 ③</span><h2>AI 실수를 고친 사례</h2></header>
+  <img class="hd-deco in" src="assets/img/puppy.webp" alt="" style="--i:2">
+  <div class="cnt">
+    <div class="tri in" style="--i:1;grid-template-columns:1fr 1fr 1fr;gap:20px"><div class="cell hdr">AI의 실수</div><div class="cell hdr">어떻게 잡았나</div><div class="cell hdr">고친 것</div></div>
+    <div class="pairs" style="margin-top:6px;gap:14px">
+      <div class="st tri" data-step="1" style="grid-template-columns:1fr 1fr 1fr"><div class="cell" style="background:var(--accent-soft)">&nbsp;Gemini 3.8 flash tts 모델이 파일 정보와 'AI가 만든 소리'라는 출처 표시가 포함된 WAV 파일을 통째로 보냄 → 노이즈 발생</div><div class="cell">시작/끝의 노이즈<b style="display: inline !important;">&nbsp;듣고 해당 음성 파일 검토</b></div><div class="cell" style="background:var(--leaf-soft)">응답 형식 구분, 규칙에 ‘새 모델이면 형식 확인’</div></div>
+      <div class="st tri" data-step="2" style="grid-template-columns:1fr 1fr 1fr"><div class="cell" style="background:var(--accent-soft)">쪽 수 경고만 남기고 0쪽 구간 통과, 화면의 모든 요소가 사라지고 멈춤</div><div class="cell">배포판에서 <b>하얀 화면</b> → 오류 위치 추척</div><div class="cell" style="background:var(--leaf-soft)">0쪽은 거절, 규칙에 기록</div></div>
+      <div class="st tri" data-step="3" style="grid-template-columns:1fr 1fr 1fr"><div class="cell" style="background:var(--accent-soft)">오류 글을 그대로 로그에 남김</div><div class="cell">배포 로그에서 <b>키 노출</b> 발견</div><div class="cell" style="background:var(--leaf-soft)">비밀값 가리기, 테스트</div></div>
+      <div class="st tri" data-step="4" style="grid-template-columns:1fr 1fr 1fr"><div class="cell" style="background:var(--accent-soft)">결말 장면에 주인공 빠짐 (프롬프트·검사 모두 발단만 신경씀)</div><div class="cell">직접 <b>끝까지 들으며</b> 발견</div><div class="cell" style="background:var(--leaf-soft)">백엔드에서 확인하고 장면에 주인공 넣기</div></div>
+    </div>
+    <div class="st card c-sun" data-step="5" style="margin-top:26px;text-align:center;padding:16px 30px"><span class="big" style="font-size:44px">교훈: 규칙 파일에 <b>‘겪은 버그’</b>를 남기면 같은 실수를 다시 안 함</span></div>
+  </div>
+</section>
+
+<!-- 18 기획과 비교 -->
+<section class="slide" data-screen-label="18 기획과 비교">
+  <header class="hd in"><span class="kick">기획과 비교</span><h2>기획안(PRD) 대비 결과물</h2></header>
+  <img class="hd-deco in" src="assets/img/map.webp" alt="" style="--i:2">
+  <div class="cnt" style="display:grid;grid-template-columns:560px 1fr;gap:36px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div class="card c-sun in" style="--i:1;text-align:center;padding:22px 24px">
+        <div class="tx" style="font-size:30px">기획안과 일치하는 정도</div>
+        <div class="big" style="font-size:120px;line-height:1.15">92.4%</div>
+        <div class="tx" style="font-size:28px">기능 91.8% · 화면 94.0%</div>
+        <div class="tx" style="font-size:28px">꼭 필요(Must) <b>95.7%</b> · 있으면 좋음(Should) 86.1%</div>
+      </div>
+      <div class="card c-leaf in" style="--i:2;padding:18px 24px"><div class="tx" style="font-size:28px">처음 선택 4단계 → 읽기 → 선택지 → 결말 → 책장·이어하기 <b>흐름은 기획대로 모두 있음</b>. 처음 선택 질문 문구도 기획과 같음</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span class="tag sec in" style="--i:2;align-self:flex-start">크게 바뀐 것</span>
+      <div class="st card c-sky" data-step="1" style="padding:12px 24px"><div class="tx" style="font-size:28px"><b>저장</b> Supabase DB → 서버 저장 없음 + 구간 서명, 책장은 IndexedDB (API 경로도 바뀜)</div></div>
+      <div class="st card c-sky" data-step="2" style="padding:12px 24px"><div class="tx" style="font-size:28px"><b>배포</b> 백엔드 Cloud Run → Render 무료</div></div>
+      <div class="st card c-sky" data-step="3" style="padding:12px 24px"><div class="tx" style="font-size:28px"><b>LLM 호출</b> 실패하면 예비 모델로 → 두 모델 동시 호출</div></div>
+      <div class="st card c-sky" data-step="4" style="padding:12px 24px"><div class="tx" style="font-size:28px"><b>음성</b> 탈락시켰던 Azure 를 안내·선택지 읽기로 다시 사용, 시연용 ElevenLabs 추가</div></div>
+      <div class="st card c-sky" data-step="5" style="padding:12px 24px"><div class="tx" style="font-size:28px"><b>선택지 읽기</b> 자동 읽기 → 한 번 누르면 읽고, 한 번 더 누르면 고름</div></div>
+      <div class="st card c-rose" data-step="6" style="padding:12px 24px"><div class="tx" style="font-size:28px"><b>기획에 없던 것</b> 그림책 디자인, 설정 창, 책장 하트·지우기</div></div>
+    </div>
+  </div>
+  <aside class="notes">말: 기획안과 비교하면 92.4% 일치합니다. 아이가 겪는 흐름은 그대로이고, 저장·배포·LLM 호출·음성 쪽이 마감과 무료 운영에 맞춰 바뀌었습니다.</aside>
+</section>
+
+<!-- 19 회고 -->
+<section class="slide" data-screen-label="19 회고">
+  <header class="hd in"><span class="kick">회고</span><h2>한계와 다음 단계</h2></header>
+  <img class="hd-deco in" src="assets/img/key.webp" alt="" style="--i:2">
+  <div class="cnt" style="top:204px">
+    <div class="grid2" style="gap:40px">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <span class="tag bad in" style="--i:1;align-self:flex-start">한계</span>
+        <div class="st card c-rose" data-step="1" style="padding:16px 28px"><div class="tx" style="font-size:33px">서버 저장 없음 → <b>기기 바꾸면 책장 없음</b></div></div>
+        <div class="st card c-rose" data-step="2" style="padding:16px 28px"><div class="tx" style="font-size:33px">무료 한도 → <b>하루 이야기 수 제한</b>, 서버 재시작하면 한도 계산이 0부터</div></div>
+        <div class="st card c-rose" data-step="3" style="padding:16px 28px"><div class="tx" style="font-size:33px">어미 오타, 프롬프트에 예시로 들어준 문장 그대로 반복</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <span class="tag ok in" style="--i:2;align-self:flex-start">다음 단계</span>
+        <div class="st card c-leaf" data-step="4" style="padding:16px 28px"><div class="tx" style="font-size:33px">익명 ID → <b>구글 로그인 + DB(Supabase)</b>로 책장 옮기기</div></div>
+        <div class="st card c-leaf" data-step="5" style="padding:16px 28px"><div class="tx" style="font-size:33px">유료 모델로 전환하여 성능 평가</div></div>
+        <div class="st card c-leaf" data-step="6" style="padding:16px 28px"><div class="tx" style="font-size:33px">실제 사용 기록으로 선택지·길이 조정</div></div>
+      </div>
+    </div>
+    <div class="st" data-step="7" style="margin-top:44px;text-align:center">
+      <div class="sub" style="font-size:44px;color:var(--ink);font-weight:700"><br></div>
+    </div>
+  </div>
+</section>
+
+<div class="pager" id="pager"><span id="deck-cur">07</span> <em>/ <span id="deck-total">19</span></em></div>
+</div>
+</div>
+
+<script>
+(function () {
+  var stage = document.getElementById('deck-stage');
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var cur = document.getElementById('deck-cur');
+  var total = document.getElementById('deck-total');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var maxStep = slides.map(function (s) {
+    var m = 0;
+    s.querySelectorAll('[data-step]').forEach(function (n) { m = Math.max(m, +n.getAttribute('data-step')); });
+    return m;
+  });
+  var idx = 0, step = 0, timer = null;
+
+  function fit() {
+    var sw = window.innerWidth, sh = window.innerHeight;
+    var s = Math.min(sw / 1920, sh / 1080);
+    if (!isFinite(s) || s <= 0) s = 1;
+    stage.style.transform = 'translate(' + (sw - 1920 * s) / 2 + 'px,' + (sh - 1080 * s) / 2 + 'px) scale(' + s + ')';
+  }
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function paintSteps() {
+    slides[idx].querySelectorAll('[data-step]').forEach(function (n) {
+      n.classList.toggle('on', +n.getAttribute('data-step') <= step);
+    });
+    syncPromo();
+    cur.textContent = pad2(idx + 1);
+    total.textContent = pad2(slides.length);
+    try { window.parent.postMessage({ type: 'od:slide-state', protocolVersion: 1, active: idx, count: slides.length }, '*'); } catch (_) {}
+  }
+  // 표지 0단계: 책 위 작은 화면(소리 없이 반복), 1단계: 화면 가득 처음부터 소리와 함께, 끝나면 마지막 장면에서 멈춤
+  var promo = document.getElementById('promo');
+  var promoBig = null;
+  function syncPromo() {
+    if (!promo) return;
+    var big = idx === 0 && step >= 1;
+    var onCover = idx === 0;
+    if (big === promoBig && onCover) return;
+    promoBig = big;
+    promo.classList.toggle('big', big);
+    document.body.classList.toggle('promo-on', big);
+    var played = null;
+    try {
+      if (big) { promo.loop = false; promo.muted = false; promo.currentTime = 0; played = promo.play(); }
+      else if (onCover) { promo.loop = true; promo.muted = true; played = promo.play(); }
+      else { promo.pause(); promo.muted = true; promoBig = null; }
+    } catch (_) {}
+    if (played && played.catch) played.catch(function () {});
+  }
+  function clearFlip() { slides.forEach(function (x) { x.classList.remove('leaving', 'flip-in', 'under'); }); }
+  function show(i, s, dir) {
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    if (i !== idx && idx < 0) {
+      slides[i].classList.add('active');
+    } else if (i !== idx) {
+      var old = slides[idx];
+      clearFlip();
+      clearTimeout(timer);
+      if (!reduce.matches) {
+        if (dir >= 0) { old.classList.add('leaving'); }
+        else { slides[i].classList.add('flip-in'); old.classList.add('leaving', 'under'); }
+        timer = setTimeout(clearFlip, 720);
+      }
+      old.classList.remove('active');
+      slides[i].classList.add('active');
+    }
+    idx = i;
+    step = Math.max(0, Math.min(maxStep[idx], s));
+    paintSteps();
+  }
+  function next() {
+    if (step < maxStep[idx]) { step++; paintSteps(); }
+    else if (idx < slides.length - 1) show(idx + 1, 0, 1);
+  }
+  function prev() {
+    if (step > 0) { step--; paintSteps(); }
+    else if (idx > 0) show(idx - 1, idx - 1 === 0 ? 0 : maxStep[idx - 1], -1); // 표지로 돌아가면 영상은 작은 화면부터
+  }
+  window.__deck = { next: next, prev: prev, show: show, state: function () { return { idx: idx, step: step, max: maxStep.slice() }; } };
+
+  window.addEventListener('message', function (e) {
+    var d = e && e.data;
+    if (!d || d.type !== 'od:slide') return;
+    if (d.protocolVersion != null && d.protocolVersion !== 1) return;
+    if (d.action === 'go' && typeof d.index === 'number' && isFinite(d.index)) show(Math.floor(d.index), 0, d.index >= idx ? 1 : -1);
+    else if (d.action === 'next') show(idx + 1, 0, 1);
+    else if (d.action === 'prev') show(idx - 1, 0, -1);
+    else if (d.action === 'first') show(0, 0, -1);
+    else if (d.action === 'last') show(slides.length - 1, 0, 1);
+  });
+  // 편집 모드 (E 켜기/끄기, Esc 끄기)
+  // - 글자: 눌러서 바로 고침
+  // - 옮기기: Alt 를 누른 채 끌기 (Alt+클릭만 하면 한 단계 바깥 틀 선택), Alt+화살표로 조금씩
+  // - 크기: 선택하면 오른쪽 아래 파란 점을 끌기
+  // - 그림 바꾸기: 그림을 두 번 누르기
+  // - 저장: Ctrl+S. serve.py 로 열었으면 deck.html 에 바로 저장(이전 판은 backups/), 아니면 내려받기
+  // - PageUp/PageDown 쪽 이동
+  var editing = false, server = false, sel = null;
+  var bar = document.createElement('div');
+  bar.className = 'edit-bar';
+  bar.innerHTML = '<span>편집 중</span>' +
+    '<button type="button" data-act="save">저장 (Ctrl+S)</button>' +
+    '<button type="button" data-act="parent" disabled>바깥 틀 선택</button>' +
+    '<button type="button" data-act="image" disabled>그림 바꾸기</button>' +
+    '<button type="button" data-act="reset" disabled>위치·크기 원래대로</button>' +
+    '<button type="button" data-act="exit">끝내기 (Esc)</button>' +
+    '<span class="msg"></span>';
+  document.body.appendChild(bar);
+  var msg = bar.querySelector('.msg');
+  var handle = document.createElement('div');
+  handle.className = 'ed-handle';
+  stage.appendChild(handle);
+  function say(t) { msg.textContent = t; }
+  function stageScale() { return stage.getBoundingClientRect().width / 1920; }
+
+  fetch('/__ping', { cache: 'no-store' }).then(function (r) { server = r.ok; }).catch(function () { server = false; });
+
+  function setEditing(on) {
+    editing = on;
+    document.body.classList.toggle('editing', on);
+    slides.forEach(function (s) {
+      s.querySelectorAll('h1,h2,h3,p,span,b,small,div,aside,td,th,li').forEach(function (n) {
+        // 글자를 직접 가진 요소만 편집 대상으로 (안쪽 요소를 가진 틀은 건드리지 않음)
+        var own = Array.prototype.some.call(n.childNodes, function (c) { return c.nodeType === 3 && c.textContent.trim(); });
+        var inEditable = n.parentElement && n.parentElement.closest('[contenteditable]');
+        if (on && own && !inEditable) n.setAttribute('contenteditable', 'true');
+        if (!on) n.removeAttribute('contenteditable');
+      });
+    });
+    if (on) say(server ? '저장하면 deck.html 에 바로 씀' : '저장하면 deck.html 내려받기 (serve.py 로 열면 바로 저장)');
+    if (!on) { select(null); closePicker(); }
+    if (!on && document.activeElement) document.activeElement.blur();
+    if (!on) focusDeck();
+  }
+
+  // ── 선택·옮기기·크기 ──
+  function readXY(el) {
+    var p = (el.style.translate || '').split(/\s+/);
+    return [parseFloat(p[0]) || 0, parseFloat(p[1]) || 0];
+  }
+  function readScale(el) { return parseFloat(el.style.scale) || 1; }
+  function placeHandle() {
+    if (!sel) { handle.classList.remove('on'); return; }
+    var sr = stage.getBoundingClientRect(), r = sel.getBoundingClientRect(), k = stageScale();
+    handle.style.left = (r.right - sr.left) / k + 'px';
+    handle.style.top = (r.bottom - sr.top) / k + 'px';
+    handle.classList.add('on');
+  }
+  function select(el) {
+    if (sel) sel.classList.remove('ed-sel');
+    sel = el;
+    if (sel) sel.classList.add('ed-sel');
+    bar.querySelector('[data-act="parent"]').disabled = !sel;
+    bar.querySelector('[data-act="reset"]').disabled = !sel;
+    bar.querySelector('[data-act="image"]').disabled = !(sel && sel.tagName === 'IMG');
+    placeHandle();
+  }
+  function selectable(el) {
+    var s = slides[idx];
+    return el && el !== s && s.contains(el) && el !== handle ? el : null;
+  }
+  function selectParent() {
+    if (!sel) return;
+    var p = sel.parentElement;
+    if (p && p !== slides[idx] && slides[idx].contains(p)) select(p);
+  }
+  var drag = null;
+  document.addEventListener('mousedown', function (e) {
+    if (!editing || e.button !== 0) return;
+    if (e.target === handle) {
+      e.preventDefault();
+      var r = sel.getBoundingClientRect();
+      drag = { mode: 'size', x: e.clientX, w: r.width, s0: readScale(sel) };
+      return;
+    }
+    if (!e.altKey) return;
+    var el = selectable(e.target);
+    if (!el) return;
+    e.preventDefault();
+    var was = !!(sel && sel.contains(el));
+    if (!was) select(el);
+    var xy = readXY(sel);
+    drag = { mode: 'move', x: e.clientX, y: e.clientY, x0: xy[0], y0: xy[1], moved: false, wasSel: was };
+  }, true);
+  document.addEventListener('mousemove', function (e) {
+    if (!drag || !sel) return;
+    var k = stageScale();
+    if (drag.mode === 'move') {
+      var dx = (e.clientX - drag.x) / k, dy = (e.clientY - drag.y) / k;
+      if (Math.abs(dx) + Math.abs(dy) > 3) drag.moved = true;
+      if (drag.moved) sel.style.translate = Math.round(drag.x0 + dx) + 'px ' + Math.round(drag.y0 + dy) + 'px';
+    } else {
+      var ratio = Math.max(0.2, (drag.w + (e.clientX - drag.x)) / drag.w);
+      sel.style.scale = String(Math.round(drag.s0 * ratio * 100) / 100);
+    }
+    placeHandle();
+  });
+  document.addEventListener('mouseup', function () {
+    if (!drag) return;
+    // 끌지 않고 Alt+클릭만 했으면 한 단계 바깥 틀을 고른다 (작은 글자 → 카드 → 묶음)
+    if (drag.mode === 'move' && !drag.moved && drag.wasSel) selectParent();
+    drag = null;
+    placeHandle();
+  });
+  window.addEventListener('resize', function () { if (editing) placeHandle(); });
+
+  // ── 그림 바꾸기 ──
+  var picker = null;
+  function closePicker() { if (picker) { picker.remove(); picker = null; } }
+  function openPicker(img) {
+    closePicker();
+    var list = server
+      ? fetch('/__images', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { return d.images; })
+      : Promise.resolve(Array.prototype.map.call(document.querySelectorAll('.slide img'), function (n) { return n.getAttribute('src').split('/').pop(); })
+          .filter(function (v, i, a) { return a.indexOf(v) === i; }).sort());
+    list.then(function (names) {
+      picker = document.createElement('div');
+      picker.className = 'ed-picker';
+      names.forEach(function (name) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.innerHTML = '<img alt="" src="' + (server ? '/__appimg/' : 'assets/img/') + name + '" />' + name.replace('.webp', '');
+        b.addEventListener('click', function () {
+          var done = server
+            ? fetch('/__use-image', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name }) })
+                .then(function (r) { return r.json(); }).then(function (d) { if (!d.src) throw new Error(d.error); return d.src; })
+            : Promise.resolve('assets/img/' + name);
+          done.then(function (src) { img.setAttribute('src', src); say('그림을 ' + name + ' 로 바꿈'); closePicker(); placeHandle(); })
+            .catch(function (err) { say('그림 바꾸기 실패: ' + err.message); });
+        });
+        picker.appendChild(b);
+      });
+      document.body.appendChild(picker);
+    });
+  }
+  document.addEventListener('dblclick', function (e) {
+    if (!editing || e.target.tagName !== 'IMG' || !selectable(e.target)) return;
+    e.preventDefault();
+    select(e.target);
+    openPicker(e.target);
+  }, true);
+
+  bar.addEventListener('click', function (e) {
+    var act = e.target.getAttribute && e.target.getAttribute('data-act');
+    if (act === 'save') saveDeck();
+    else if (act === 'parent') selectParent();
+    else if (act === 'image' && sel) openPicker(sel);
+    else if (act === 'reset' && sel) { sel.style.translate = ''; sel.style.scale = ''; placeHandle(); }
+    else if (act === 'exit') setEditing(false);
+  });
+
+  // ── 저장 ──
+  function deckHtml() {
+    var doc = document.documentElement.cloneNode(true);
+    doc.querySelectorAll('[contenteditable]').forEach(function (n) { n.removeAttribute('contenteditable'); });
+    doc.querySelectorAll('.edit-bar, .ed-handle, .ed-picker').forEach(function (n) { n.remove(); });
+    doc.querySelectorAll('.ed-sel').forEach(function (n) { n.classList.remove('ed-sel'); });
+    doc.querySelector('body').classList.remove('editing', 'promo-on');
+    doc.querySelectorAll('.promo.big').forEach(function (n) { n.classList.remove('big'); });
+    doc.querySelectorAll('.slide').forEach(function (s, i) {
+      s.classList.remove('active', 'leaving', 'flip-in', 'under');
+      if (i === 0) s.classList.add('active');
+    });
+    doc.querySelectorAll('[data-step].on').forEach(function (n) { n.classList.remove('on'); });
+    doc.querySelectorAll('[class=""]').forEach(function (n) { n.removeAttribute('class'); });
+    var stg = doc.querySelector('#deck-stage'); if (stg) stg.style.transform = '';
+    return '<!DOCTYPE html>\n' + doc.outerHTML;
+  }
+  function saveDeck() {
+    var html = deckHtml();
+    if (server) {
+      say('저장 중…');
+      fetch('/__save', { method: 'POST', headers: { 'Content-Type': 'text/html; charset=utf-8' }, body: html })
+        .then(function (r) { return r.json(); })
+        .then(function (d) { say(d.ok ? '저장함 (이전 판: backups/' + d.backup + ')' : '저장 실패: ' + d.error); })
+        .catch(function (err) { say('저장 실패: ' + err.message); });
+      return;
+    }
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
+    a.download = 'deck.html';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+    say('deck.html 을 내려받음 → presentation 폴더의 파일과 바꾸기');
+  }
+  function onEditKey(e) {
+    var k = e.key;
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'S')) { e.preventDefault(); e.stopPropagation(); if (editing) saveDeck(); return true; }
+    if (!editing) {
+      var t = e.target, typing = t && (t.isContentEditable || /^(INPUT|TEXTAREA)$/.test(t.tagName));
+      if ((k === 'e' || k === 'E' || k === 'ㄷ') && !e.ctrlKey && !e.metaKey && !e.altKey && !typing) { e.preventDefault(); setEditing(true); return true; }
+      return false;
+    }
+    if (k === 'Escape') { e.preventDefault(); if (picker) closePicker(); else if (sel) select(null); else setEditing(false); return true; }
+    if (k === 'PageDown') { e.preventDefault(); select(null); show(idx + 1, maxStep[idx + 1] || 0, 1); return true; }
+    if (k === 'PageUp') { e.preventDefault(); select(null); show(idx - 1, maxStep[idx - 1] || 0, -1); return true; }
+    if (e.altKey && sel && /^Arrow/.test(k)) {
+      e.preventDefault();
+      var xy = readXY(sel), d = e.shiftKey ? 10 : 2;
+      if (k === 'ArrowLeft') xy[0] -= d; if (k === 'ArrowRight') xy[0] += d;
+      if (k === 'ArrowUp') xy[1] -= d; if (k === 'ArrowDown') xy[1] += d;
+      sel.style.translate = xy[0] + 'px ' + xy[1] + 'px';
+      placeHandle();
+      return true;
+    }
+    if (k === 'e' || k === 'E') {
+      var tt = e.target;
+      if (!(tt && tt.isContentEditable)) { e.preventDefault(); setEditing(false); return true; }
+    }
+    return true; // 편집 중에는 나머지 키(화살표·스페이스)를 글쓰기에 맡김
+  }
+
+  function onKey(e) {
+    if (e.__odDeckKeyHandled) return;
+    if (e.__deckEditSeen) return;
+    e.__deckEditSeen = true;
+    if (onEditKey(e)) { e.__odDeckKeyHandled = true; return; }
+    if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ') { e.__odDeckKeyHandled = true; e.preventDefault(); next(); }
+    else if (k === 'ArrowLeft' || k === 'PageUp') { e.__odDeckKeyHandled = true; e.preventDefault(); prev(); }
+    else if (k === 'Home') { e.__odDeckKeyHandled = true; e.preventDefault(); show(0, 0, -1); }
+    else if (k === 'End') { e.__odDeckKeyHandled = true; e.preventDefault(); show(slides.length - 1, 0, 1); }
+  }
+  window.addEventListener('keydown', onKey, true);
+  document.addEventListener('keydown', onKey, true);
+  document.addEventListener('click', function (e) {
+    if (editing) return;
+    if (e.defaultPrevented || (e.button !== undefined && e.button !== 0)) return;
+    if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+    var t = e.target;
+    while (t && t !== document.body) {
+      var tag = String(t.tagName || '').toUpperCase();
+      if (tag === 'A' || tag === 'BUTTON' || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      t = t.parentElement;
+    }
+    next();
+  }, true);
+  document.body.setAttribute('tabindex', '-1');
+  document.body.style.outline = 'none';
+  function focusDeck() { try { window.focus(); document.body.focus({ preventScroll: true }); } catch (_) {} }
+  window.addEventListener('load', focusDeck);
+
+  // #7 → 7번 쪽, #7.3 → 7번 쪽 3단계 (공유·점검용)
+  var m = /^#(\d+)(?:\.(\d+))?$/.exec(location.hash || '');
+  if (m) { slides[0].classList.remove('active'); idx = -1; show(Math.min(slides.length, +m[1]) - 1, m[2] ? +m[2] : 0, 1); }
+
+  window.addEventListener('resize', fit);
+  try { window.parent.postMessage({ type: 'od:deck-ready', protocolVersion: 1, capabilities: ['absolute-navigation', 'state-events'] }, '*'); } catch (_) {}
+  fit();
+  paintSteps();
+})();
+</script>
+
+
+</body></html>
