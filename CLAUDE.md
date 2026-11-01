@@ -115,7 +115,7 @@ uv sync
 :: 이야기 생성·음성 실험 서버 (http://localhost:8000)
 uv run --env-file .env uvicorn app.lab.server:app --port 8000
 
-:: 서비스 API (http://localhost:8001/docs)
+:: 서비스 API (http://localhost:8001/docs) — 기록은 backend\logs\날짜.log 에도 남음
 uv run --env-file .env uvicorn --factory app.main:build_app --port 8001
 ```
 
@@ -188,6 +188,7 @@ uv run --group assets python -m tools.icons
     - 다시 듣기에서 '다음'을 누르면 쪽이 앞 쪽으로 잠깐 돌아가던 버그 수정(MP3 위치 이동)
     - 새 이야기 1편을 처음 선택부터 결말까지 실제로 진행해 확인
   - 결말 장면에 처음 고른 주인공이 빠지면 서버가 서명 전에 넣기 (`rules/story.md`)
+  - 로컬 서버 기록을 `backend/logs/날짜.log`(KST, git 제외)에도 저장: 이야기 기록 + 서버 오류, 비밀값 가림. Render 에서는 자동으로 끔 (`rules/api.md`)
 - 다음 후보: 프롬프트 v1~v9 결과 품질 평가·비교(기준 점수) → 기획안과 결과물 비교(`prd-match-report`) → 3.8 TTS 지시 형식 시험(B)
 - 하지 않기로 함:
   - 임베딩으로 그림·소리 매칭 — 프롬프트에 목록을 넣고 ID 만 고르게 하는 것으로 충분
@@ -213,4 +214,4 @@ uv run --group assets python -m tools.icons
   - 서비스 API 리뷰에서 미룬 작은 문제: 동시 시작 시 초과 예약, anon_id 바꿔 전체 한도 소진 등
   - `run_generate` 기본 프롬프트가 v1 — `--version` 으로 지정해야 함
   - 기획안(PRD)은 3차 기준 — 본문은 고치지 않고 실제 결과물과 비교하기로 함
-  - 서버 기록(story_start·tts·tts_failed 등)은 콘솔·Render Logs 에만 남고 파일로는 저장 안 됨
+  - 배포 서버 기록은 Render Logs 에만 남음(무료 요금제는 디스크가 재배포 때 지워져 파일 저장 안 함)

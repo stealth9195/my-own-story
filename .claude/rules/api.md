@@ -41,7 +41,10 @@ paths:
   - 요청 오류는 예외 글 대신 종류만 남긴다(`요청 실패: LocalProtocolError`). 예외 글에 요청 머리가 들어갈 수 있다.
   - `log_event` 는 등록한 비밀값을 끝 4자리로 가린다(`register_secrets`, 마지막 방어선).
   - 첫 구간을 못 만들면 하루 이야기 수를 되돌린다(`cancel_start`). 실패만 반복하다 '내일 또 만나요'가 떴다.
-- 기록은 DB 대신 `log_event` 로 JSON 한 줄(Cloud Run 로그). API 키·서명 비밀값은 넣지 않는다(`test_log_has_no_secret`).
+- 기록은 DB 대신 `log_event` 로 JSON 한 줄(콘솔·Render Logs). API 키·서명 비밀값은 넣지 않는다(`test_log_has_no_secret`).
+  - 로컬에서는 `backend/logs/YYYY-MM-DD.log`(KST 날짜, `시각 JSON` 한 줄씩)에도 남긴다(`DailyFileHandler`). `story` 기록과 `uvicorn.error`(처리 못 한 예외)를 함께 담고, 파일에 쓸 때도 비밀값을 가린다.
+  - 왜: 콘솔은 창을 닫으면 사라지고 Windows 콘솔에서 한글이 깨져 API 오류 원인을 나중에 찾기 어려웠다(2026-10-31).
+  - `LOG_DIR`(기본 `logs`, 비우면 끔). Render 는 `RENDER` 환경 변수가 있으면 자동으로 끈다(무료 디스크는 재배포 때 지워짐).
 - `.env` 의 JSON 목록(`BACKUP_MODELS`, `CORS_ORIGINS`)은 작은따옴표로 감싼다.
   - 겪은 버그: `uv run --env-file` 이 큰따옴표를 지워 `["a"]` → `[a]` 가 되어 서버가 시작하지 않았다.
 - 빈 주소 줄(`PRIMARY_BASE_URL=`)은 기본 주소(Gemini)로 처리한다. 예전 `.env.example` 을 복사한 `.env` 에 남아 있었다.
