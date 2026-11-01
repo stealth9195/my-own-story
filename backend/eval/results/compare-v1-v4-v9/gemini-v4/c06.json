@@ -1,0 +1,647 @@
+{
+  "case_id": "c06",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "bear",
+    "rainbow",
+    "dragon"
+  ],
+  "card_names": [
+    "곰",
+    "무지개",
+    "아기 용"
+  ],
+  "status": "done",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "알록달록 아름다운 무지개가 커다란 숲에 환하게 떠올랐어요. 아기 용은 무지개 너머로 날아가고 싶어 바쁘게 움직였어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "하지만 하늘에는 반짝이는 구름이 가득해서 길을 찾기 어려웠어요. 아기 용은 속상한 마음에 눈물이 살짝 고였어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "그때 커다란 곰이 나타나 무지개로 가는 길을 도와주겠다고 다가왔어요. 아기 용은 곰과 함께 무지개를 찾아 나서기로 했어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "footsteps"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "map",
+          "label": "지도"
+        },
+        {
+          "kind": "item",
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "kind": "item",
+          "id": "lantern",
+          "label": "등불"
+        }
+      ],
+      "chosen": "balloon",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1926,
+          "dropped": [],
+          "sent_choices": [
+            "map",
+            "balloon",
+            "lantern"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1926
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "아기 용과 곰은 하늘을 나는 풍선을 커다랗게 불었어요.\n두 친구는 풍선에 매달려 구름 위로 둥실 떠올랐지요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "balloon",
+              "rainbow"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "wind"
+        },
+        {
+          "text": "하지만 바람이 너무 세게 불어서 풍선이 자꾸 흔들렸어요.\n알록달록 무지개는 점점 더 멀어져서 마음이 조급해졌지요.",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "surprised"
+              },
+              {
+                "id": "bear",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "balloon",
+              "rainbow"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "아기 용은 바람을 피해 조심스럽게 날갯짓을 시작했어요.\n곰도 튼튼한 두 팔로 풍선을 단단히 붙잡아 주었답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "walking"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "balloon",
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "힘을 합쳐 나아가자 눈앞에 찬란한 무지개가 활짝 펼쳐졌어요.\n아기 용과 곰은 웃으며 무지개 위를 신나게 달렸어요.",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "kind": "item",
+          "id": "umbrella",
+          "label": "우산"
+        },
+        {
+          "kind": "item",
+          "id": "whale",
+          "label": "고래"
+        },
+        {
+          "kind": "item",
+          "id": "key",
+          "label": "열쇠"
+        }
+      ],
+      "chosen": "key",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2504,
+          "dropped": [
+            "bird"
+          ],
+          "sent_choices": [
+            "apple",
+            "umbrella",
+            "bird"
+          ],
+          "page_count": 4,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2504
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "무지개 위를 신나게 달리던 아기 용과 곰은 잠긴 문을 발견했어요. 그 문 너머에 더 멋진 무지개가 있을 것 같았지요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "key",
+              "rainbow"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "bell"
+        },
+        {
+          "text": "하지만 문을 열쇠로 열어야 하는데 닫혀서 들어갈 수가 없었어요. 아기 용은 살짝 당황하며 발을 동동 구르기도 했답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "key"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "곰이 주머니 속에서 반짝이는 열쇠를 꺼내어 건네주었어요. 아기 용은 두손으로 열쇠를 꼭 쥐고 자물쇠에 꽂았지요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "thinking"
+              },
+              {
+                "id": "bear",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "key"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "딸깍 소리와 함께 문이 열리고 눈부신 빛이 환하게 쏟아졌어요. 함께 힘을 합쳐 문을 열자 더욱 아름다운 세상이 펼쳐졌답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rainbow",
+              "key"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "cookie",
+          "label": "쿠키"
+        },
+        {
+          "kind": "item",
+          "id": "rabbit",
+          "label": "토끼"
+        },
+        {
+          "kind": "item",
+          "id": "music_box",
+          "label": "오르골"
+        }
+      ],
+      "chosen": "cookie",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2266,
+          "dropped": [],
+          "sent_choices": [
+            "cookie",
+            "rabbit",
+            "music_box"
+          ],
+          "page_count": 4,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2266
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "빛이 쏟아진 곳에는 달콤한 냄새가 가득한 방이 나왔어요. 아기 용과 곰은 그곳에서 맛있어 보이는 쿠키를 발견했지요.",
+          "scene": {
+            "background": "castle",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cookie"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "door_open"
+        },
+        {
+          "text": "아기 용은 혼자서 쿠키를 전부 먹고 싶어 슬쩍 숨겼어요. 하지만 곰이 서운한 표정을 짓자 아기 용은 마음이 조금 이상해졌지요.",
+          "scene": {
+            "background": "castle",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "thinking"
+              },
+              {
+                "id": "bear",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "cookie"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "아기 용은 곰의 얼굴을 바라보다가 쿠키를 반으로 쪼개어 내밀었어요. 곰은 활짝 웃으며 고맙다고 인사를 건넸답니다.",
+          "scene": {
+            "background": "castle",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cookie"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "함께 나누어 먹은 쿠키 덕분에 마음까지 따뜻해졌어요. 두 친구는 더 다정한 마음으로 새로운 모험을 떠났답니다.",
+          "scene": {
+            "background": "castle",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cookie"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "cake",
+          "label": "케이크"
+        },
+        {
+          "kind": "item",
+          "id": "star",
+          "label": "별"
+        },
+        {
+          "kind": "item",
+          "id": "flower_crown",
+          "label": "꽃 왕관"
+        },
+        {
+          "kind": "item",
+          "id": "kite",
+          "label": "연"
+        }
+      ],
+      "chosen": "flower_crown",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1801,
+          "dropped": [
+            "sad",
+            "balloon"
+          ],
+          "sent_choices": [
+            "cake",
+            "balloon",
+            "star"
+          ],
+          "page_count": 4,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1801
+    },
+    {
+      "type": "ending",
+      "pages": [
+        {
+          "text": "아기 용과 곰은 나란히 걸으며 예쁜 길을 구경했어요. 그때 나무 뒤에서 반짝이는 무엇인가가 인사했어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "flower_crown"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "다정한 요정이 나타나 두 친구에게 예쁜 꽃 왕관을 씌워주었어요. 머리 위에 놓인 왕관이 햇살처럼 환하게 빛났답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "fairy",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "flower_crown"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "아기 용은 곰의 머리에도 꽃 왕관을 예쁘게 얹어 주었어요. 곰도 아기 용의 머리를 다정하게 쓰다듬어 주었지요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "flower_crown"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "꽃 왕관을 나란히 쓴 두 친구는 서로를 보며 환하게 웃었어요. 마음을 나누며 함께하는 모험이 언제나 즐거웠답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "flower_crown"
+            ]
+          },
+          "mood": "calm",
+          "sfx": "birds"
+        }
+      ],
+      "choices": [],
+      "chosen": null,
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": false,
+          "errors": [
+            "page_count"
+          ],
+          "latency_ms": 1763,
+          "dropped": [],
+          "sent_choices": [],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2206,
+          "dropped": [],
+          "sent_choices": [],
+          "page_count": 4,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 3969
+    }
+  ],
+  "failed_at": null
+}

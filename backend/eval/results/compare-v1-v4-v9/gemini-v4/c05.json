@@ -1,0 +1,501 @@
+{
+  "case_id": "c05",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "dinosaur",
+    "cake",
+    "rabbit",
+    "star",
+    "rose"
+  ],
+  "card_names": [
+    "공룡",
+    "케이크",
+    "토끼",
+    "별",
+    "장미"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "예쁜 별이 반짝이는 밤에 아기 공룡이 맛있는 케이크를 만들었어요. 토끼와 함께 먹으려고 케이크에 장미꽃을 올렸지요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star",
+              "cake",
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "그런데 토끼가 오기도 전에 배가 고픈 아기 공룡이 케이크를 혼자 다 먹어 버렸어요. 토끼가 놀러 왔지만 케이크가 없어 토끼는 서운해서 눈물이 났어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "surprised"
+              },
+              {
+                "id": "rabbit",
+                "state": "scared"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "아기 공룡은 속상해하는 토끼를 보고 깜짝 놀랐어요. 토끼를 달래주려고 아기 공룡이 무언가를 찾아보기로 했어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "thinking"
+              },
+              {
+                "id": "rabbit",
+                "state": "idle"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "warm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "honey",
+          "label": "꿀단지"
+        },
+        {
+          "kind": "item",
+          "id": "ball",
+          "label": "공"
+        },
+        {
+          "kind": "item",
+          "id": "umbrella",
+          "label": "우산"
+        }
+      ],
+      "chosen": "honey",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2177,
+          "dropped": [],
+          "sent_choices": [
+            "honey",
+            "ball",
+            "umbrella"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2177
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "아기 공룡은 달콤한 꿀단지를 번쩍 들고 토끼에게 다가갔어요.\n토끼는 꿀단지를 보며 눈물을 톡 그치고 쳐다보았지요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "walking"
+              },
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "honey"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "하지만 혼자 꿀을 먹으려니 토끼 얼굴이 다시 시무룩해졌어요.\n아기 공룡은 꿀을 어떻게 나누어 먹어야 할지 고민에 빠졌답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "thinking"
+              },
+              {
+                "id": "rabbit",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "honey"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "아기 공룡은 꿀단지를 기울여 두 개의 컵에 똑같이 나누어 담았어요.\n노랗고 달콤한 꿀이 반짝이자 토끼가 활짝 웃음을 지었답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "honey"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "cookie",
+          "label": "쿠키"
+        },
+        {
+          "kind": "item",
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "kind": "item",
+          "id": "balloon",
+          "label": "풍선"
+        }
+      ],
+      "chosen": "balloon",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": false,
+          "errors": [
+            "page_count"
+          ],
+          "latency_ms": 1530,
+          "dropped": [],
+          "sent_choices": [],
+          "page_count": 2,
+          "message": "",
+          "warnings": []
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2297,
+          "dropped": [
+            "sad"
+          ],
+          "sent_choices": [
+            "cookie",
+            "apple",
+            "balloon"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 3827
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "노란 꿀을 나누어 마신 두 친구는 신나게 춤을 추었어요. 그때 반짝이는 별빛 아래에서 달콤한 냄새가 솔솔 풍겨왔답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star",
+              "honey"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        },
+        {
+          "text": "아기 공룡과 토끼는 숲속에서 맛있는 간식을 찾아 나섰어요. 덤불 속에서 알록달록한 보물 상자를 발견했지요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "walking"
+              },
+              {
+                "id": "rabbit",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "treasure_box"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "보물 상자 안에는 무엇이 들어 있었을까요? 친구들은 함께 상자를 열어보며 활짝 웃었답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "treasure_box"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "magic_wand",
+          "label": "요술봉"
+        },
+        {
+          "kind": "item",
+          "id": "bicycle",
+          "label": "자전거"
+        },
+        {
+          "kind": "item",
+          "id": "music_box",
+          "label": "오르골"
+        }
+      ],
+      "chosen": "bicycle",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2307,
+          "dropped": [],
+          "sent_choices": [
+            "magic_wand",
+            "bicycle",
+            "music_box"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2307
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "알록달록 보물 상자 안에는 멋진 자전거가 들어 있었어요. 두 친구는 자전거를 번갈아 타며 신나게 달렸답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "bicycle",
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        },
+        {
+          "text": "자전거를 함께 타며 친구는 서로를 밀어주고 당겨주었어요. 혼자보다 같이 타니 훨씬 더 즐거운 마음이 들었답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "walking"
+              },
+              {
+                "id": "rabbit",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "bicycle"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "wind"
+        },
+        {
+          "text": "두 친구는 자전거를 세워두고 밤하늘의 예쁜 별을 함께 올려다보았어요. 마음을 나누니 반짝이는 별빛이 더욱 따스하게 느껴졌답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "idle"
+              },
+              {
+                "id": "rabbit",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "calm",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "lantern",
+          "label": "등불"
+        },
+        {
+          "kind": "item",
+          "id": "penguin",
+          "label": "펭귄"
+        },
+        {
+          "kind": "item",
+          "id": "dragon",
+          "label": "아기 용"
+        },
+        {
+          "kind": "item",
+          "id": "princess",
+          "label": "공주"
+        }
+      ],
+      "chosen": "princess",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1986,
+          "dropped": [
+            "balloon",
+            "apple",
+            "music_box",
+            "umbrella"
+          ],
+          "sent_choices": [
+            "balloon",
+            "apple",
+            "music_box",
+            "umbrella"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1986
+    }
+  ],
+  "failed_at": 4,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count"
+      ],
+      "latency_ms": 1224,
+      "dropped": [],
+      "sent_choices": [],
+      "page_count": 2,
+      "message": "",
+      "warnings": []
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count"
+      ],
+      "latency_ms": 1575,
+      "dropped": [],
+      "sent_choices": [],
+      "page_count": 2,
+      "message": "",
+      "warnings": []
+    }
+  ]
+}

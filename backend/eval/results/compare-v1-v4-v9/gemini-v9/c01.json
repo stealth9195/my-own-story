@@ -1,0 +1,542 @@
+{
+  "case_id": "c01",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v9",
+  "cards": [
+    "rabbit",
+    "rose",
+    "star"
+  ],
+  "card_names": [
+    "토끼",
+    "장미",
+    "별"
+  ],
+  "status": "done",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "욕심쟁이 토끼는 숲속 작은 집에 살고 있었어요. 토끼는 반짝이는 장미를 혼자만 보고 싶어 했어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "토끼는 장미를 품에 꼭 안고 집 밖으로 걸어 나갔어요. 밤이 되자 예쁘게 빛나던 장미의 빛이 점점 흐려졌어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "토끼는 당황해서 주위를 둘러보았어요. 밤하늘을 올려다보니 원래 반짝여야 할 하늘이",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "star",
+              "rose"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "kind": "phrase",
+          "id": "phrase-1",
+          "label": "별이 하나도 없었어요"
+        },
+        {
+          "kind": "phrase",
+          "id": "phrase-2",
+          "label": "까만 구름으로 가득했어요"
+        },
+        {
+          "kind": "phrase",
+          "id": "phrase-3",
+          "label": "빛이 모두 사라졌어요"
+        }
+      ],
+      "chosen": "phrase-1",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1836,
+          "dropped": [],
+          "sent_choices": [
+            "별이 하나도 없었어요",
+            "까만 구름으로 가득했어요",
+            "빛이 모두 사라졌어요"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1836
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "별이 하나도 없었어요. 밤하늘이 너무 까맣고 쓸쓸해 보였어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "토끼는 장미를 반짝이게 하려고 하늘을 향해 들어 올렸어요. 하지만 장미는 반짝이기는커녕 점점 더 어두워졌어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "그때 어두운 나무 위에서 살짝 소리가 들렸어요. 나무 위에서 내려다보던 건",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "owl",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "birds"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "bear",
+          "label": "곰"
+        },
+        {
+          "kind": "item",
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "kind": "item",
+          "id": "cake",
+          "label": "케이크"
+        }
+      ],
+      "chosen": "apple",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1998,
+          "dropped": [
+            "owl"
+          ],
+          "sent_choices": [
+            "owl",
+            "bear",
+            "apple"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1998
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "나무 위에서 내려다보던 다람쥐가 빨갛고 동그란 사과를 툭 떨어뜨렸어요. 토끼는 깜짝 놀라 뒤로 엉덩방아를 찧었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "squirrel",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "rose",
+              "apple"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "pop"
+        },
+        {
+          "text": "다람쥐는 토끼 품에 안긴 장미를 보며 밤하늘에 별을 돌려주려면 다른 친구들과 함께 힘을 합쳐야 한다고 말해 주었어요. 토끼는 혼자만 가지려던 장미를 꼭 쥐고 고민에 빠졌어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "thinking"
+              },
+              {
+                "id": "squirrel",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "rose",
+              "apple"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "토끼가 장미를 어떻게 해야 할지 망설이고 있을 때, 조용한 숲길을 따라 쿵쾅거리며 다가온 것은...",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "footsteps"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "elephant",
+          "label": "코끼리"
+        },
+        {
+          "kind": "item",
+          "id": "fox",
+          "label": "여우"
+        },
+        {
+          "kind": "item",
+          "id": "snowman",
+          "label": "눈사람"
+        }
+      ],
+      "chosen": "snowman",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2107,
+          "dropped": [
+            "owl"
+          ],
+          "sent_choices": [
+            "elephant",
+            "fox",
+            "owl"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2107
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "토끼는 혼자만 가지려던 장미를 내려놓고 눈사람에게 다가갔어요. 토끼는 장미의 빛을 되찾기 위해 친구들과 함께 나누기로 마음먹었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "talking"
+              },
+              {
+                "id": "snowman",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "눈사람은 환하게 웃으며 장미를 건네받고 밤하늘을 향해 높이 들어 올렸어요. 그러자 장미가 다시 환하게 빛나기 시작했어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "snowman",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "장미의 따뜻한 빛이 밤하늘로 올라가 잃어버렸던 별들을 환하게 밝혔어요. 깜깜했던 숲속이 별빛으로 가득해졌어요. 그때 눈앞에 나타난 것은 바로...",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "snowman",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star",
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "dinosaur",
+          "label": "공룡"
+        },
+        {
+          "kind": "item",
+          "id": "ball",
+          "label": "공"
+        },
+        {
+          "kind": "item",
+          "id": "seashell",
+          "label": "조개껍데기"
+        }
+      ],
+      "chosen": "dinosaur",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": false,
+          "errors": [
+            "page_count",
+            "no_pages"
+          ],
+          "latency_ms": 2006,
+          "dropped": [],
+          "sent_choices": [],
+          "page_count": 0,
+          "message": "",
+          "warnings": []
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1595,
+          "dropped": [
+            "squirrel",
+            "owl",
+            "fox"
+          ],
+          "sent_choices": [
+            "squirrel",
+            "owl",
+            "fox"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 3601
+    },
+    {
+      "type": "ending",
+      "pages": [
+        {
+          "text": "커다란 공룡이 다가와 눈사람과 토끼를 보며 활짝 웃었어요. 공룡은 환하게 빛나는 장미를 보며 기뻐서 깡충깡충 뛰었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "snowman",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "토끼는 공룡에게 다가가 장미를 함께 보자고 손을 내밀었어요. 공룡은 고맙다며 토끼의 손을 꼭 잡았어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "talking"
+              },
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "토끼와 친구들은 아름다운 별빛 아래에서 다 함께 신나게 노래를 불렀어요. 숲속은 따뜻한 온기로 가득 찼어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "snowman",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star",
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        }
+      ],
+      "choices": [],
+      "chosen": null,
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1644,
+          "dropped": [],
+          "sent_choices": [],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1644
+    }
+  ],
+  "failed_at": null
+}

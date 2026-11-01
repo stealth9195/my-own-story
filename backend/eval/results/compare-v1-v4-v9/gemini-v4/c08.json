@@ -1,0 +1,514 @@
+{
+  "case_id": "c08",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "rabbit",
+    "dinosaur",
+    "rainbow"
+  ],
+  "card_names": [
+    "토끼",
+    "공룡",
+    "무지개"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "예쁜 무지개가 뜬 푸른 풀밭에 토끼가 찾아왔어요. 토끼는 알록달록한 무지개 위를 걷고 싶었지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "하지만 무지개는 하늘 높이 떠 있어서 닿을 수가 없었어요. 토끼는 발을 동동 구르며 속상해했어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "scared"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "그때 커다란 공룡이 나타나 반짝이는 것을 건네주었어요. 토끼는 무지개에 닿기 위해 무엇을 먼저 집어 들었을까요?",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "pop"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "kind": "item",
+          "id": "umbrella",
+          "label": "우산"
+        },
+        {
+          "kind": "item",
+          "id": "apple",
+          "label": "사과"
+        }
+      ],
+      "chosen": "balloon",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2177,
+          "dropped": [],
+          "sent_choices": [
+            "balloon",
+            "umbrella",
+            "apple"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2177
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "토끼는 커다란 풍선에 알록달록한 줄을 묶었어요.\n두근두근 설레는 마음으로 풍선을 꼭 쥐었지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "dinosaur",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "balloon",
+              "rainbow"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "pop"
+        },
+        {
+          "text": "풍선을 타고 하늘 높이 두둥실 떠올랐어요.\n하지만 무지개는 아직도 저 위에 둥둥 떠 있었어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "balloon",
+              "rainbow"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "토끼는 풍선을 놓고 곰과 함께 무지개 끝을 잡았어요.\n두 손으로 힘껏 잡아당기자 무지개가 아래로 내려왔어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "토끼는 친구와 함께 알록달록한 무지개 위를 걸었어요.\n사뿐사뿐 발을 디딜 때마다 예쁜 노랫소리가 울려 퍼졌어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "walking"
+              },
+              {
+                "id": "bear",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "star",
+          "label": "별"
+        },
+        {
+          "kind": "item",
+          "id": "bicycle",
+          "label": "자전거"
+        },
+        {
+          "kind": "item",
+          "id": "letter",
+          "label": "편지"
+        },
+        {
+          "kind": "item",
+          "id": "crown",
+          "label": "왕관"
+        }
+      ],
+      "chosen": "bicycle",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": false,
+          "errors": [
+            "page_count"
+          ],
+          "latency_ms": 1719,
+          "dropped": [
+            "cloud"
+          ],
+          "sent_choices": [
+            "star",
+            "butterfly",
+            "cookie",
+            "cloud"
+          ],
+          "page_count": 2,
+          "message": "",
+          "warnings": []
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2772,
+          "dropped": [
+            "bear"
+          ],
+          "sent_choices": [
+            "bear",
+            "star",
+            "bicycle"
+          ],
+          "page_count": 4,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 4491
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "노랫소리를 들으며 걷던 토끼는 자전거를 타고 놀고 싶어졌어요.\n하지만 자전거는 바퀴가 하나 망가져서 앞으로 나아가지 않았지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "bicycle",
+              "rainbow"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "토끼는 망가진 자전거를 고치기 위해 반짝이는 열쇠를 주머니에서 꺼냈어요.\n열쇠로 나사를 꽉 조이자 바퀴가 튼튼하게 움직이기 시작했어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "bicycle",
+              "key"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "토끼는 수리한 자전거를 타고 무지개 위를 신나게 달렸어요.\n바람을 가르며 달릴 때마다 세상이 더욱 환하게 빛났답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "bicycle",
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "cookie",
+          "label": "쿠키"
+        },
+        {
+          "kind": "item",
+          "id": "turtle",
+          "label": "거북이"
+        },
+        {
+          "kind": "item",
+          "id": "honey",
+          "label": "꿀단지"
+        },
+        {
+          "kind": "item",
+          "id": "grandpa",
+          "label": "할아버지"
+        }
+      ],
+      "chosen": "honey",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2000,
+          "dropped": [
+            "sad",
+            "key"
+          ],
+          "sent_choices": [
+            "key",
+            "cookie",
+            "turtle"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2000
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "달리던 토끼 앞에 달콤한 꿀단지가 놓여 있었어요. 토끼는 맛있는 꿀을 먹고 싶어 자전거를 멈춰 세웠지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "honey",
+              "bicycle"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        },
+        {
+          "text": "하지만 꿀단지 뚜껑이 꽉 닫혀서 열리지 않았어요. 토끼는 꿀을 혼자 다 먹으려다 그만 쏟을 뻔했지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "honey"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "마침 지나가던 여우가 와서 뚜껑을 함께 열어 주었어요. 토끼는 달콤한 꿀을 나누어 먹으며 환하게 웃었답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "fox",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "honey"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "robot",
+          "label": "로봇"
+        },
+        {
+          "kind": "item",
+          "id": "hedgehog",
+          "label": "고슴도치"
+        },
+        {
+          "kind": "item",
+          "id": "frog",
+          "label": "개구리"
+        },
+        {
+          "kind": "item",
+          "id": "map",
+          "label": "지도"
+        }
+      ],
+      "chosen": "robot",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2091,
+          "dropped": [
+            "fox",
+            "balloon"
+          ],
+          "sent_choices": [
+            "fox",
+            "robot",
+            "balloon"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2091
+    }
+  ],
+  "failed_at": 4,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count"
+      ],
+      "latency_ms": 2073,
+      "dropped": [],
+      "sent_choices": [],
+      "page_count": 3,
+      "message": "",
+      "warnings": []
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count"
+      ],
+      "latency_ms": 2080,
+      "dropped": [],
+      "sent_choices": [],
+      "page_count": 3,
+      "message": "",
+      "warnings": []
+    }
+  ]
+}

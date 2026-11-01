@@ -1,0 +1,14 @@
+file,model,case_id
+s01,gemini-v9,c04
+s02,gemini-v9,c02
+s03,gemini-v4,c04
+s04,gemini-v9,c07
+s05,gemini-v9,c10
+s06,gemini-v9,c01
+s07,gemini-v9,c09
+s08,gemini-v9,c06
+s09,gemini-v4,c06
+s10,gemini-v4,c10
+s11,gemini-v4,c02
+s12,gemini-v4,c03
+s13,gemini-v9,c08

@@ -1,0 +1,576 @@
+{
+  "case_id": "c04",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "cat",
+    "rose",
+    "rainbow"
+  ],
+  "card_names": [
+    "고양이",
+    "장미",
+    "무지개"
+  ],
+  "status": "done",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "예쁜 장미 꽃밭에 반짝반짝 무지개가 떴어요. 고양이가 그 아래에서 예쁜 장미를 쳐다보았어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "고양이는 장미꽃 곁에 커다란 케이크를 놓고 싶었어요. 하지만 케이크를 둘 자리가 없어 속상했어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "rose",
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "고양이는 케이크를 둘 멋진 자리를 찾기로 했어요. 어디로 가면 예쁜 자리를 찾을 수 있을까요?",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "kind": "item",
+          "id": "umbrella",
+          "label": "우산"
+        },
+        {
+          "kind": "item",
+          "id": "boy",
+          "label": "남자아이"
+        },
+        {
+          "kind": "item",
+          "id": "bicycle",
+          "label": "자전거"
+        }
+      ],
+      "chosen": "bicycle",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1993,
+          "dropped": [
+            "forest"
+          ],
+          "sent_choices": [
+            "forest",
+            "balloon",
+            "umbrella"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1993
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "고양이는 자전거를 타고 쌩쌩 달렸어요. 하지만 케이크를 실을 곳이 없어 멈춰 섰어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "bicycle",
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "이번에는 반짝이는 별님에게 도움을 청하기로 했어요. 밤이 되자 하늘에 예쁜 별이 가득 떴어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star",
+              "cake"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "고양이는 커다란 케이크를 혼자 먹지 않고 친구들과 나누기로 했어요. 친구들이 모여서 달콤한 케이크를 맛있게 먹었어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "fairy",
+          "label": "요정"
+        },
+        {
+          "kind": "item",
+          "id": "giraffe",
+          "label": "기린"
+        },
+        {
+          "kind": "item",
+          "id": "lantern",
+          "label": "등불"
+        },
+        {
+          "kind": "item",
+          "id": "crown",
+          "label": "왕관"
+        }
+      ],
+      "chosen": "fairy",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1781,
+          "dropped": [
+            "star",
+            "rabbit",
+            "bear"
+          ],
+          "sent_choices": [
+            "star",
+            "rabbit",
+            "bear"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1781
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "요정이 나타나서 마법의 지팡이를 톡톡 두드렸어요. 그러자 맛있는 케이크가 초콜릿 집으로 변했어요.",
+          "scene": {
+            "background": "village",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "surprised"
+              },
+              {
+                "id": "fairy",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "rainbow",
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "고양이는 친구들과 함께 초콜릿 집을 나누어 먹었어요. 혼자서는 못 먹을 만큼 커서 모두가 배불렀어요.",
+          "scene": {
+            "background": "village",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              },
+              {
+                "id": "fairy",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "rainbow"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        },
+        {
+          "text": "친구들과 힘을 합치니 고민이 싹 사라졌어요. 장미 꽃밭에는 행복한 웃음소리가 가득 울려 퍼졌답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              },
+              {
+                "id": "fairy",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "wizard",
+          "label": "마법사"
+        },
+        {
+          "kind": "item",
+          "id": "whale",
+          "label": "고래"
+        },
+        {
+          "kind": "item",
+          "id": "key",
+          "label": "열쇠"
+        },
+        {
+          "kind": "item",
+          "id": "owl",
+          "label": "부엉이"
+        }
+      ],
+      "chosen": "whale",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2099,
+          "dropped": [
+            "dog",
+            "dog"
+          ],
+          "sent_choices": [],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2099
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "고양이는 고래를 타고 넓은 바다로 모험을 떠났어요. 커다란 케이크도 고래의 등에 조심히 실었답니다.",
+          "scene": {
+            "background": "sea",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "splash"
+        },
+        {
+          "text": "고래가 시원한 물줄기를 뿜어내자 무지개가 피어올랐어요. 케이크를 나누어 먹을 친구들이 바다 위로 모여들었어요.",
+          "scene": {
+            "background": "sea",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              },
+              {
+                "id": "penguin",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "cake",
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "모두 함께 맛있는 케이크를 나누며 즐겁게 놀았어요. 혼자서는 못 했을 멋진 파티가 완성되었답니다.",
+          "scene": {
+            "background": "sea",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              },
+              {
+                "id": "penguin",
+                "state": "talking"
+              },
+              {
+                "id": "whale",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake",
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "kind": "item",
+          "id": "ball",
+          "label": "공"
+        },
+        {
+          "kind": "item",
+          "id": "map",
+          "label": "지도"
+        }
+      ],
+      "chosen": "map",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1572,
+          "dropped": [
+            "whale",
+            "whale",
+            "penguin"
+          ],
+          "sent_choices": [
+            "penguin",
+            "apple",
+            "ball",
+            "map"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1572
+    },
+    {
+      "type": "ending",
+      "pages": [
+        {
+          "text": "고양이는 지도를 펼쳐서 새로운 놀고 곳을 찾았어요. 지도가 가리키는 곳으로 신나게 걸어갔지요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "map",
+              "rose",
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "초록 숲속에 도착하자 반가운 친구들이 기다리고 있었어요. 친구들과 함께 멋진 놀이를 시작했답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              },
+              {
+                "id": "squirrel",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "rainbow"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        },
+        {
+          "text": "함께 힘을 모아 예쁜 장미로 꽃다발을 만들었어요. 무지개 빛깔 리본으로 예쁘게 묶어 주었지요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              },
+              {
+                "id": "squirrel",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        },
+        {
+          "text": "서로에게 꽃다발을 건네며 환하게 웃었어요. 함께 나누는 마음 덕분에 온 세상이 따뜻해졌답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              },
+              {
+                "id": "squirrel",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [],
+      "chosen": null,
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1679,
+          "dropped": [],
+          "sent_choices": [],
+          "page_count": 4,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1679
+    }
+  ],
+  "failed_at": null
+}

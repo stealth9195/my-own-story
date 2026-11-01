@@ -1,0 +1,588 @@
+{
+  "case_id": "c10",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "dinosaur",
+    "rose",
+    "cake"
+  ],
+  "card_names": [
+    "공룡",
+    "장미",
+    "케이크"
+  ],
+  "status": "done",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "예쁜 장미가 활짝 핀 숲속에 달콤한 케이크가 놓였어요. 공룡은 케이크를 혼자서 모두 먹고 싶었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "친구가 다가와 함께 먹자고 손을 내밀었어요. 하지만 공룡은 친구에게 케이크를 주기 싫었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "thinking"
+              },
+              {
+                "id": "rabbit",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "욕심을 부리다가 그만 케이크가 숲속으로 데굴데굴 굴러갔어요. 공룡은 깜짝 놀라서 뒤를 쫓아갔어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "footsteps"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "kind": "item",
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "kind": "item",
+          "id": "map",
+          "label": "지도"
+        }
+      ],
+      "chosen": "balloon",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1924,
+          "dropped": [],
+          "sent_choices": [
+            "apple",
+            "balloon",
+            "map"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1924
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "공룡은 멀리 날아가는 풍선을 잡으려고 까치발을 들었어요. 하지만 팔이 짧아서 풍선을 잡을 수가 없었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "balloon",
+              "rose",
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "그때 숲속 친구가 나타나 위로 툭 쳐서 풍선을 내려주었어요. 공룡은 고마운 마음에 주머니를 뒤적였어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "thinking"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "balloon",
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "공룡은 방금 찾은 달콤한 간식을 친구에게 살짝 내밀었어요. 둘은 나란히 앉아 맛있게 나누어 먹었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "star",
+          "label": "별"
+        },
+        {
+          "kind": "item",
+          "id": "cookie",
+          "label": "쿠키"
+        },
+        {
+          "kind": "item",
+          "id": "bicycle",
+          "label": "자전거"
+        }
+      ],
+      "chosen": "star",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1734,
+          "dropped": [
+            "rabbit"
+          ],
+          "sent_choices": [
+            "rabbit",
+            "star",
+            "cookie",
+            "bicycle"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1734
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "공룡과 친구는 반짝이는 밤하늘을 올려다보았어요. 밤하늘에는 커다란 별 하나가 반짝이고 있었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "squirrel",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "둘은 별빛을 따라 숲속 길을 함께 걸었어요. 밤이라서 길이 조금 어둡고 무서웠어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "scared"
+              },
+              {
+                "id": "squirrel",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "lantern"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "공룡은 주저앉지 않고 친구의 손을 꼭 잡았어요. 둘은 용기를 내어 어두운 길을 환하게 밝히며 걸어갔어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "idle"
+              },
+              {
+                "id": "squirrel",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "lantern"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        },
+        {
+          "text": "환한 웃음과 함께 어둠이 사라지고 아름다운 집이 나타났어요. 혼자라면 무서웠겠지만 함께여서 더 즐거웠답니다.",
+          "scene": {
+            "background": "castle",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "squirrel",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "flower_crown"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "monkey",
+          "label": "원숭이"
+        },
+        {
+          "kind": "item",
+          "id": "grandma",
+          "label": "할머니"
+        },
+        {
+          "kind": "item",
+          "id": "robot",
+          "label": "로봇"
+        },
+        {
+          "kind": "item",
+          "id": "prince",
+          "label": "왕자"
+        }
+      ],
+      "chosen": "prince",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2355,
+          "dropped": [
+            "brave",
+            "lantern",
+            "flower_crown",
+            "squirrel"
+          ],
+          "sent_choices": [
+            "lantern",
+            "flower_crown",
+            "squirrel"
+          ],
+          "page_count": 4,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2355
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "공룡과 친구는 아름다운 집 문을 살짝 열었어요. 집 안에는 예쁜 왕자가 기다리고 있었어요.",
+          "scene": {
+            "background": "castle",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "prince",
+                "state": "surprised"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "warm",
+          "sfx": "door_open"
+        },
+        {
+          "text": "왕자는 깜짝 놀란 공룡에게 반갑게 손을 흔들었어요. 그리고 따뜻한 차를 마시며 쉬어가라고 권했어요.",
+          "scene": {
+            "background": "castle",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "surprised"
+              },
+              {
+                "id": "prince",
+                "state": "talking"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "공룡은 왕자와 함께 따뜻한 차를 마시며 미소를 지었어요. 혼자보다 함께 나누는 즐거움을 환하게 배웠답니다.",
+          "scene": {
+            "background": "castle",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "prince",
+                "state": "happy"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "warm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "penguin",
+          "label": "펭귄"
+        },
+        {
+          "kind": "item",
+          "id": "umbrella",
+          "label": "우산"
+        },
+        {
+          "kind": "item",
+          "id": "ball",
+          "label": "공"
+        },
+        {
+          "kind": "item",
+          "id": "fox",
+          "label": "여우"
+        }
+      ],
+      "chosen": "ball",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1945,
+          "dropped": [],
+          "sent_choices": [
+            "penguin",
+            "umbrella",
+            "ball",
+            "fox"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1945
+    },
+    {
+      "type": "ending",
+      "pages": [
+        {
+          "text": "공룡은 왕자와 함께 방 안을 둘러보며 공놀이를 시작했어요. 공을 굴리며 신나게 웃는 동안 마음이 따뜻해졌어요.",
+          "scene": {
+            "background": "castle",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "prince",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "ball"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        },
+        {
+          "text": "친구도 함께 공을 받아 치며 환하게 웃었어요. 혼자 놀 때보다 둘이 함께하니 훨씬 더 즐거웠답니다.",
+          "scene": {
+            "background": "castle",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "prince",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "ball"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "공룡은 나누는 즐거움을 가득 안고 집을 나섰어요. 밤하늘의 별빛이 반짝이며 따뜻한 길을 비추어 주었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        },
+        {
+          "text": "장미 향기가 가득한 숲속에서 모두가 미소를 지었어요. 함께 나눈 따뜻한 마음은 오래도록 행복하게 남았답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        }
+      ],
+      "choices": [],
+      "chosen": null,
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": false,
+          "errors": [
+            "page_count"
+          ],
+          "latency_ms": 1249,
+          "dropped": [],
+          "sent_choices": [],
+          "page_count": 2,
+          "message": "",
+          "warnings": []
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2092,
+          "dropped": [],
+          "sent_choices": [],
+          "page_count": 4,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 3341
+    }
+  ],
+  "failed_at": null
+}

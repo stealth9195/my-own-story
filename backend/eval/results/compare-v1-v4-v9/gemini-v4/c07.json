@@ -1,0 +1,493 @@
+{
+  "case_id": "c07",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "robot",
+    "cat",
+    "rose",
+    "cake"
+  ],
+  "card_names": [
+    "로봇",
+    "고양이",
+    "장미",
+    "케이크"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "예쁜 장미가 가득 핀 정원에 커다란 케이크가 놓였어요.\n달콤한 냄새를 맡고 귀여운 고양이가 살금살금 다가왔지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "rose",
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "고양이는 친구들과 함께 케이크를 맛있게 먹고 싶었어요.\n하지만 아직 친구들이 오지 않아서 속상한 마음이 들었답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "scared"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "어떻 하면 친구들을 빨리 불러올 수 있을까요?\n고양이는 곁에 있는 단단한 로봇에게 도움을 청하기로 했어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "talking"
+              },
+              {
+                "id": "robot",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "footsteps"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "kind": "item",
+          "id": "letter",
+          "label": "편지"
+        },
+        {
+          "kind": "item",
+          "id": "crown",
+          "label": "왕관"
+        },
+        {
+          "kind": "item",
+          "id": "fairy",
+          "label": "요정"
+        }
+      ],
+      "chosen": "crown",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2020,
+          "dropped": [
+            "bell"
+          ],
+          "sent_choices": [
+            "balloon",
+            "bell",
+            "letter"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2020
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "고양이는 반짝이는 왕관을 로봇의 머리에 씌워주었어요. 로봇은 멋진 모습으로 변신하고 큰 소리로 친구들을 불렀지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              },
+              {
+                "id": "robot",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "rose",
+              "cake",
+              "crown"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "bell"
+        },
+        {
+          "text": "우렁찬 소리를 듣고 숲속 친구들이 하나둘 모여들었어요. 달콤한 케이크를 본 친구들의 얼굴에 환한 미소가 번졌답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              },
+              {
+                "id": "robot",
+                "state": "idle"
+              },
+              {
+                "id": "bear",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "고양이는 다정하게 케이크를 잘라서 친구들에게 골고루 나누어주었어요. 다 함께 맛있는 케이크를 먹으니 훨씬 더 즐거웠어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "kind": "item",
+          "id": "ball",
+          "label": "공"
+        },
+        {
+          "kind": "item",
+          "id": "music_box",
+          "label": "오르골"
+        },
+        {
+          "kind": "item",
+          "id": "cookie",
+          "label": "쿠키"
+        }
+      ],
+      "chosen": "apple",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2315,
+          "dropped": [],
+          "sent_choices": [
+            "apple",
+            "ball",
+            "music_box",
+            "cookie"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2315
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "친구들과 헤어지기 아쉬운 고양이가 사과를 꺼냈어요. 달콤한 사과를 어떻게 하면 더 재밌게 나눌 수 있을까요?",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "apple",
+              "rose",
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "고양이는 사과를 데굴데굴 굴리며 놀이 대장을 시작했어요. 사과가 멈춘 곳의 친구가 멋진 장기를 보여주기로 했지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "walking"
+              },
+              {
+                "id": "robot",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "apple",
+              "rose"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "모두가 사과 놀이에 푹 빠져 신나게 웃음을 터뜨렸어요. 혼자 먹을 때보다 함께 나누며 놀 때 행복이 커졌답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              },
+              {
+                "id": "robot",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "apple"
+            ]
+          },
+          "mood": "warm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "bicycle",
+          "label": "자전거"
+        },
+        {
+          "kind": "item",
+          "id": "umbrella",
+          "label": "우산"
+        },
+        {
+          "kind": "item",
+          "id": "star",
+          "label": "별"
+        }
+      ],
+      "chosen": "bicycle",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2049,
+          "dropped": [
+            "music_box"
+          ],
+          "sent_choices": [
+            "bicycle",
+            "umbrella",
+            "star",
+            "music_box"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2049
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "즐거운 놀이가 끝나고 고양이는 반짝이는 자전거를 타고 달리기로 했어요. 쌩쌩 달리는 자전거 뒤로 친구들도 저마다 놀잇감을 챙겨 따라 나섰지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "bicycle",
+              "rose",
+              "cake"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "한참을 달리다 보니 낯선 곳에 도착해 어디로 가야 할지 몰라 당황했어요. 그때 자전거 바구니 속에서 빛나는 물건이 톡 튀어나왔답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "bicycle",
+              "rose"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "pop"
+        },
+        {
+          "text": "빛을 따라간 곳에는 달콤한 냄새가 가득한 신나는 놀이터가 기다리고 있었어요. 고양이는 친구들과 함께 자전거를 타고 달리며 하루를 마무리했답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "cat",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "bicycle",
+              "cake",
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "map",
+          "label": "지도"
+        },
+        {
+          "kind": "item",
+          "id": "lantern",
+          "label": "등불"
+        },
+        {
+          "kind": "item",
+          "id": "flower_crown",
+          "label": "꽃 왕관"
+        }
+      ],
+      "chosen": "lantern",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1801,
+          "dropped": [
+            "bell"
+          ],
+          "sent_choices": [
+            "bell",
+            "map",
+            "lantern",
+            "flower_crown"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1801
+    }
+  ],
+  "failed_at": 4,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count"
+      ],
+      "latency_ms": 1985,
+      "dropped": [],
+      "sent_choices": [],
+      "page_count": 3,
+      "message": "",
+      "warnings": []
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count"
+      ],
+      "latency_ms": 2065,
+      "dropped": [
+        "dog"
+      ],
+      "sent_choices": [],
+      "page_count": 3,
+      "message": "",
+      "warnings": []
+    }
+  ]
+}

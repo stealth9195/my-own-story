@@ -1,0 +1,62 @@
+{
+  "case_id": "c07",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v1",
+  "cards": [
+    "robot",
+    "cat",
+    "rose",
+    "cake"
+  ],
+  "card_names": [
+    "로봇",
+    "고양이",
+    "장미",
+    "케이크"
+  ],
+  "status": "failed",
+  "segments": [],
+  "failed_at": 0,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "cards_missing"
+      ],
+      "latency_ms": 2100,
+      "dropped": [
+        "robot"
+      ],
+      "sent_choices": [
+        "robot",
+        "dragon",
+        "balloon",
+        "fairy"
+      ],
+      "page_count": 3,
+      "message": "",
+      "warnings": []
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "cards_missing"
+      ],
+      "latency_ms": 1576,
+      "dropped": [
+        "dancing",
+        "robot"
+      ],
+      "sent_choices": [
+        "robot",
+        "dragon",
+        "balloon"
+      ],
+      "page_count": 3,
+      "message": "",
+      "warnings": []
+    }
+  ]
+}

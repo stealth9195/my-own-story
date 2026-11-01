@@ -1,0 +1,544 @@
+{
+  "case_id": "c06",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v9",
+  "cards": [
+    "bear",
+    "rainbow",
+    "dragon"
+  ],
+  "card_names": [
+    "곰",
+    "무지개",
+    "아기 용"
+  ],
+  "status": "done",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "햇살이 반짝이는 숲속에 귀여운 아기 용이 살았어요. 아기 용은 아름다운 무지개를 아주 좋아했어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "아기 용은 무지개 끝에 어떤 신비한 세상이 있을지 궁금했어요. 그래서 무지개를 따라 숲길을 걷기 시작했어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "알록달록한 무지개를 쫓아가 마을 어귀에 도착해 보니...",
+          "scene": {
+            "background": "village",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "wind"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "phrase",
+          "id": "phrase-1",
+          "label": "길이 두 갈래로 나뉘어 있었어요"
+        },
+        {
+          "kind": "phrase",
+          "id": "phrase-2",
+          "label": "친절한 곰이 기다리고 있었어요"
+        },
+        {
+          "kind": "phrase",
+          "id": "phrase-3",
+          "label": "알록달록한 보물상자가 놓여 있었어요"
+        }
+      ],
+      "chosen": "phrase-2",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1844,
+          "dropped": [],
+          "sent_choices": [
+            "길이 두 갈래로 나뉘어 있었어요",
+            "친절한 곰이 기다리고 있었어요",
+            "알록달록한 보물상자가 놓여 있었어요"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1844
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "친절한 곰이 기다리고 있었어요. 곰은 아기 용에게 반갑게 손을 흔들었어요.",
+          "scene": {
+            "background": "village",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "birds"
+        },
+        {
+          "text": "아기 용은 곰과 함께 무지개 끝을 찾아가고 싶었어요. 하지만 커다란 나무가 길을 가로막고 있었어요.",
+          "scene": {
+            "background": "village",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "thinking"
+              },
+              {
+                "id": "bear",
+                "state": "idle"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "길을 지나가기 위해 도움이 필요했어요. 그때 눈앞에 나타난 것은 바로...",
+          "scene": {
+            "background": "village",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "surprised"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "mystery",
+          "sfx": "wind"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "key",
+          "label": "열쇠"
+        },
+        {
+          "kind": "item",
+          "id": "map",
+          "label": "지도"
+        },
+        {
+          "kind": "item",
+          "id": "apple",
+          "label": "사과"
+        }
+      ],
+      "chosen": "key",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2076,
+          "dropped": [],
+          "sent_choices": [
+            "key",
+            "map",
+            "apple"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2076
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "아기 용과 곰은 나무를 지나려 열쇠를 찾아보았어요. 하지만 커다란 나무 문은 단단히 잠겨 있었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "thinking"
+              },
+              {
+                "id": "bear",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "key",
+              "rainbow"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "열쇠를 꽂을 자물쇠는 어디에도 보이지 않았어요. 아기 용은 쿵쾅거리는 마음에 눈물이 날 것 같았어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "scared"
+              }
+            ],
+            "objects": [
+              "key"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "어떻게 해야 문을 열 수 있을지 고민했어요. 그때 저기서 걸어오는 누군가를 발견했어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "surprised"
+              },
+              {
+                "id": "bear",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "key"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "footsteps"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "fox",
+          "label": "여우"
+        },
+        {
+          "kind": "item",
+          "id": "owl",
+          "label": "부엉이"
+        },
+        {
+          "kind": "item",
+          "id": "rabbit",
+          "label": "토끼"
+        }
+      ],
+      "chosen": "fox",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1880,
+          "dropped": [],
+          "sent_choices": [
+            "fox",
+            "owl",
+            "rabbit"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1880
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "여우가 다가와 문을 열 방법을 같이 찾아보자고 말했어요. 아기 용과 곰은 여우의 따뜻한 말에 용기를 얻었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "idle"
+              },
+              {
+                "id": "fox",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "아기 용은 문을 두드리는 대신 꼬리로 부드럽게 문을 밀어 보았어요. 그러자 단단했던 나무 문이 살짝 소리를 내며 열렸어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "surprised"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "fox",
+                "state": "happy"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "exciting",
+          "sfx": "door_open"
+        },
+        {
+          "text": "문이 열린 곳에서 밝은 빛과 함께 반갑게 맞이해 준 건...",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "fox",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "fairy",
+          "label": "요정"
+        },
+        {
+          "kind": "item",
+          "id": "dinosaur",
+          "label": "공룡"
+        },
+        {
+          "kind": "item",
+          "id": "wizard",
+          "label": "마법사"
+        }
+      ],
+      "chosen": "wizard",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1815,
+          "dropped": [
+            "rabbit",
+            "bird"
+          ],
+          "sent_choices": [
+            "rabbit",
+            "bird",
+            "fairy"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1815
+    },
+    {
+      "type": "ending",
+      "pages": [
+        {
+          "text": "빛 속에서 나타난 마법사는 손을 흔들며 환하게 웃었어요. 마법사는 아기 용과 친구들에게 알록달록한 무지개 사탕을 건네주었어요.",
+          "scene": {
+            "background": "castle",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "wizard",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "아기 용과 곰은 마법사가 준 사탕을 달콤하게 나누어 먹었어요. 함께 길을 걸어온 여우도 다 함께 모여 즐겁게 웃음을 터뜨렸어요.",
+          "scene": {
+            "background": "castle",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "fox",
+                "state": "happy"
+              },
+              {
+                "id": "wizard",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "아기 용은 마침내 무지개 끝에 도착해 멋진 친구들과 함께 행복한 시간을 보냈답니다.",
+          "scene": {
+            "background": "castle",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "fox",
+                "state": "happy"
+              },
+              {
+                "id": "wizard",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "bell"
+        }
+      ],
+      "choices": [],
+      "chosen": null,
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1754,
+          "dropped": [],
+          "sent_choices": [],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1754
+    }
+  ],
+  "failed_at": null
+}

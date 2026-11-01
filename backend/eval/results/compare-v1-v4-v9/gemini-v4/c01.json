@@ -1,0 +1,489 @@
+{
+  "case_id": "c01",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "rabbit",
+    "rose",
+    "star"
+  ],
+  "card_names": [
+    "토끼",
+    "장미",
+    "별"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "까만 밤하늘에 반짝이는 별이 가득 떴어요. 예쁜 장미꽃이 활짝 핀 정원에서 토끼가 반짝반짝 빛을 찾고 있었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "star",
+              "rose"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "wind"
+        },
+        {
+          "text": "토끼는 가장 예쁜 별을 따고 싶었지만 손이 닿지 않았어요. 키가 작아서 껑충 뛰어도 별은 아주 높이 있었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "어떻게 하면 반짝이는 별을 만질 수 있을까요? 토끼는 고민하며 주변을 둘러보았어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "kind": "item",
+          "id": "magic_wand",
+          "label": "요술봉"
+        },
+        {
+          "kind": "item",
+          "id": "prince",
+          "label": "왕자"
+        },
+        {
+          "kind": "item",
+          "id": "boy",
+          "label": "남자아이"
+        }
+      ],
+      "chosen": "balloon",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2079,
+          "dropped": [
+            "ladder"
+          ],
+          "sent_choices": [
+            "balloon",
+            "ladder",
+            "magic_wand"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2079
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "토끼는 알록달록한 풍선들을 묶어서 하늘 위로 띄워 보았어요. 하지만 풍선은 별보다 훨씬 아래에 멈춰 서고 말았어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "balloon",
+              "star",
+              "rose"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "풍선을 타고 올라갈 수 없자 토끼는 아쉽고 속상한 마음이 들었어요. 그때 반짝이는 별이 바람을 타고 조금 더 아래로 내려왔어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "star",
+              "rose",
+              "balloon"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "토끼는 까치발을 하고 두 손을 뻗어 별을 살며시 감싸 안았어요. 마침내 따뜻하고 환한 빛이 토끼의 품 가득 안겼어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star",
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "환하게 웃는 토끼의 품에서 별은 정원의 장미꽃처럼 환한 빛을 반짝였어요. 혼자서도 끝까지 노력하면 원하는 것을 이룰 수 있다는 걸 알았답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star",
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "cookie",
+          "label": "쿠키"
+        },
+        {
+          "kind": "item",
+          "id": "kite",
+          "label": "연"
+        },
+        {
+          "kind": "item",
+          "id": "unicorn",
+          "label": "유니콘"
+        },
+        {
+          "kind": "item",
+          "id": "dinosaur",
+          "label": "공룡"
+        }
+      ],
+      "chosen": "kite",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2709,
+          "dropped": [
+            "ladder",
+            "bird"
+          ],
+          "sent_choices": [
+            "ladder",
+            "cookie",
+            "bird"
+          ],
+          "page_count": 4,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2709
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "토끼는 품에 안은 별을 가지고 정원을 나왔어요. 어두운 숲길에서 길을 잃을까 봐 걱정되었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "scared"
+              }
+            ],
+            "objects": [
+              "star",
+              "kite"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "wind"
+        },
+        {
+          "text": "토끼는 품에 품은 반짝이는 별을 높이 들어 올렸어요. 별빛이 어두운 숲길을 환하게 비춰 주었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star",
+              "lantern"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "밝아진 길을 따라 걸어가자 무사히 집으로 돌아올 수 있었어요. 혼자 힘으로 어려움을 이겨내서 정말 기뻤답니다.",
+          "scene": {
+            "background": "village",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "calm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "bear",
+          "label": "곰"
+        },
+        {
+          "kind": "item",
+          "id": "map",
+          "label": "지도"
+        },
+        {
+          "kind": "item",
+          "id": "crown",
+          "label": "왕관"
+        },
+        {
+          "kind": "item",
+          "id": "grandpa",
+          "label": "할아버지"
+        }
+      ],
+      "chosen": "crown",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1983,
+          "dropped": [
+            "lantern"
+          ],
+          "sent_choices": [
+            "lantern",
+            "bear",
+            "map"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1983
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "토끼는 반짝이는 왕관을 머리에 조심스럽게 얹었어요. 별빛이 왕관에 닿자 사방이 환하게 반짝였어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "crown",
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "왕관의 빛을 따라 걸어가던 토끼는 반짝이는 작은 친구를 만났어요. 다정한 다람쥐가 토끼를 보며 활짝 웃었어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "walking"
+              },
+              {
+                "id": "squirrel",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "crown"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "토끼는 머리에 쓴 왕관을 벗어서 다람쥐에게 살짝 씌워 주었어요. 둘이 함께 빛을 나누자 숲속은 더 따뜻해졌답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "squirrel",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "crown"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "robot",
+          "label": "로봇"
+        },
+        {
+          "kind": "item",
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "kind": "item",
+          "id": "ball",
+          "label": "공"
+        }
+      ],
+      "chosen": "robot",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1810,
+          "dropped": [
+            "squirrel"
+          ],
+          "sent_choices": [
+            "squirrel",
+            "robot",
+            "apple",
+            "ball"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1810
+    }
+  ],
+  "failed_at": 4,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count",
+        "no_pages"
+      ],
+      "latency_ms": 2133,
+      "dropped": [],
+      "sent_choices": [],
+      "page_count": 0,
+      "message": "",
+      "warnings": []
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count"
+      ],
+      "latency_ms": 2029,
+      "dropped": [],
+      "sent_choices": [],
+      "page_count": 3,
+      "message": "",
+      "warnings": []
+    }
+  ]
+}

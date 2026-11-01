@@ -1,0 +1,52 @@
+{
+  "case_id": "c03",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v9",
+  "cards": [
+    "robot",
+    "star",
+    "bear",
+    "cake"
+  ],
+  "card_names": [
+    "로봇",
+    "별",
+    "곰",
+    "케이크"
+  ],
+  "status": "failed",
+  "segments": [],
+  "failed_at": 0,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "schema"
+      ],
+      "latency_ms": 1568,
+      "dropped": [],
+      "sent_choices": [],
+      "page_count": 0,
+      "message": "",
+      "warnings": []
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "cards_missing"
+      ],
+      "latency_ms": 2039,
+      "dropped": [],
+      "sent_choices": [
+        "커다란 나무뿌리였어요",
+        "깊고 넓은 강이었어요",
+        "반짝이는 덩굴이었어요"
+      ],
+      "page_count": 3,
+      "message": "",
+      "warnings": []
+    }
+  ]
+}

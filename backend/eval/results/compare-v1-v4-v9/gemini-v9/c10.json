@@ -1,0 +1,484 @@
+{
+  "case_id": "c10",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v9",
+  "cards": [
+    "dinosaur",
+    "rose",
+    "cake"
+  ],
+  "card_names": [
+    "공룡",
+    "장미",
+    "케이크"
+  ],
+  "status": "done",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "초록 숲속에 아기 공룡이 살고 있었어요. 숲속 친구들과 나눠 먹으려고 달콤한 케이크를 만들었지요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "공룡은 예쁜 장미를 꺾어 케이크 위에 올렸어요. 혼자서 다 먹고 싶은 마음이 몽글몽글 피어올랐어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "rose",
+              "cake"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "친구들에게 케이크를 주기 아까워서 공룡은 케이크를 숨기려고",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "kind": "phrase",
+          "id": "phrase-1",
+          "label": "깊은 숲속으로 도망쳤어요"
+        },
+        {
+          "kind": "phrase",
+          "id": "phrase-2",
+          "label": "나뭇잎 아래에 꼭꼭 감췄어요"
+        },
+        {
+          "kind": "phrase",
+          "id": "phrase-3",
+          "label": "커다란 상자에 넣고 잠갔어요"
+        }
+      ],
+      "chosen": "phrase-2",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1841,
+          "dropped": [],
+          "sent_choices": [
+            "깊은 숲속으로 도망쳤어요",
+            "나뭇잎 아래에 꼭꼭 감췄어요",
+            "커다란 상자에 넣고 잠갔어요"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1841
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "나뭇잎 아래에 꼭꼭 감췄어요. 하지만 맛있는 냄새가 자꾸만 새어 나왔어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "thinking"
+              }
+            ],
+            "objects": [
+              "cake",
+              "rose"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "공룡이 깜짝 놀라 뒤돌아보았어요. 손에 들고 있던 건...",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "footsteps"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "rabbit",
+          "label": "토끼"
+        },
+        {
+          "kind": "item",
+          "id": "apple",
+          "label": "사과"
+        },
+        {
+          "kind": "item",
+          "id": "balloon",
+          "label": "풍선"
+        }
+      ],
+      "chosen": "rabbit",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1865,
+          "dropped": [],
+          "sent_choices": [
+            "rabbit",
+            "apple",
+            "balloon"
+          ],
+          "page_count": 2,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1865
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "귀를 쫑긋 세운 토끼가 다가와 케이크 냄새를  맡았어요. 공룡은 깜짝 놀라 케이크를 등 뒤로 쏙 감추었지요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "surprised"
+              },
+              {
+                "id": "rabbit",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "cake",
+              "rose"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "토끼는 맛있는 냄새가 난다며 방긋 웃었어요. 공룡은 마음이 콩닥거려서 아무 말도 하지 못했어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "scared"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "공룡이 어쩔 줄 몰라 할 때, 숲속에서 꼬리를 살랑이며 나타난 건...",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "bear",
+          "label": "곰"
+        },
+        {
+          "kind": "item",
+          "id": "fox",
+          "label": "여우"
+        },
+        {
+          "kind": "item",
+          "id": "squirrel",
+          "label": "다람쥐"
+        }
+      ],
+      "chosen": "bear",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1554,
+          "dropped": [],
+          "sent_choices": [
+            "bear",
+            "fox",
+            "squirrel"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1554
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "커다란 곰이 나타나 케이크를 같이 먹자고 다정하게 말했어요. 공룡은 쿵쾅거리는 가슴을 안고 케이크를 쳐다보았어요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "surprised"
+              },
+              {
+                "id": "bear",
+                "state": "talking"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake",
+              "rose"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        },
+        {
+          "text": "공룡은 혼자 먹으려던 마음을 툭 털어내기로 용기를 냈어요. 친구들과 함께 웃으며 케이크를 한 조각씩 나누어 먹었지요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake",
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "butterfly",
+          "label": "나비"
+        },
+        {
+          "kind": "item",
+          "id": "cookie",
+          "label": "쿠키"
+        },
+        {
+          "kind": "item",
+          "id": "cat",
+          "label": "고양이"
+        }
+      ],
+      "chosen": "cat",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1487,
+          "dropped": [
+            "bird"
+          ],
+          "sent_choices": [
+            "bird",
+            "butterfly",
+            "cookie"
+          ],
+          "page_count": 2,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1487
+    },
+    {
+      "type": "ending",
+      "pages": [
+        {
+          "text": "사뿐사뿐 걸어온 고양이가 다가와 고소한 빵 냄새를 맡았어요. 공룡은 망설이다가 고양이에게도 케이크를 건넸지요.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "cat",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "cake",
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        },
+        {
+          "text": "토끼와 곰, 그리고 고양이까지 모두 모여서 맛있게 먹었어요. 달콤한 케이크를 함께 나누니 행복이 가득 퍼졌답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "공룡은 친구들과 함께 맛있는 간식을 먹으며 즐겁게 놀았어요. 마음을 나누는 일이 참 좋다는 걸 느꼈지요.",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "dinosaur",
+                "state": "happy"
+              },
+              {
+                "id": "cat",
+                "state": "happy"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "warm",
+          "sfx": null
+        }
+      ],
+      "choices": [],
+      "chosen": null,
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1863,
+          "dropped": [],
+          "sent_choices": [],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1863
+    }
+  ],
+  "failed_at": null
+}

@@ -1,0 +1,61 @@
+{
+  "case_id": "c09",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v4",
+  "cards": [
+    "dragon",
+    "star",
+    "cat",
+    "bear",
+    "robot"
+  ],
+  "card_names": [
+    "아기 용",
+    "별",
+    "고양이",
+    "곰",
+    "로봇"
+  ],
+  "status": "failed",
+  "segments": [],
+  "failed_at": 0,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "cards_missing"
+      ],
+      "latency_ms": 1623,
+      "dropped": [
+        "lantern",
+        "map"
+      ],
+      "sent_choices": [
+        "lantern",
+        "map",
+        "umbrella"
+      ],
+      "page_count": 3,
+      "message": "",
+      "warnings": []
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "cards_missing"
+      ],
+      "latency_ms": 2302,
+      "dropped": [],
+      "sent_choices": [
+        "lantern",
+        "cookie",
+        "owl"
+      ],
+      "page_count": 3,
+      "message": "",
+      "warnings": []
+    }
+  ]
+}

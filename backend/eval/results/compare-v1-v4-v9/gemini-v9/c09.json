@@ -1,0 +1,458 @@
+{
+  "case_id": "c09",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v9",
+  "cards": [
+    "dragon",
+    "star",
+    "cat",
+    "bear",
+    "robot"
+  ],
+  "card_names": [
+    "아기 용",
+    "별",
+    "고양이",
+    "곰",
+    "로봇"
+  ],
+  "status": "done",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "초록빛 풀밭에 아기 용이 살고 있었어요. 아기 용은 밤하늘의 빛나는 별을 아주 좋아했어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "어느 날 아기 용은 가장 반짝이는 별을 만지고 싶었어요. 그래서 반짝이는 별을 찾아 조심조심 걸었어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "wind"
+        },
+        {
+          "text": "하지만 풀밭 끝에서 어두운 숲을 만났고, 길을 잃어버려 속상했어요. 그때 나무 뒤에서 나타난 건...",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "lantern",
+          "label": "등불"
+        },
+        {
+          "kind": "item",
+          "id": "rabbit",
+          "label": "토끼"
+        },
+        {
+          "kind": "item",
+          "id": "apple",
+          "label": "사과"
+        }
+      ],
+      "chosen": "lantern",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1889,
+          "dropped": [],
+          "sent_choices": [
+            "lantern",
+            "rabbit",
+            "apple"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1889
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "아기 용은 어두운 숲에서 노란 등불을 발견했어요. 따뜻한 불빛을 따라 걸어가면 될 것 같았어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "lantern"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "wind"
+        },
+        {
+          "text": "하지만 등불을 잡으려고 손을 뻗자 숲속 길이 자꾸만 구불구불 갈라졌어요. 어느 길로 가야 할지 몰라 마음이 콩닥거렸어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "lantern"
+            ]
+          },
+          "mood": "tense",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "puppy",
+          "label": "강아지"
+        },
+        {
+          "kind": "item",
+          "id": "frog",
+          "label": "개구리"
+        },
+        {
+          "kind": "item",
+          "id": "honey",
+          "label": "꿀단지"
+        }
+      ],
+      "chosen": "puppy",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1995,
+          "dropped": [
+            "등불이 갑자기 반짝이며 앞을 비춰 주었어요",
+            "바람이 불어 등불이 그만 꺼지고 말았어요",
+            "등불 속에서 작은 목소리가 흘러나왔어요"
+          ],
+          "sent_choices": [
+            "등불이 갑자기 반짝이며 앞을 비춰 주었어요",
+            "바람이 불어 등불이 그만 꺼지고 말았어요",
+            "등불 속에서 작은 목소리가 흘러나왔어요"
+          ],
+          "page_count": 2,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1995
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "그때 친절한 강아지가 나타나 반짝이는 공을 굴려 주었어요. 아기 용은 공을 따라가며 어두운 길을 빠져나오려 했어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "surprised"
+              },
+              {
+                "id": "puppy",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "star",
+              "lantern",
+              "ball"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "footsteps"
+        },
+        {
+          "text": "하지만 공이 갑자기 반짝이는 강물 속으로 퐁당 빠져버렸어요. 다리를 건너야 하는데 다리가 무너져 있어 옴짝달싹 못 했어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "scared"
+              },
+              {
+                "id": "puppy",
+                "state": "scared"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "tense",
+          "sfx": "splash"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "phrase",
+          "id": "phrase-1",
+          "label": "다리 대신 튼튼한 무지개가 나타났어요"
+        },
+        {
+          "kind": "phrase",
+          "id": "phrase-2",
+          "label": "커다란 우산이 배처럼 떠올랐어요"
+        },
+        {
+          "kind": "phrase",
+          "id": "phrase-3",
+          "label": "살랑살랑 바람이 불어 날려 주었어요"
+        }
+      ],
+      "chosen": "phrase-3",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": false,
+          "errors": [
+            "choices"
+          ],
+          "latency_ms": 1386,
+          "dropped": [
+            "숲속에 쿵쾅거리는 소리가 울려 퍼졌어요"
+          ],
+          "sent_choices": [
+            "숲속에 쿵쾅거리는 소리가 울려 퍼졌어요",
+            "사방이 짙은 안개로 가득 찼어요",
+            "갑자기 눈앞이 캄캄해졌어요"
+          ],
+          "page_count": 2,
+          "message": "",
+          "warnings": []
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1509,
+          "dropped": [],
+          "sent_choices": [
+            "다리 대신 튼튼한 무지개가 나타났어요",
+            "커다란 우산이 배처럼 떠올랐어요",
+            "살랑살랑 바람이 불어 날려 주었어요"
+          ],
+          "page_count": 2,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2895
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "살랑살랑 바람이 불어 날려 주었어요. 바람은 아기 용을 부드럽게 감싸 안았어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "wind"
+        },
+        {
+          "text": "아기 용은 두 눈을 질끈 감고 용기를 내어 바람에 몸을 실었어요. 강물을 훌쩍 건너자 하늘의 별이 더 가까이 보였어요.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "umbrella",
+          "label": "우산"
+        },
+        {
+          "kind": "item",
+          "id": "rainbow",
+          "label": "무지개"
+        },
+        {
+          "kind": "item",
+          "id": "fairy",
+          "label": "요정"
+        }
+      ],
+      "chosen": "rainbow",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1584,
+          "dropped": [],
+          "sent_choices": [
+            "umbrella",
+            "rainbow",
+            "fairy"
+          ],
+          "page_count": 2,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1584
+    },
+    {
+      "type": "ending",
+      "pages": [
+        {
+          "text": "강물을 건너자 아름다운 무지개가 환하게 떠올랐어요. 아기 용은 무지개 다리를 건너 마침내 반짝이는 별에 손을 뻗었어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star",
+              "rainbow"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "별은 따스한 빛을 내뿜으며 아기 용의 손을 부드럽게 감싸 안아 주었어요. 어두운 길에서 헤매던 무서운 마음이 싹 사라졌어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "calm",
+          "sfx": "bell"
+        },
+        {
+          "text": "아기 용은 혼자 힘으로 별을 만져 본 것이 자랑스러웠어요. 밤하늘을 올려다보며 환하게 미소 지었답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "night",
+            "characters": [
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "laugh"
+        }
+      ],
+      "choices": [],
+      "chosen": null,
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1841,
+          "dropped": [],
+          "sent_choices": [],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 1841
+    }
+  ],
+  "failed_at": null
+}

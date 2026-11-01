@@ -1,0 +1,465 @@
+{
+  "case_id": "c01",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v1",
+  "cards": [
+    "rabbit",
+    "rose",
+    "star"
+  ],
+  "card_names": [
+    "토끼",
+    "장미",
+    "별"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "예쁜 꽃이 가득 피어난 초록색 풀밭에서 토끼가 깡충깡충 뛰어놀고 있었어요. 맑고 푸른 하늘 위에는 반짝반짝 별이 예쁘게 떠 있었답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "토끼는 향기로운 장미꽃 냄새를 맡으며 즐겁게 산책을 했어요. 그러다 반짝이는 별빛이 가리키는 신기한 길을 발견했지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "rose",
+              "star"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "토끼가 호기심 가득한 눈으로 조심조심 발걸음을 옮겼어요. 과연 그 길 끝에서 누구를 만나게 될까요?",
+          "scene": {
+            "background": "forest",
+            "time": "day",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "footsteps"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "dragon",
+          "label": "아기 용"
+        },
+        {
+          "kind": "item",
+          "id": "bear",
+          "label": "곰"
+        },
+        {
+          "kind": "item",
+          "id": "magic_wand",
+          "label": "요술봉"
+        },
+        {
+          "kind": "item",
+          "id": "fairy",
+          "label": "요정"
+        }
+      ],
+      "chosen": "dragon",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2317,
+          "dropped": [
+            "curious"
+          ],
+          "sent_choices": [
+            "dragon",
+            "bear",
+            "magic_wand",
+            "fairy"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2317
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "토끼가 별빛을 따라 걸어가자, 따뜻한 빛이 나는 아늑한 숲이 나왔어요. 그곳에는 귀여운 아기 용이 반갑게 인사를 건네며 기다리고 있었답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "dragon",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "star",
+              "rose"
+            ]
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "아기 용은 몽글몽글 예쁜 연기로 반짝이는 별 모양을 만들어 보였어요. 토끼는 신기해서 눈을 반짝이며 아기 용 곁으로 다가갔지요.",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "magic_sparkle"
+        },
+        {
+          "text": "둘은 함께 숲속을 걸으며 즐거운 이야기를 나누었어요. 그때, 풀숲 사이에서 은은한 달빛을 받으며 무언가 반짝이기 시작했어요. 그건 바로...",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "walking"
+              },
+              {
+                "id": "dragon",
+                "state": "walking"
+              }
+            ],
+            "objects": [
+              "moon"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "wind"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "treasure_box",
+          "label": "보물 상자"
+        },
+        {
+          "kind": "item",
+          "id": "cake",
+          "label": "케이크"
+        },
+        {
+          "kind": "item",
+          "id": "ship",
+          "label": "배"
+        },
+        {
+          "kind": "item",
+          "id": "snowman",
+          "label": "눈사람"
+        }
+      ],
+      "chosen": "cake",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": false,
+          "errors": [
+            "page_count",
+            "no_pages"
+          ],
+          "latency_ms": 2326,
+          "dropped": [],
+          "sent_choices": [],
+          "page_count": 0,
+          "message": "",
+          "warnings": []
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 1980,
+          "dropped": [
+            "teddy_bear",
+            "magic_wand"
+          ],
+          "sent_choices": [
+            "treasure_box",
+            "cake",
+            "teddy_bear",
+            "magic_wand"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 4306
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "풀숲 사이에서 반짝이던 건 달콤한 냄새가 솔솔 나는 커다란 케이크였어요. 토끼와 아기 용은 깜짝 놀라 눈을 동그랗게 떴답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "surprised"
+              },
+              {
+                "id": "dragon",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "케이크 위에는 반짝이는 초가 예쁘게 꽂혀 있었어요. 아기 용이 따뜻한 입김으로 초에 불을 켜 주었지요.",
+          "scene": {
+            "background": "forest",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "dragon",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "cake",
+              "star"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "토끼와 아기 용은 달콤한 케이크를 나누어 먹으며 행복한 파티를 열었어요. 숲속 친구들도 모두 모여 즐겁게 노래를 불렀답니다.",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "dragon",
+                "state": "happy"
+              },
+              {
+                "id": "owl",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "파티가 끝날 무렵, 하늘에서 반짝이는 별들이 반갑게 인사를 건넸어요. 토끼는 오늘 하루가 정말 꿈만 같았답니다. 다음에는 또 어떤 즐거운 일이 기다리고 있을까요?",
+          "scene": {
+            "background": "forest",
+            "time": "night",
+            "characters": [
+              {
+                "id": "rabbit",
+                "state": "happy"
+              },
+              {
+                "id": "dragon",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "balloon",
+          "label": "풍선"
+        },
+        {
+          "kind": "item",
+          "id": "wizard",
+          "label": "마법사"
+        },
+        {
+          "kind": "item",
+          "id": "girl",
+          "label": "여자아이"
+        },
+        {
+          "kind": "item",
+          "id": "cookie",
+          "label": "쿠키"
+        }
+      ],
+      "chosen": "girl",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": false,
+          "errors": [
+            "unchosen_used"
+          ],
+          "latency_ms": 2894,
+          "dropped": [
+            "treasure_box",
+            "star"
+          ],
+          "sent_choices": [
+            "treasure_box",
+            "umbrella",
+            "bicycle",
+            "star"
+          ],
+          "page_count": 4,
+          "message": "",
+          "warnings": []
+        },
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2620,
+          "dropped": [
+            "cake",
+            "treasure_box",
+            "fairy"
+          ],
+          "sent_choices": [
+            "cake",
+            "balloon",
+            "treasure_box",
+            "fairy"
+          ],
+          "page_count": 4,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 5514
+    }
+  ],
+  "failed_at": 3,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "unchosen_used"
+      ],
+      "latency_ms": 1871,
+      "dropped": [
+        "girl",
+        "balloon"
+      ],
+      "sent_choices": [
+        "girl",
+        "robot",
+        "balloon",
+        "key"
+      ],
+      "page_count": 3,
+      "message": "",
+      "warnings": []
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "unchosen_used"
+      ],
+      "latency_ms": 2439,
+      "dropped": [
+        "ship",
+        "teddy_bear",
+        "magic_wand"
+      ],
+      "sent_choices": [
+        "rainbow",
+        "ship",
+        "teddy_bear",
+        "magic_wand"
+      ],
+      "page_count": 4,
+      "message": "",
+      "warnings": []
+    }
+  ]
+}

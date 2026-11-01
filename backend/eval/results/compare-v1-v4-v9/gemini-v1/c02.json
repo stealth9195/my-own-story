@@ -1,0 +1,55 @@
+{
+  "case_id": "c02",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v1",
+  "cards": [
+    "dragon",
+    "cake",
+    "rainbow"
+  ],
+  "card_names": [
+    "아기 용",
+    "케이크",
+    "무지개"
+  ],
+  "status": "failed",
+  "segments": [],
+  "failed_at": 0,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "cards_missing",
+        "wrong_hero"
+      ],
+      "latency_ms": 2232,
+      "dropped": [
+        "dragon"
+      ],
+      "sent_choices": [
+        "dragon",
+        "robot",
+        "fairy",
+        "bear"
+      ],
+      "page_count": 3,
+      "message": "",
+      "warnings": []
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "page_count",
+        "no_pages"
+      ],
+      "latency_ms": 2283,
+      "dropped": [],
+      "sent_choices": [],
+      "page_count": 0,
+      "message": "",
+      "warnings": []
+    }
+  ]
+}

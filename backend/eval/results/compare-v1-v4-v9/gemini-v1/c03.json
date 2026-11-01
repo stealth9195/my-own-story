@@ -1,0 +1,302 @@
+{
+  "case_id": "c03",
+  "model": "gemini-3.5-flash-lite",
+  "version": "v1",
+  "cards": [
+    "robot",
+    "star",
+    "bear",
+    "cake"
+  ],
+  "card_names": [
+    "로봇",
+    "별",
+    "곰",
+    "케이크"
+  ],
+  "status": "failed",
+  "segments": [
+    {
+      "type": "intro",
+      "pages": [
+        {
+          "text": "어느 맑은 낮, 커다란 곰돌이가 초록빛 풀밭 위에서 반짝이는 별을 바라보고 있었어요. 곰돌이는 밤이 되면 반짝이는 별과 놀 수 있다고 생각했지요. 그때, 하늘에서 반짝이는 무언가가 곰돌이 앞으로 살살 다가왔어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "곰돌이가 눈을 반짝이며 살펴보니, 그것은 바로 뚝딱뚝딱 소리를 내는 멋진 로봇이었어요. 로봇은 싱긋 웃으며 맛있는 케이크 상자를 살짝 열어 보였답니다. 달콤한 냄새가 풀밭 가득 퍼져 나갔어요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "surprised"
+              },
+              {
+                "id": "robot",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        },
+        {
+          "text": "로봇과 곰돌이는 달콤한 케이크를 나눠 먹으며 신나게 춤을 추었어요. 그러자 케이크 상자 밑에서 신기한 빛이 번쩍이며 또 다른 친구가 나타났어요. 과연 상자 속에서 나온 친구는 누구일까요?",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "robot",
+                "state": "talking"
+              }
+            ],
+            "objects": [
+              "cake",
+              "star"
+            ]
+          },
+          "mood": "calm",
+          "sfx": null
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "dragon",
+          "label": "아기 용"
+        },
+        {
+          "kind": "item",
+          "id": "rabbit",
+          "label": "토끼"
+        },
+        {
+          "kind": "item",
+          "id": "cat",
+          "label": "고양이"
+        },
+        {
+          "kind": "item",
+          "id": "fairy",
+          "label": "요정"
+        }
+      ],
+      "chosen": "cat",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2384,
+          "dropped": [],
+          "sent_choices": [
+            "dragon",
+            "rabbit",
+            "cat",
+            "fairy"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2384
+    },
+    {
+      "type": "middle",
+      "pages": [
+        {
+          "text": "상자 속에서 살살 걸어 나온 친구는 바로 귀여운 고양이였어요. 고양이는 퐁퐁 뛰며 로봇과 곰돌이에게 반갑게 인사를 건넸지요.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "happy"
+              },
+              {
+                "id": "robot",
+                "state": "happy"
+              },
+              {
+                "id": "cat",
+                "state": "happy"
+              }
+            ],
+            "objects": [
+              "cake"
+            ]
+          },
+          "mood": "exciting",
+          "sfx": "laugh"
+        },
+        {
+          "text": "셋은 함께 둥글게 모여 앉아 신나는 놀이를 시작했어요. 고양이가 살랑살랑 꼬리를 흔들자, 로봇이 재미있는 소리로 노래를 불렀답니다.",
+          "scene": {
+            "background": "meadow",
+            "time": "day",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "idle"
+              },
+              {
+                "id": "robot",
+                "state": "talking"
+              },
+              {
+                "id": "cat",
+                "state": "idle"
+              }
+            ],
+            "objects": []
+          },
+          "mood": "warm",
+          "sfx": "birds"
+        },
+        {
+          "text": "노래 소리를 듣고 풀밭 너머에서 누군가가 반갑게 손을 흔들며 다가왔어요. 그 친구는 과연 누구일까요?",
+          "scene": {
+            "background": "meadow",
+            "time": "sunset",
+            "characters": [
+              {
+                "id": "bear",
+                "state": "surprised"
+              },
+              {
+                "id": "cat",
+                "state": "idle"
+              }
+            ],
+            "objects": [
+              "star"
+            ]
+          },
+          "mood": "mystery",
+          "sfx": "magic_sparkle"
+        }
+      ],
+      "choices": [
+        {
+          "kind": "item",
+          "id": "butterfly",
+          "label": "나비"
+        },
+        {
+          "kind": "item",
+          "id": "ship",
+          "label": "배"
+        },
+        {
+          "kind": "item",
+          "id": "letter",
+          "label": "편지"
+        },
+        {
+          "kind": "item",
+          "id": "map",
+          "label": "지도"
+        }
+      ],
+      "chosen": "map",
+      "attempts": [
+        {
+          "model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "errors": [],
+          "latency_ms": 2281,
+          "dropped": [
+            "dancing",
+            "lively",
+            "curious",
+            "robot",
+            "dragon",
+            "cake"
+          ],
+          "sent_choices": [
+            "robot",
+            "dragon",
+            "butterfly",
+            "cake"
+          ],
+          "page_count": 3,
+          "message": "",
+          "warnings": []
+        }
+      ],
+      "latency_ms": 2281
+    }
+  ],
+  "failed_at": 2,
+  "failed_attempts": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "unchosen_used"
+      ],
+      "latency_ms": 2216,
+      "dropped": [
+        "cake",
+        "door_open"
+      ],
+      "sent_choices": [
+        "treasure_box",
+        "cake",
+        "balloon",
+        "door_open"
+      ],
+      "page_count": 4,
+      "message": "",
+      "warnings": []
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "ok": false,
+      "errors": [
+        "unchosen_used"
+      ],
+      "latency_ms": 1650,
+      "dropped": [
+        "star",
+        "robot",
+        "cake"
+      ],
+      "sent_choices": [
+        "star",
+        "robot",
+        "cake",
+        "princess"
+      ],
+      "page_count": 3,
+      "message": "",
+      "warnings": []
+    }
+  ]
+}
