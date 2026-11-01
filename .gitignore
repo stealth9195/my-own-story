@@ -16,5 +16,8 @@ assets/raw/
 # 사용자가 받아 둔 음성 확인용 파일
 voice-noise/
 
+# 로컬 서버 기록 (backend/logs/날짜.log)
+logs/
+
 # 발표 자료 편집 서버 백업 (presentation/serve.py)
 presentation/backups/

@@ -2,19 +2,21 @@
 
 import json
 import logging
+import os
 import random
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from collections.abc import Callable
 from dataclasses import asdict
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
 from app.api.limits import Limits
-from app.api.log import log_event, register_secrets
+from app.api.log import log_event, register_secrets, save_to_files
 from app.api.schemas import (EventRequest, NextRequest, SegmentResponse, SignedSegment, SpeakRequest,
                              StartRequest, StoryKey, TTSRequest, Voice)
 from app.api.signing import BadSignature, sign_segment, verify_history, verify_segment
@@ -278,5 +280,8 @@ def build_clients(s: Settings) -> tuple[OpenAICompatClient, OpenAICompatClient |
 def build_app() -> FastAPI:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     s = Settings()
+    # Render 는 RENDER 환경 변수를 넣어 준다 → 배포에서는 Render Logs 만
+    if s.log_dir and not os.environ.get("RENDER"):
+        save_to_files(Path(s.log_dir))
     primary, secondary, backups = build_clients(s)
     return create_app(s, primary, secondary, backups=backups)

@@ -4,6 +4,11 @@ API 키·서명 비밀값은 넣지 않는다. 그래도 오류 글에 섞여 �
 
 import json
 import logging
+from collections.abc import Callable
+from datetime import datetime
+from pathlib import Path
+
+from app.api.limits import KST
 
 logger = logging.getLogger("story")
 _secrets: set[str] = set()
@@ -23,3 +28,31 @@ def _mask(text: str) -> str:
 
 def log_event(kind: str, **fields) -> None:
     logger.info(_mask(json.dumps({"kind": kind, **fields}, ensure_ascii=False, default=str)))
+
+
+class DailyFileHandler(logging.Handler):
+    """로컬 전용: logs/2026-10-31.log 처럼 KST 날짜별 파일에 '시각 내용' 한 줄씩 덧붙인다.
+    콘솔 기록은 창을 닫으면 사라지고 Windows 콘솔에서는 한글이 깨져 보여서 만들었다.
+    서버 오류(uvicorn.error)의 예외 내용도 들어오므로 여기서도 비밀값을 가린다."""
+
+    def __init__(self, folder: Path, clock: Callable[[], datetime] = lambda: datetime.now(KST)):
+        super().__init__(level=logging.INFO)
+        self.folder = Path(folder)
+        self._clock = clock
+
+    def emit(self, record: logging.LogRecord) -> None:
+        try:
+            now = self._clock().astimezone(KST)
+            line = _mask(f"{now:%H:%M:%S} {self.format(record)}")
+            self.folder.mkdir(parents=True, exist_ok=True)
+            with open(self.folder / f"{now:%Y-%m-%d}.log", "a", encoding="utf-8") as f:
+                f.write(line + "\n")
+        except Exception:
+            self.handleError(record)
+
+
+def save_to_files(folder: Path) -> None:
+    """이야기 기록(story)과 서버 오류(uvicorn.error)를 날짜별 파일에도 남긴다"""
+    handler = DailyFileHandler(folder)
+    for name in ("story", "uvicorn.error"):
+        logging.getLogger(name).addHandler(handler)

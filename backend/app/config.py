@@ -43,6 +43,8 @@ class Settings(BaseSettings):
     daily_stories_total: int = 30
     # NoDecode: JSON 으로 먼저 읽지 않고 아래 _origins 가 받는다 (Render 화면에 넣은 값이 JSON 이 아니어도 시작되게)
     cors_origins: Annotated[list[str], NoDecode] = DEFAULT_ORIGINS
+    # 로그를 날짜별 파일로도 남길 폴더(실행 위치 기준). 비우면 끔. Render 에서는 자동으로 끈다(디스크가 재배포 때 지워짐)
+    log_dir: str = "logs"
 
     # 이야기 생성 LLM. 모두 Google 모델이라 주소는 기본값, 키는 비우면 GEMINI_API_KEY 를 쓴다
     primary_base_url: str = GEMINI_OPENAI_URL

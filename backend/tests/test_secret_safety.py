@@ -55,3 +55,26 @@ def test_log_masks_registered_secrets(caplog):
     text = caplog.records[-1].getMessage()
     assert KEY not in text and "…1234" in text
     assert json.loads(text)["kind"] == "x"
+
+
+def test_daily_file_handler_writes_kst_dated_file_and_masks(tmp_path):
+    """로컬 로그 파일: KST 날짜별 파일에 시각과 함께 덧붙이고, 예외 글 속 비밀값도 가린다"""
+    from datetime import datetime, timezone
+
+    from app.api.log import DailyFileHandler
+    register_secrets(KEY)
+    # UTC 15:30 = KST 다음 날 00:30
+    handler = DailyFileHandler(tmp_path / "logs", clock=lambda: datetime(2026, 10, 31, 15, 30, tzinfo=timezone.utc))
+    log = logging.getLogger("test-file-log")
+    log.addHandler(handler)
+    try:
+        log.error("첫 줄")
+        try:
+            raise RuntimeError(f"Bearer {KEY}")
+        except RuntimeError:
+            log.exception("서버 오류")
+    finally:
+        log.removeHandler(handler)
+    text = (tmp_path / "logs" / "2026-11-01.log").read_text(encoding="utf-8")
+    assert text.startswith("00:30:00 첫 줄\n")
+    assert "RuntimeError" in text and KEY not in text and "…1234" in text
